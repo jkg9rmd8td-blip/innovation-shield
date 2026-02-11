@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>الملف الابتكاري | درع الابتكار</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand" data-href="../../index.html">
+    <div class="brand-mark">◈</div>
+    <div class="brand-text">
+      <div class="brand-title">درع الابتكار</div>
+      <div class="brand-sub">الملف الابتكاري</div>
+    </div>
+  </div>
+  <nav class="topnav">
+    <a class="toplink" href="../../index.html">الرئيسية</a>
+    <a class="toplink" href="../policies.html">السياسات</a>
+    <a class="toplink" href="../map/innovation-map.html">الخريطة</a>
+    <a class="toplink" href="../judging/index.html">التحكيم</a>
+    <a class="toplink" href="../command/dashboard.html">الإدارة</a>
+  </nav>
+  <div class="chip" id="userChip"></div>
+</header>
+
+<main class="container">
+  <section class="panel glass">
+    <div class="panel-head">
+      <h2>ملف موظف مبتكر</h2>
+      <p class="muted">نقاط المشاركة، المبادرات، الفريق، وختم زمني داخلي (Demo).</p>
+    </div>
+
+    <div class="grid3">
+      <div class="kcard glass">
+        <div class="knum" id="points">—</div>
+        <div class="klabel">نقاط الابتكار</div>
+      </div>
+      <div class="kcard glass">
+        <div class="knum" id="myCount">—</div>
+        <div class="klabel">عدد مبادراتي</div>
+      </div>
+      <div class="kcard glass">
+        <div class="knum" id="wins">—</div>
+        <div class="klabel">مبادرات فائزة</div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card glass">
+        <h3>مبادراتي</h3>
+        <div id="myList" class="list"></div>
+      </div>
+
+      <div class="card glass">
+        <h3>تقديم مبادرة (تجريبي)</h3>
+        <div class="form">
+          <label>عنوان المبادرة</label>
+          <input id="newTitle" placeholder="مثال: تحسين تجربة المراجع..." />
+          <label>تحديد المرحلة</label>
+          <select id="newStage"></select>
+          <label>إضافة أعضاء فريق (IDs)</label>
+          <input id="newTeam" placeholder="مثال: U-100,U-101" />
+          <button class="primary wide" id="submitIdea">حفظ المبادرة</button>
+          <div class="hint" id="submitHint"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="../app.js"></script>
+</body>
+</html>

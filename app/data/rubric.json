@@ -1,0 +1,36 @@
+{
+    "name": "Rubric التحكيم (تجريبي)",
+    "scale": "0-100",
+    "criteria": [
+        {
+            "key": "impact",
+            "title": "الأثر",
+            "weight": 30,
+            "notes": "قيمة متوقعة + قابلية قياس"
+        },
+        {
+            "key": "feasibility",
+            "title": "قابلية التنفيذ",
+            "weight": 25,
+            "notes": "جاهزية + موارد + زمن"
+        },
+        {
+            "key": "innovation",
+            "title": "الابتكار",
+            "weight": 20,
+            "notes": "جِدة + تميّز"
+        },
+        {
+            "key": "governance",
+            "title": "الحوكمة",
+            "weight": 15,
+            "notes": "التزام بالسياسات + توثيق"
+        },
+        {
+            "key": "scalability",
+            "title": "قابلية التوسع",
+            "weight": 10,
+            "notes": "قابلية التعميم داخل التجمع"
+        }
+    ]
+}

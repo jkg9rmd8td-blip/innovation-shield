@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>السياسات والحوكمة | درع الابتكار</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand" data-href="../index.html">
+      <div class="brand-mark">◈</div>
+      <div class="brand-text">
+        <div class="brand-title">درع الابتكار</div>
+        <div class="brand-sub">السياسات والحوكمة</div>
+      </div>
+    </div>
+    <nav class="topnav">
+      <a class="toplink" href="../index.html">الرئيسية</a>
+      <a class="toplink active" href="policies.html">السياسات</a>
+      <a class="toplink" href="map/innovation-map.html">الخريطة</a>
+      <a class="toplink" href="command/dashboard.html">لوحة القيادة</a>
+    </nav>
+    <div class="chip" id="userChip"></div>
+  </header>
+
+  <main class="container">
+    <section class="panel glass">
+      <div class="panel-head">
+        <h2>ربط السياسات داخل الواجهة</h2>
+        <p class="muted">هذه الصفحة تُظهر السياسات وربطها بالمبادرات، مع تعهّد إلكتروني (قبول) يُسجَّل داخليًا.</p>
+      </div>
+
+      <div class="grid2">
+        <div class="card glass">
+          <h3>السياسات المعتمدة</h3>
+          <div id="policiesList" class="list"></div>
+        </div>
+
+        <div class="card glass">
+          <h3>إقرار الالتزام</h3>
+          <p class="muted">بالنقر على “أوافق”، يتم حفظ إقرارك داخل الجهاز (Demo) ويُستخدم كمتطلب دخول للمسارات.</p>
+
+          <div class="accept">
+            <label class="check">
+              <input type="checkbox" id="ack1">
+              <span>أتعهد بالمحافظة على سرية المساهمات وعدم مشاركتها خارج نطاق الصلاحيات.</span>
+            </label>
+            <label class="check">
+              <input type="checkbox" id="ack2">
+              <span>أقر بأن قرارات التحكيم والاعتماد تُوثق بسجلات تدقيق ولا تُعدل إلا وفق حوكمة الجهة.</span>
+            </label>
+
+            <button class="primary wide" id="acceptBtn">أوافق وأعتمد الإقرار</button>
+            <div class="hint" id="acceptState"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel glass">
+      <div class="panel-head">
+        <h2>ربط المبادرات بالسياسات</h2>
+        <p class="muted">كل مبادرة تحمل مراجع سياسات (PolicyRefs) تظهر هنا.</p>
+      </div>
+      <div id="policyRefsTable" class="table"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

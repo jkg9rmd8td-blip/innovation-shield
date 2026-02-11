@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <title>مسار التحكيم | درع الابتكار</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark">◈</div>
+            <div class="brand-text">
+                <div class="brand-title">درع الابتكار</div>
+                <div class="brand-sub">مسار التحكيم (Rubric + قرارات)</div>
+            </div>
+        </div>
+
+        <nav class="topnav">
+            <a class="toplink" href="../../index.html">الرئيسية</a>
+            <a class="toplink" href="policies.html">السياسات</a>
+            <a class="toplink" href="map.html">الخريطة</a>
+            <a class="toplink" href="admin.html">لوحة الإدارة</a>
+            <a class="toplink active" href="judging.html">التحكيم</a>
+        </nav>
+    </header>
+
+    <section class="page" id="page-judging">
+        <h2>لوحة التحكيم</h2>
+        <p>اختر مبادرة ثم طبّق Rubric (تجريبي) + اعتمد + وزّع جوائز + اصدر محضر.</p>
+
+        <div class="row cardline" style="align-items:flex-end;">
+            <div style="flex:1">
+                <label>Rubric (JSON)</label>
+                <a class="btn ghost sm" href="../data/rubric.json" target="_blank">فتح rubric.json</a>
+            </div>
+            <div style="flex:1">
+                <label>محاضر (تجريبي)</label>
+                <button class="btn ghost" id="jb_minutes">توليد محضر للمبادرة المحددة</button>
+            </div>
+        </div>
+
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>المعرف</th>
+                    <th>العنوان</th>
+                    <th>المرحلة</th>
+                    <th>الحالة</th>
+                    <th>النتيجة</th>
+                    <th>إجراء</th>
+                </tr>
+            </thead>
+            <tbody id="jd_tbody"></tbody>
+        </table>
+
+        <!-- Modal: Prize توزيع الجوائز -->
+        <div id="modal_prize" class="modal">
+            <div class="modal-box">
+                <h3 id="pr_title"></h3>
+
+                <label>إجمالي الجائزة</label>
+                <input id="pr_total" type="number" value="100000">
+
+                <label>آلية التوزيع</label>
+                <select id="pr_mode">
+                    <option value="weighted">حسب الدور (آلي)</option>
+                    <option value="manual">يدوي باتفاق الفريق</option>
+                </select>
+
+                <table class="tbl" style="margin-top:10px;">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الدور</th>
+                            <th>وزن</th>
+                            <th>نسبة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pr_tbody"></tbody>
+                </table>
+
+                <div class="modal-actions">
+                    <button class="primary" id="pr_apply">حفظ</button>
+                    <button class="btn ghost" data-close>إغلاق</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="../app.js"></script>
+    <script>
+        (() => {
+            let selectedId = null;
+
+            // التقط آخر مبادرة ضغطت عليها
+            document.addEventListener("click", (e) => {
+                const a = e.target.closest('a.link');
+                if (a && a.href.includes("initiative.html?id=")) {
+                    const u = new URL(a.href);
+                    selectedId = u.searchParams.get("id");
+                }
+            });
+
+            document.getElementById("jb_minutes").onclick = () => {
+                const st = JSON.parse(localStorage.getItem("is_state_v1") || "{}");
+                const i = (st.initiatives || [])[0];
+                const target = selectedId ? (st.initiatives || []).find(x => x.id === selectedId) : i;
+                if (!target) return alert("مافي مبادرات.");
+
+                const text =
+                    `محضر لجنة التحكيم (تجريبي)
+--------------------------------
+المبادرة: ${target.title}
+المعرف: ${target.id}
+المرحلة: ${target.stage}
+الحالة: ${target.status}
+النتيجة: ${target.score ?? "—"}
+
+قرار اللجنة:
+- تم الاطلاع على العرض والمتطلبات.
+- توثيق الملاحظات وربطها بالحوكمة.
+- (Mock) القرار: ${target.status === "معتمد" ? "اعتماد" : "تحت الإجراء"}
+
+التاريخ: ${new Date().toISOString()}
+`;
+
+                alert(text);
+            };
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <title>تقديم مبادرة | درع الابتكار</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark">◈</div>
+            <div class="brand-text">
+                <div class="brand-title">درع الابتكار</div>
+                <div class="brand-sub">تقديم مبادرة جديدة</div>
+            </div>
+        </div>
+
+        <nav class="topnav">
+            <a class="toplink" href="../../index.html">الرئيسية</a>
+            <a class="toplink" href="map.html">الخريطة</a>
+            <a class="toplink" href="policies.html">السياسات</a>
+        </nav>
+    </header>
+
+    <section class="page" id="page-submit">
+        <h2>تقديم مبادرة</h2>
+
+        <form id="sb_form" class="row cardline" style="flex-direction:column; align-items:stretch;">
+            <label>اسم المبادرة</label>
+            <input id="sb_title" placeholder="مثال: تحسين تجربة المراجع عبر ذكاء اصطناعي">
+
+            <label>وصف مختصر</label>
+            <textarea id="sb_desc" rows="4" placeholder="اذكر المشكلة، الفكرة، القيمة، والأثر المتوقع"></textarea>
+
+            <div class="modal-actions">
+                <button class="primary" type="submit">حفظ المبادرة</button>
+                <a class="btn ghost" href="map.html">إلغاء</a>
+            </div>
+        </form>
+    </section>
+
+    <script src="../app.js"></script>
+</body>
+
+</html>

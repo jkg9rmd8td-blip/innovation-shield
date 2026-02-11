@@ -1,0 +1,84 @@
+{
+  "org": {
+    "name": "مجمع الملك فيصل الطبي — تجمع الطائف الصحي",
+    "initiative": "مبادرة درع الابتكار"
+  },
+  "policies": [
+    {
+      "id": "P-01",
+      "title": "حوكمة الابتكار وحماية المساهمات",
+      "version": "1.0",
+      "updated": "2026-02-10",
+      "summary": "تنظيم تقديم المبادرات، حماية مساهمات الموظفين، وضبط آلية التحكيم والاعتماد والتوثيق.",
+      "clauses": [
+        "سرية المساهمات: لا يتم الاطلاع إلا وفق الصلاحيات.",
+        "إثبات الأسبقية: يُسجّل ختم زمني لكل نسخة/مرفق.",
+        "سجلات تدقيق: كل إجراء يُسجّل (من/متى/ماذا).",
+        "سيادة البيانات: حفظ البيانات داخل نطاق الجهة وفق الأنظمة."
+      ]
+    },
+    {
+      "id": "P-02",
+      "title": "سياسة تضارب المصالح في التحكيم",
+      "version": "1.0",
+      "updated": "2026-02-10",
+      "summary": "ضمان نزاهة التحكيم ومنع أي تحيز.",
+      "clauses": [
+        "إقرار تضارب المصالح قبل التقييم.",
+        "إلغاء صلاحية المحكم عند وجود تضارب.",
+        "توثيق قرار الاستبعاد آليًا."
+      ]
+    }
+  ],
+  "roles": [
+    { "key": "employee", "name": "موظف مبتكر", "rights": ["submit", "team", "view_own", "accept_policies"] },
+    { "key": "team_lead", "name": "قائد فريق", "rights": ["submit", "team", "assign_tasks", "propose_split", "view_team"] },
+    { "key": "judge", "name": "محكّم", "rights": ["judge", "conflict_check", "view_assigned"] },
+    { "key": "admin", "name": "إدارة الابتكار", "rights": ["approve", "dashboard", "assign_judges", "finalize_awards", "audit"] }
+  ],
+  "users": [
+    { "id": "U-100", "name": "نواف الشمري", "dept": "التمريض", "role": "employee", "points": 120 },
+    { "id": "U-101", "name": "سارة القحطاني", "dept": "الجودة", "role": "team_lead", "points": 210 },
+    { "id": "U-102", "name": "فهد الحارثي", "dept": "تقنية المعلومات", "role": "judge", "points": 50 },
+    { "id": "U-103", "name": "ريم الشهري", "dept": "الابتكار", "role": "admin", "points": 300 }
+  ],
+  "initiatives": [
+    {
+      "id": "I-001",
+      "title": "نظام تتبع العدوى الذكي",
+      "stage": "تحكيم",
+      "owner": "U-101",
+      "team": ["U-101","U-100"],
+      "created": "2026-02-01",
+      "policyRefs": ["P-01","P-02"],
+      "scores": { "impact": 4.4, "feasibility": 3.9, "novelty": 4.6, "alignment": 4.2 },
+      "contrib": [
+        { "user": "U-101", "role": "قائد", "weight": 0.55 },
+        { "user": "U-100", "role": "تنفيذ", "weight": 0.45 }
+      ],
+      "award": { "total": 50000, "mode": "weighted", "finalized": false, "split": [] }
+    },
+    {
+      "id": "I-002",
+      "title": "عيادة افتراضية للتثقيف الصحي",
+      "stage": "اعتماد",
+      "owner": "U-100",
+      "team": ["U-100"],
+      "created": "2026-01-18",
+      "policyRefs": ["P-01"],
+      "scores": { "impact": 4.0, "feasibility": 4.1, "novelty": 3.7, "alignment": 4.5 },
+      "contrib": [
+        { "user": "U-100", "role": "مالك", "weight": 1.0 }
+      ],
+      "award": { "total": 30000, "mode": "manual", "finalized": true, "split": [{ "user":"U-100","pct":100 }] }
+    }
+  ],
+  "stages": [
+    { "key":"فكرة", "pct": 10 },
+    { "key":"تقديم", "pct": 25 },
+    { "key":"فرز", "pct": 40 },
+    { "key":"تحكيم", "pct": 65 },
+    { "key":"اعتماد", "pct": 85 },
+    { "key":"تمكين/تطبيق", "pct": 100 }
+  ]
+}

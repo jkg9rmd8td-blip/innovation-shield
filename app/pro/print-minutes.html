@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <title>محضر لجنة التحكيم | للطباعة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, "Tajawal", Arial;
+            margin: 24px;
+            color: #111;
+        }
+
+        .box {
+            border: 1px solid #ddd;
+            border-radius: 14px;
+            padding: 18px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 22px;
+        }
+
+        .muted {
+            color: #666;
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 12px;
+            flex: 1;
+            min-width: 240px;
+        }
+
+        .k {
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid #eee;
+            padding: 10px;
+            text-align: right;
+        }
+
+        th {
+            background: #fafafa;
+        }
+
+        .sig {
+            margin-top: 16px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .sig>div {
+            flex: 1;
+            border: 1px dashed #bbb;
+            border-radius: 12px;
+            padding: 14px;
+            height: 80px;
+        }
+
+        @media print {
+            button {
+                display: none;
+            }
+
+            body {
+                margin: 0;
+            }
+
+            .box {
+                border: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <button onclick="window.print()">طباعة</button>
+        <h1>محضر لجنة التحكيم (نموذج داخلي)</h1>
+        <div class="muted" id="ts">—</div>
+
+        <div class="row">
+            <div class="card">
+                <div class="k">المبادرة</div>
+                <div id="title">—</div>
+            </div>
+            <div class="card">
+                <div class="k">المعرف</div>
+                <div id="id">—</div>
+            </div>
+            <div class="card">
+                <div class="k">المرحلة / الحالة</div>
+                <div id="stage">—</div>
+            </div>
+            <div class="card">
+                <div class="k">النتيجة</div>
+                <div id="score">—</div>
+            </div>
+        </div>
+
+        <h3>Rubric</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>المعيار</th>
+                    <th>الدرجة</th>
+                </tr>
+            </thead>
+            <tbody id="rub"></tbody>
+        </table>
+
+        <h3>قرار اللجنة</h3>
+        <div class="card">
+            <div id="decision">—</div>
+        </div>
+
+        <div class="sig">
+            <div>توقيع رئيس اللجنة</div>
+            <div>توقيع مقرر اللجنة</div>
+            <div>توقيع ممثل الإدارة</div>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            const fmt = (n) => new Intl.NumberFormat("ar-SA").format(n || 0);
+            const payload = JSON.parse(localStorage.getItem("is_minutes_payload_v1") || "null");
+            if (!payload) { document.body.innerHTML = "<p>لا يوجد محضر محفوظ.</p>"; return; }
+
+            const i = payload.initiative;
+            document.getElementById("ts").textContent = "تاريخ الإنشاء: " + (payload.ts || "");
+            document.getElementById("title").textContent = i.title || "—";
+            document.getElementById("id").textContent = i.id || "—";
+            document.getElementById("stage").textContent = (i.stage || "—") + " / " + (i.status || "—");
+            document.getElementById("score").textContent = i.score == null ? "—" : fmt(i.score);
+
+            const rub = i.rubricScores || {};
+            const rows = Object.keys(rub).map(k => `<tr><td>${k}</td><td>${fmt(rub[k])}</td></tr>`).join("");
+            document.getElementById("rub").innerHTML = rows || "<tr><td colspan='2'>لا يوجد تقييم Rubric محفوظ</td></tr>";
+
+            document.getElementById("decision").textContent =
+                i.status === "معتمد" ? "تم اعتماد المبادرة وإحالتها لمسار التنفيذ." :
+                    i.status === "قابل للتحسين" ? "تحتاج المبادرة لاستكمال ملاحظات اللجنة وإعادة العرض." :
+                        i.status === "مرفوض" ? "تم رفض المبادرة وفق معايير التقييم." :
+                            "قرار قيد الإجراء.";
+        })();
+    </script>
+</body>
+
+</html>

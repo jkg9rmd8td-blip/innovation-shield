@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>درع الابتكار | المسار التنفيذي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="ui/luxe.css" />
+</head>
+<body>
+  <main class="container">
+    <section class="panel">
+      <h1 style="margin-top:0">المسار التنفيذي للمبادرات</h1>
+      <div class="hero-note"><span class="dot"></span><span id="welcome">—</span></div>
+      <div style="margin-top:10px;">
+        <div class="small muted">الصلاحيات المتاحة لك</div>
+        <div id="rolePerms" style="margin-top:6px;"></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>الخدمات المتاحة لدورك</h3>
+      <div id="roleServices" class="grid" style="margin-top:10px;"></div>
+    </section>
+
+    <section class="panel">
+      <h3>إنشاء مبادرة</h3>
+      <div class="grid-2">
+        <div>
+          <label>عنوان المبادرة</label>
+          <input id="title" placeholder="مثال: أتمتة إجراءات التشغيل" />
+        </div>
+        <div>
+          <label>المالك</label>
+          <input id="owner" placeholder="اسم الفريق أو المالك" />
+        </div>
+      </div>
+      <button id="createBtn" class="primary" style="margin-top:10px;">إنشاء</button>
+      <div id="createHint" class="small muted" style="margin-top:8px;"></div>
+    </section>
+
+    <section class="panel">
+      <h3>قائمة المبادرات</h3>
+      <table class="tbl-lite">
+        <thead>
+          <tr><th>المعرف</th><th>العنوان</th><th>المالك</th><th>الحالة</th><th>المتوسط</th><th>إجراء</th></tr>
+        </thead>
+        <tbody id="list"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script type="module" src="ui/teams.js"></script>
+</body>
+</html>

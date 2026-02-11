@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <title>السيرة الابتكارية | درع الابتكار</title>
+    <style>
+        body {
+            font-family: system-ui, Tajawal;
+            margin: 24px
+        }
+
+        h1 {
+            margin-bottom: 6px
+        }
+
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid #ccc;
+            margin: 4px
+        }
+
+        @media print {
+            button {
+                display: none
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button onclick="print()">طباعة / PDF</button>
+    <h1>السيرة الابتكارية للموظف</h1>
+    <div id="box"></div>
+
+    <script>
+        const data = JSON.parse(localStorage.getItem("is_employee_print_v1") || "null");
+        if (!data) { document.body.innerHTML = "لا توجد بيانات"; }
+        else {
+            box.innerHTML = `
+    <div class="card"><b>الاسم:</b> ${data.me.displayName}</div>
+    <div class="card"><b>الجهة:</b> ${data.org.nameAr}</div>
+    <div class="card"><b>المستوى:</b> ${data.level}</div>
+    <div class="card"><b>النقاط:</b> ${data.points}</div>
+    <div class="card"><b>الإحصائيات:</b>
+      مبادرات ${data.stats.total} • معتمدة ${data.stats.wins} • أثر ${data.stats.impact}
+    </div>
+    <div class="card"><b>الشارات:</b><br>
+      ${(data.badges || []).map(b => `<span class="badge">${b.t}</span>`).join("")}
+    </div>
+  `;
+        }
+    </script>
+</body>
+
+</html>
