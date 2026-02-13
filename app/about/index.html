@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>درع الابتكار | عن المنصة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/app.css" />
+    <style>
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .team-card {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .03);
+            padding: 10px;
+            display: grid;
+            gap: 4px;
+        }
+
+        .team-card p {
+            margin: 0;
+            color: var(--muted2);
+            font-size: 12px;
+        }
+
+        @media (max-width: 980px) {
+            .team-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="career-body">
+    <a class="skip-link" href="#aboutMain">تخطي إلى المحتوى الرئيسي</a>
+
+    <div class="platform-bg" aria-hidden="true">
+        <div class="mesh mesh-1"></div>
+        <div class="mesh mesh-2"></div>
+        <div class="mesh mesh-3"></div>
+    </div>
+
+    <main class="platform-shell" id="aboutMain" tabindex="-1">
+        <header class="platform-topbar reveal">
+            <div class="topbar-brand">
+                <div class="brand-mark">IS</div>
+                <div>
+                    <h1 class="topbar-title">عن منصة درع الابتكار</h1>
+                    <p class="topbar-sub">من نحن • الرؤية • الأهداف • الفريق • قصص النجاح</p>
+                </div>
+            </div>
+
+            <nav class="nav" aria-label="التنقل الرئيسي">
+                <a href="../../index.html">الرئيسية</a>
+                <a href="../map/index.html">خريطة الابتكار</a>
+                <a href="../prototype/index.html">النماذج الأولية</a>
+                <a href="../judging/index.html">التحكيم</a>
+                <a href="../command/index.html">لوحة القيادة</a>
+                <a href="./index.html" class="active">عن المنصة</a>
+            </nav>
+
+            <div class="topbar-actions">
+                <button class="btn btn-primary" data-go="../map/index.html">ابدأ مبادرة الآن</button>
+            </div>
+        </header>
+
+        <section class="workspace-banner reveal">
+            <div>
+                <span class="eyebrow">من نحن</span>
+                <h2 class="hero-title">منصة ابتكار مؤسسية لتمكين الموظفين وتحويل الأفكار إلى أثر فعلي</h2>
+                <p class="hero-sub">
+                    درع الابتكار هي منظومة رقمية تجمع إدارة دورة حياة الابتكار، بناء النماذج الأولية، التحليل الذكي،
+                    والتحكيم البشري العادل؛ بهدف رفع جودة الخدمات الصحية وتسريع تحسين العمليات داخل التجمع.
+                </p>
+            </div>
+            <div class="quality-pill">ثقة + شفافية + أثر قابل للقياس</div>
+        </section>
+
+        <section class="workspace-grid reveal">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>الرؤية</h3>
+                </div>
+                <p class="hero-sub" style="margin:0;">
+                    بناء بيئة ابتكار مستدامة تمكّن كل موظف من المشاركة في حل المشكلات الفعلية، وتحويل الأفكار الواعدة
+                    إلى مبادرات قابلة للتطبيق والتوسع.
+                </p>
+            </div>
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>الأهداف</h3>
+                </div>
+                <ul class="insight-list" style="margin:0;">
+                    <li>رفع جودة الأفكار عبر أدوات تمكين ذكية.</li>
+                    <li>تسريع التقييم والاعتماد بمسار تحكيم واضح.</li>
+                    <li>زيادة نسبة المبادرات المطبّقة ذات الأثر الفعلي.</li>
+                    <li>تعزيز الحوكمة والشفافية وسجل التدقيق.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>الفريق</h3>
+                <span class="panel-note">يعرض أعضاء فرق الابتكار من البيانات الحالية</span>
+            </div>
+            <div class="team-grid" id="teamGrid"></div>
+        </section>
+
+        <section class="workspace-grid reveal">
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>قصص نجاح</h3>
+                    <span class="panel-note">نماذج مبادرات معتمدة/مطبقة</span>
+                </div>
+                <ul class="insight-list" id="successStories" style="margin:0;"></ul>
+            </div>
+            <div class="panel">
+                <div class="panel-head">
+                    <h3>لماذا هذه المنصة؟</h3>
+                </div>
+                <ul class="insight-list" style="margin:0;">
+                    <li>توحيد رحلة الابتكار من الفكرة حتى التطبيق.</li>
+                    <li>دمج الذكاء الاصطناعي مع التحكيم البشري لتعزيز الجودة.</li>
+                    <li>دعم قرارات الإدارة بمؤشرات أداء واضحة.</li>
+                    <li>تجربة متوافقة مع العربية وواجهة متجاوبة لجميع الشاشات.</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <script src="../../assets/js/app.js"></script>
+    <script>
+        (() => {
+            "use strict";
+            const IS = window.IS;
+            if (!IS) return;
+            const fmt = (n) => new Intl.NumberFormat("ar-SA").format(Number(n || 0));
+            const go = (path) => { if (path) window.location.href = path; };
+
+            document.querySelectorAll("[data-go]").forEach((el) => {
+                el.addEventListener("click", () => go(el.getAttribute("data-go")));
+            });
+
+            const teams = IS.state.teams || [];
+            const members = teams.flatMap((t) => (t.members || []).map((m) => ({ ...m, team: t.name })));
+            const teamGrid = document.getElementById("teamGrid");
+            teamGrid.innerHTML = members.length ? members.map((m) => `
+                <article class="team-card">
+                    <strong>${m.name || "عضو فريق"}</strong>
+                    <p>${m.role || "دور غير محدد"}</p>
+                    <p>الفريق: ${m.team || "—"}</p>
+                    <p>مساهمة: ${fmt(m.weight || 0)}%</p>
+                </article>
+            `).join("") : `<article class="team-card"><strong>لا توجد بيانات فريق بعد</strong><p>أضف أعضاء الفريق من مسار الإدارة.</p></article>`;
+
+            const initiatives = IS.state.initiatives || [];
+            const stories = initiatives
+                .filter((i) => ["معتمد", "مطبق"].includes(i.status) || ["الاعتماد", "التطبيق"].includes(i.stage))
+                .sort((a, b) => Number(b.impact?.costSaving || 0) - Number(a.impact?.costSaving || 0))
+                .slice(0, 4);
+            const successStories = document.getElementById("successStories");
+            successStories.innerHTML = stories.length ? stories.map((i) => `
+                <li>
+                    <strong>${i.id} — ${i.title}</strong>
+                    <div>الحالة: <span class="status-badge is-good">${i.status || i.stage}</span></div>
+                    <div>الأثر السنوي المتوقع: ${fmt(i.impact?.costSaving || 0)} ريال</div>
+                </li>
+            `).join("") : `<li>لا توجد قصص نجاح منشورة بعد.</li>`;
+
+            IS.audit("فتح صفحة التعريف", "about");
+            IS.save();
+        })();
+    </script>
+</body>
+
+</html>

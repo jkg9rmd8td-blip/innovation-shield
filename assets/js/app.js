@@ -151,6 +151,15 @@
     };
   }
 
+  function defaultEngagementShape() {
+    return {
+      upvotes: 0,
+      downvotes: 0,
+      userVote: 0,
+      updatedAt: null
+    };
+  }
+
   function defaultState() {
     return {
       version: 3,
@@ -166,6 +175,11 @@
         level: "Pioneer",
         points: 120,
         role: "employee" // employee | judge | admin
+      },
+
+      preferences: {
+        language: "ar",
+        rtl: true
       },
 
       // Stages in the innovation journey (includes prototype stage)
@@ -468,6 +482,7 @@
     // ensure critical keys exist
     if (!raw.org) raw.org = defaultState().org;
     if (!raw.me) raw.me = defaultState().me;
+    if (!raw.preferences || typeof raw.preferences !== "object") raw.preferences = defaultState().preferences;
     if (!Array.isArray(raw.stages)) raw.stages = defaultState().stages;
     if (!Array.isArray(raw.taxonomy)) raw.taxonomy = defaultState().taxonomy;
     if (!raw.policies) raw.policies = defaultState().policies;
@@ -497,6 +512,13 @@
       item.validation.problem = String(item.validation.problem || "");
       item.validation.beneficiary = String(item.validation.beneficiary || "");
       item.validation.evidence = String(item.validation.evidence || "");
+
+      if (!item.engagement || typeof item.engagement !== "object") item.engagement = {};
+      const baseEngagement = defaultEngagementShape();
+      item.engagement.upvotes = Math.max(0, Number(item.engagement.upvotes ?? baseEngagement.upvotes));
+      item.engagement.downvotes = Math.max(0, Number(item.engagement.downvotes ?? baseEngagement.downvotes));
+      item.engagement.userVote = clamp(Number(item.engagement.userVote ?? baseEngagement.userVote), -1, 1);
+      item.engagement.updatedAt = item.engagement.updatedAt ? String(item.engagement.updatedAt) : null;
 
       if (!item.impact || typeof item.impact !== "object") item.impact = {};
       const baseImpact = defaultImpactShape();

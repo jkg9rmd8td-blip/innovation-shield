@@ -582,6 +582,50 @@
             font-size: 11px;
         }
 
+        .broadcast-grid {
+            display: grid;
+            gap: 8px;
+        }
+
+        .broadcast-block {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 8px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .broadcast-block strong {
+            font-size: 12px;
+            color: var(--cmd-blue);
+        }
+
+        .broadcast-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 6px;
+        }
+
+        .broadcast-list li {
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 7px 8px;
+            font-size: 12px;
+            color: var(--cmd-text);
+            line-height: 1.55;
+        }
+
+        .broadcast-list li small {
+            display: block;
+            color: var(--cmd-muted);
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
         .watch-table td small {
             color: var(--cmd-muted);
             display: block;
@@ -956,6 +1000,7 @@
                 <a href="../command/index.html" class="active">لوحة القيادة</a>
                 <a href="../policies/index.html">السياسات</a>
                 <a href="../report/index.html">التقرير التنفيذي</a>
+                <a href="../about/index.html">عن المنصة</a>
             </nav>
 
             <div class="topbar-actions">
@@ -1218,6 +1263,39 @@
 
                 <section class="panel skeletonable">
                     <div class="panel-head">
+                        <h3>Innovation Broadcast</h3>
+                        <span class="panel-note" id="broadcastStamp">نشرة أسبوعية تلقائية</span>
+                    </div>
+                    <div class="table-tools" style="margin-bottom:10px;">
+                        <button class="btn btn-soft" id="btnGenerateBroadcast">توليد النشرة</button>
+                        <button class="btn btn-ghost" id="btnCopyBroadcast">نسخ الملخص</button>
+                        <span class="table-count" id="broadcastArchiveCount">0 نشرات</span>
+                    </div>
+
+                    <div class="broadcast-grid">
+                        <article class="broadcast-block">
+                            <strong>أفضل الأفكار</strong>
+                            <ul class="broadcast-list" id="broadcastTopIdeas"></ul>
+                        </article>
+                        <article class="broadcast-block">
+                            <strong>التحديات المفتوحة</strong>
+                            <ul class="broadcast-list" id="broadcastChallenges"></ul>
+                        </article>
+                        <article class="broadcast-block">
+                            <strong>النتائج</strong>
+                            <ul class="broadcast-list" id="broadcastResults"></ul>
+                        </article>
+                    </div>
+
+                    <div class="panel-head" style="margin-top:10px;">
+                        <h3 style="font-size:13px;">أرشيف النشرات</h3>
+                        <span class="panel-note">آخر 3 نشرات</span>
+                    </div>
+                    <ul class="event-list" id="broadcastArchive"></ul>
+                </section>
+
+                <section class="panel skeletonable">
+                    <div class="panel-head">
                         <h3>Timeline تفاعلي</h3>
                         <span class="panel-note">Nodes • Progress • Hover Insight</span>
                     </div>
@@ -1367,7 +1445,9 @@
             let cinematicMode = false;
             let smartCompareMode = false;
             let orgStatsCache = [];
+            let latestBroadcastText = "";
             const compareState = { a: "", b: "" };
+            const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
             const fmt = (n) => new Intl.NumberFormat("ar-SA").format(Number(n || 0));
             const esc = (v) => String(v ?? "")
@@ -2143,6 +2223,199 @@
                 IS.state.commandEvents = IS.state.commandEvents.slice(0, 60);
             }
 
+            function ensureBroadcastState() {
+                const rows = Array.isArray(IS.state.broadcasts) ? IS.state.broadcasts : [];
+                IS.state.broadcasts = rows
+                    .filter((x) => x && typeof x === "object")
+                    .map((x) => ({
+                        id: x.id || `BC-${Math.floor(1000 + Math.random() * 9000)}`,
+                        generatedAt: x.generatedAt || nowISO(),
+                        mode: x.mode === "manual" ? "manual" : "auto",
+                        scopeCount: Math.max(0, Number(x.scopeCount || 0)),
+                        topIdeas: Array.isArray(x.topIdeas) ? x.topIdeas : [],
+                        challenges: Array.isArray(x.challenges) ? x.challenges : [],
+                        results: Array.isArray(x.results) ? x.results : []
+                    }))
+                    .sort((a, b) => new Date(b.generatedAt || 0).getTime() - new Date(a.generatedAt || 0).getTime())
+                    .slice(0, 12);
+            }
+
+            function buildBroadcastSnapshot(list, { mode = "auto" } = {}) {
+                const scope = Array.isArray(list) ? list : [];
+                const topIdeas = [...scope]
+                    .sort((a, b) => {
+                        const aiDiff = calcSuccessPrediction(b).score - calcSuccessPrediction(a).score;
+                        if (aiDiff !== 0) return aiDiff;
+                        const econDiff = calcEconomicImpact(b.impact).netAnnual - calcEconomicImpact(a.impact).netAnnual;
+                        if (econDiff !== 0) return econDiff;
+                        return Number(b.progress || 0) - Number(a.progress || 0);
+                    })
+                    .slice(0, 3)
+                    .map((i) => ({
+                        id: i.id,
+                        title: i.title,
+                        ai: calcSuccessPrediction(i).score,
+                        netAnnual: calcEconomicImpact(i.impact).netAnnual,
+                        risk: calcRiskProfile(i.riskProfile).residualPct,
+                        org: i.org
+                    }));
+
+                const challenges = [...scope]
+                    .filter((i) => isCritical(i) || isStalled(i))
+                    .sort((a, b) => watchScore(b) - watchScore(a))
+                    .slice(0, 3)
+                    .map((i) => ({
+                        id: i.id,
+                        title: i.title,
+                        reason: reasonForCritical(i),
+                        watch: watchScore(i),
+                        org: i.org
+                    }));
+
+                const results = [...scope]
+                    .filter((i) => isApplied(i) || calcPostMonitoring(i.postMonitoring, i.impact).m6Done)
+                    .sort((a, b) => new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime())
+                    .slice(0, 3)
+                    .map((i) => {
+                        const post = calcPostMonitoring(i.postMonitoring, i.impact);
+                        return {
+                            id: i.id,
+                            title: i.title,
+                            status: i.status,
+                            stage: i.stage,
+                            netAnnual: calcEconomicImpact(i.impact).netAnnual,
+                            m6Done: !!post.m6Done
+                        };
+                    });
+
+                return {
+                    id: `BC-${Math.floor(1000 + Math.random() * 9000)}`,
+                    generatedAt: nowISO(),
+                    mode: mode === "manual" ? "manual" : "auto",
+                    scopeCount: scope.length,
+                    topIdeas,
+                    challenges,
+                    results
+                };
+            }
+
+            function formatBroadcastText(snapshot) {
+                if (!snapshot) return "";
+                const stamp = new Date(snapshot.generatedAt || nowISO()).toLocaleString("ar-SA");
+                const lines = [
+                    `Innovation Broadcast | ${stamp}`,
+                    `النطاق: ${fmt(snapshot.scopeCount || 0)} مبادرة`,
+                    "",
+                    "أفضل الأفكار:"
+                ];
+                (snapshot.topIdeas || []).forEach((x, idx) => {
+                    lines.push(`${idx + 1}. ${x.id} - ${x.title} | AI ${fmt(x.ai)}% | Net ${fmt(x.netAnnual)} SAR`);
+                });
+                lines.push("", "التحديات المفتوحة:");
+                (snapshot.challenges || []).forEach((x, idx) => {
+                    lines.push(`${idx + 1}. ${x.id} - ${x.title} | ${x.reason}`);
+                });
+                lines.push("", "النتائج:");
+                (snapshot.results || []).forEach((x, idx) => {
+                    lines.push(`${idx + 1}. ${x.id} - ${x.title} | ${x.status} • ${x.stage}`);
+                });
+                return lines.join("\n");
+            }
+
+            function storeBroadcast(snapshot, { logEvent = true } = {}) {
+                if (!snapshot) return;
+                ensureBroadcastState();
+                IS.state.broadcasts.unshift(snapshot);
+                IS.state.broadcasts = IS.state.broadcasts.slice(0, 12);
+                if (logEvent) {
+                    const modeLabel = snapshot.mode === "manual" ? "Manual" : "Auto Weekly";
+                    pushCommandEvent("Innovation Broadcast", `${modeLabel} • ${fmt(snapshot.scopeCount)} مبادرة`);
+                    IS.audit("توليد نشرة الابتكار", `${snapshot.id} • ${modeLabel}`);
+                }
+                IS.save();
+            }
+
+            function ensureWeeklyBroadcast(all) {
+                ensureBroadcastState();
+                const latest = IS.state.broadcasts[0];
+                const latestAt = latest ? new Date(latest.generatedAt || 0).getTime() : 0;
+                if (!latest || !Number.isFinite(latestAt) || (Date.now() - latestAt) >= WEEK_MS) {
+                    const snapshot = buildBroadcastSnapshot(all, { mode: "auto" });
+                    storeBroadcast(snapshot, { logEvent: true });
+                    return snapshot;
+                }
+                return latest;
+            }
+
+            function renderBroadcast(all) {
+                const latest = ensureWeeklyBroadcast(all);
+                const topIdeas = latest?.topIdeas || [];
+                const challenges = latest?.challenges || [];
+                const results = latest?.results || [];
+                const stamp = latest ? new Date(latest.generatedAt || nowISO()).toLocaleString("ar-SA") : nowLocal();
+
+                $("#broadcastStamp").textContent = `آخر نشرة: ${stamp} • ${latest?.mode === "manual" ? "Manual" : "Auto Weekly"}`;
+                $("#broadcastArchiveCount").textContent = `${fmt((IS.state.broadcasts || []).length)} نشرات`;
+
+                $("#broadcastTopIdeas").innerHTML = topIdeas.length
+                    ? topIdeas.map((x) => `
+                        <li>
+                            <strong>${esc(x.id)} — ${esc(x.title)}</strong>
+                            <small>AI: ${fmt(x.ai)}% • Risk: ${fmt(x.risk)}% • Net: ${fmt(x.netAnnual)} SAR</small>
+                        </li>
+                    `).join("")
+                    : `<li>لا توجد أفكار ضمن النطاق الحالي.</li>`;
+
+                $("#broadcastChallenges").innerHTML = challenges.length
+                    ? challenges.map((x) => `
+                        <li>
+                            <strong>${esc(x.id)} — ${esc(x.title)}</strong>
+                            <small>${esc(x.reason)} • Watch ${fmt(x.watch)}% • ${esc(x.org)}</small>
+                        </li>
+                    `).join("")
+                    : `<li>لا توجد تحديات مفتوحة حالياً.</li>`;
+
+                $("#broadcastResults").innerHTML = results.length
+                    ? results.map((x) => `
+                        <li>
+                            <strong>${esc(x.id)} — ${esc(x.title)}</strong>
+                            <small>${esc(x.status)} • ${esc(x.stage)} • Net ${fmt(x.netAnnual)} SAR${x.m6Done ? " • متابعة 6 أشهر مكتملة" : ""}</small>
+                        </li>
+                    `).join("")
+                    : `<li>لا توجد نتائج معتمدة/مطبقة بعد.</li>`;
+
+                $("#broadcastArchive").innerHTML = (IS.state.broadcasts || []).slice(0, 3).length
+                    ? (IS.state.broadcasts || []).slice(0, 3).map((x) => `
+                        <li>
+                            <strong>${esc(x.id)} • ${x.mode === "manual" ? "Manual" : "Auto Weekly"}</strong>
+                            <small>${new Date(x.generatedAt || nowISO()).toLocaleString("ar-SA")} • نطاق ${fmt(x.scopeCount || 0)} مبادرة</small>
+                        </li>
+                    `).join("")
+                    : `<li><strong>لا يوجد أرشيف بعد</strong><small>سيتم إنشاء أول نشرة تلقائيًا.</small></li>`;
+
+                latestBroadcastText = formatBroadcastText(latest);
+            }
+
+            async function copyBroadcastToClipboard() {
+                const text = latestBroadcastText || "";
+                if (!text) return false;
+                if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                }
+                const ta = document.createElement("textarea");
+                ta.value = text;
+                ta.setAttribute("readonly", "true");
+                ta.style.position = "fixed";
+                ta.style.opacity = "0";
+                document.body.appendChild(ta);
+                ta.focus();
+                ta.select();
+                const ok = document.execCommand("copy");
+                ta.remove();
+                return ok;
+            }
+
             function getAll() {
                 const all = (IS.state.initiatives || []).map(normalizeInitiative);
                 IS.state.initiatives = all;
@@ -2359,6 +2632,7 @@
 
                 renderHeaderStrip(list, all);
                 renderSummary(list, all);
+                renderBroadcast(all);
                 renderKPIs(list);
                 renderStageBars(list);
                 renderStageTimeline(list);
@@ -2389,6 +2663,7 @@
                 document.body.classList.add("loading-skeleton");
 
                 IS.state.commandEvents = IS.state.commandEvents || [];
+                ensureBroadcastState();
                 getAll();
                 IS.audit("فتح لوحة القيادة التنفيذية", "command");
                 pushCommandEvent("فتح الصفحة", "لوحة القيادة التنفيذية");
@@ -2453,6 +2728,24 @@
                     pushCommandEvent("فتح التقرير التنفيذي", `${fmt(list.length)} مبادرة`);
                     IS.save();
                     window.open("../report/index.html", "_blank");
+                });
+
+                $("#btnGenerateBroadcast").addEventListener("click", () => {
+                    const all = getAll();
+                    const snapshot = buildBroadcastSnapshot(all, { mode: "manual" });
+                    storeBroadcast(snapshot, { logEvent: true });
+                    renderAll();
+                    IS.toast("تم توليد Innovation Broadcast ✅", "ok", 1700);
+                });
+
+                $("#btnCopyBroadcast").addEventListener("click", async () => {
+                    try {
+                        const ok = await copyBroadcastToClipboard();
+                        if (ok) IS.toast("تم نسخ ملخص النشرة ✅", "ok", 1500);
+                        else IS.toast("تعذر النسخ تلقائيًا.", "warn", 1700);
+                    } catch {
+                        IS.toast("تعذر النسخ تلقائيًا.", "warn", 1700);
+                    }
                 });
 
                 $("#btnLiveToggle").addEventListener("click", () => {

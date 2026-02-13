@@ -193,6 +193,7 @@
                 <a href="../command/index.html">لوحة القيادة</a>
                 <a href="../policies/index.html">السياسات</a>
                 <a href="../report/index.html">التقرير التنفيذي</a>
+                <a href="../about/index.html">عن المنصة</a>
             </nav>
 
             <div class="topbar-actions">
@@ -391,6 +392,22 @@
                             <textarea id="nEvidence" rows="3"
                                 style="width:100%; border-radius:12px; border:1px solid rgba(53,82,110,.22); padding:10px; font-family:inherit;"></textarea>
                         </div>
+                        <div class="field">
+                            <div class="lbl">حجم عينة المرضى/المستفيدين</div>
+                            <input id="nCoSample" type="number" min="0" step="1" placeholder="مثال: 12">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">تقييم العينة (1-5)</div>
+                            <input id="nCoScore" type="number" min="1" max="5" step="1" placeholder="مثال: 4">
+                        </div>
+                        <div class="field" style="grid-column:1/-1;">
+                            <div class="lbl">أبرز نقاط الألم</div>
+                            <input id="nCoPain" placeholder="مثال: طول الانتظار وصعوبة تنسيق الموعد">
+                        </div>
+                        <div class="field" style="grid-column:1/-1;">
+                            <div class="lbl">توصية العينة قبل التحكيم</div>
+                            <input id="nCoReco" placeholder="مثال: جاهز للتحكيم بعد توضيح رحلة المريض">
+                        </div>
                     </div>
                 </div>
 
@@ -510,6 +527,32 @@
                         <div class="field">
                             <div class="lbl">تخفيض وقت الخدمة (%)</div>
                             <input id="dTimeSaving" type="number" min="0" max="100" step="1" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:10px;">
+                    <div class="panel-head">
+                        <h3>Patient Co‑Creation Panel</h3>
+                        <span class="panel-note">اختبار الفكرة مع عينة مستفيدين قبل التحكيم الرسمي</span>
+                    </div>
+                    <div class="mgrid">
+                        <div class="field">
+                            <div class="lbl">حجم العينة</div>
+                            <input id="dCoSample" type="number" min="0" step="1" value="0">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">متوسط التقييم (1-5)</div>
+                            <input id="dCoScore" type="number" min="1" max="5" step="1">
+                        </div>
+                        <div class="field" style="grid-column:1/-1;">
+                            <div class="lbl">أبرز نقاط الألم</div>
+                            <textarea id="dCoPain" rows="2"
+                                style="width:100%; border-radius:12px; border:1px solid rgba(53,82,110,.22); padding:10px; font-family:inherit;"></textarea>
+                        </div>
+                        <div class="field" style="grid-column:1/-1;">
+                            <div class="lbl">توصية العينة</div>
+                            <input id="dCoReco" placeholder="جاهز للتحكيم / يحتاج تعديل">
                         </div>
                     </div>
                 </div>
@@ -942,7 +985,27 @@
                 const validation = i?.validation || {};
                 const v = ["problem", "beneficiary", "evidence"].filter((k) => String(validation[k] || "").trim()).length;
                 const validationPct = Math.round((v / 3) * 100);
-                return clamp(Math.round((score * 0.45) + (progress * 0.35) + (validationPct * 0.20)), 0, 100);
+                const coCreationPct = calcCoCreationCoverage(i?.coCreation);
+                return clamp(Math.round((score * 0.40) + (progress * 0.30) + (validationPct * 0.18) + (coCreationPct * 0.12)), 0, 100);
+            }
+
+            function calcCoCreationCoverage(coCreation) {
+                const c = coCreation || {};
+                const completed = [
+                    Number(c.sampleSize || 0) > 0,
+                    Number(c.score || 0) >= 1,
+                    String(c.painPoints || "").trim().length > 0,
+                    String(c.recommendation || "").trim().length > 0
+                ].filter(Boolean).length;
+                return Math.round((completed / 4) * 100);
+            }
+
+            function isCoCreationReady(i) {
+                const c = i?.coCreation || {};
+                return Number(c.sampleSize || 0) >= 5
+                    && Number(c.score || 0) >= 3
+                    && String(c.painPoints || "").trim().length > 0
+                    && String(c.recommendation || "").trim().length > 0;
             }
 
             function inferPriority(i) {
@@ -972,6 +1035,7 @@
             function ensureShape(i) {
                 i.tags = Array.isArray(i.tags) ? i.tags : [];
                 i.validation = i.validation || { problem: "", beneficiary: "", evidence: "" };
+                i.coCreation = i.coCreation || { sampleSize: 0, score: null, painPoints: "", recommendation: "", updatedAt: null };
                 i.impact = i.impact || { costSaving: 0, timeSavingPct: 0, implementationCost: 0, operatingCost: 0, horizonYears: 3, confidencePct: 75 };
                 i.riskProfile = i.riskProfile || { operational: 2, financial: 2, technical: 2, quality: 2, experience: 2, mitigationEffectivenessPct: 0, mitigationPlan: "", owner: "", reviewCycle: "شهري" };
                 i.postMonitoring = i.postMonitoring || {
@@ -1045,6 +1109,8 @@
                     i.validation?.problem,
                     i.validation?.beneficiary,
                     i.validation?.evidence,
+                    i.coCreation?.painPoints,
+                    i.coCreation?.recommendation,
                     ...(i.comments || []).map((c) => c.text)
                 ].join(" "));
                 const tokens = q.split(" ").filter(Boolean);
@@ -1146,6 +1212,7 @@
                 $("#criticalList").innerHTML = critical.length ? critical.map((i) => {
                     const maturity = calcMaturity(i);
                     const risk = calcRiskProfile(i.riskProfile).residualPct;
+                    const coReady = isCoCreationReady(i);
                     return `
                         <li>
                             <strong>${esc(i.id)} — ${esc(i.title)}</strong>
@@ -1153,6 +1220,7 @@
                                 <span class="status-badge ${i.priority === "حرجة" ? "is-bad" : "is-mid"}">${esc(i.priority)}</span>
                                 <span class="status-badge is-low">نضج ${maturity}%</span>
                                 <span class="status-badge ${risk >= 70 ? "is-bad" : (risk >= 40 ? "is-mid" : "is-good")}">خطر ${risk}%</span>
+                                <span class="status-badge ${coReady ? "is-good" : "is-mid"}">${coReady ? "Co‑Creation جاهز" : "Co‑Creation ناقص"}</span>
                                 <button class="btn btn-soft sm" data-open="${esc(i.id)}">تفاصيل</button>
                                 <button class="btn btn-ghost sm" data-j="${esc(i.id)}">تحكيم</button>
                                 <button class="btn btn-ghost sm" data-e="${esc(i.id)}">موظف</button>
@@ -1167,6 +1235,16 @@
             }
 
             function goJudging(id) {
+                const ini = (IS.state.initiatives || []).find((x) => x.id === id);
+                if (ini && !isCoCreationReady(ini)) {
+                    const sample = Math.max(0, Number(ini.coCreation?.sampleSize || 0));
+                    const score = Number(ini.coCreation?.score || 0);
+                    const proceed = window.confirm(`تنبيه: بيانات Patient Co‑Creation غير مكتملة (${sample} عينة • ${score ? `${score}/5` : "بدون تقييم"}).\nهل تريد المتابعة للتحكيم؟`);
+                    if (!proceed) {
+                        IS.toast("تم الإلغاء حتى استكمال بيانات Co‑Creation.", "warn", 2100);
+                        return;
+                    }
+                }
                 IS.setSelectedInitiative(id);
                 IS.audit("فتح التحكيم من الخريطة", id);
                 IS.save();
@@ -1218,6 +1296,9 @@
                     const risk = calcRiskProfile(i.riskProfile).residualPct;
                     const maturity = calcMaturity(i);
                     const protoProgress = clamp(i.prototype?.progress || 0, 0, 100);
+                    const coCoverage = calcCoCreationCoverage(i.coCreation);
+                    const coSample = Math.max(0, Number(i.coCreation?.sampleSize || 0));
+                    const coScore = Number(i.coCreation?.score || 0);
 
                     const card = document.createElement("article");
                     card.className = "kan-card";
@@ -1240,6 +1321,7 @@
                         <div class="map-card-kpis">
                             <small>نضج: ${maturity}% • خطر: ${risk}%</small>
                             <small>جهة: ${esc(i.organization || "—")}</small>
+                            <small>Co‑Creation: ${coSample ? `${fmt(coSample)} عينة` : "غير مكتمل"} • جاهزية ${coCoverage}%${coScore ? ` • تقييم ${fmt(coScore)}/5` : ""}</small>
                         </div>
                         ${i.prototype ? `<div class="mini"><div class="mini-progress"><span style="width:${protoProgress}%"></span></div><small>Prototype: ${fmt(protoProgress)}%</small></div>` : ""}
                         <div class="kactions">
@@ -1338,6 +1420,10 @@
                 const problem = ($("#nProblem").value || "").trim();
                 const beneficiary = ($("#nBeneficiary").value || "").trim();
                 const evidence = ($("#nEvidence").value || "").trim();
+                const coSample = Math.max(0, Number($("#nCoSample").value || 0));
+                const coScore = toNullableNumber($("#nCoScore").value, 1, 5);
+                const coPain = ($("#nCoPain").value || "").trim();
+                const coReco = ($("#nCoReco").value || "").trim();
                 const nOrg = ($("#nOrg").value || "").trim() || "التجمع الصحي بالطائف";
                 const template = $("#nTemplate").value;
 
@@ -1356,6 +1442,13 @@
                     ownerTeam: "T-1001",
                     organization: nOrg,
                     validation: { problem, beneficiary, evidence },
+                    coCreation: {
+                        sampleSize: coSample,
+                        score: coScore,
+                        painPoints: coPain,
+                        recommendation: coReco,
+                        updatedAt: (coSample > 0 || coScore != null || coPain || coReco) ? iso : null
+                    },
                     impact: { costSaving: 0, timeSavingPct: 0, implementationCost: 0, operatingCost: 0, horizonYears: 3, confidencePct: 75 },
                     postMonitoring: {
                         owner: "قائد المبادرة",
@@ -1407,7 +1500,7 @@
                     IS.toast("تم إنشاء المبادرة محليًا، وتعذر الربط مع API حالياً.", "warn", 2000);
                 }
 
-                ["#nTitle", "#nDesc", "#nProblem", "#nBeneficiary", "#nEvidence", "#nOrg"].forEach((id) => { $(id).value = ""; });
+                ["#nTitle", "#nDesc", "#nProblem", "#nBeneficiary", "#nEvidence", "#nOrg", "#nCoSample", "#nCoScore", "#nCoPain", "#nCoReco"].forEach((id) => { $(id).value = ""; });
                 $("#nTemplate").value = "";
                 closeNew();
                 renderAll();
@@ -1434,6 +1527,10 @@
                 $("#dProblem").value = i.validation?.problem || "";
                 $("#dBeneficiary").value = i.validation?.beneficiary || "";
                 $("#dEvidence").value = i.validation?.evidence || "";
+                $("#dCoSample").value = Math.max(0, Number(i.coCreation?.sampleSize || 0));
+                $("#dCoScore").value = i.coCreation?.score == null ? "" : clamp(i.coCreation.score, 1, 5);
+                $("#dCoPain").value = i.coCreation?.painPoints || "";
+                $("#dCoReco").value = i.coCreation?.recommendation || "";
                 $("#dCostSaving").value = Math.max(0, Number(i.impact?.costSaving || 0));
                 $("#dTimeSaving").value = clamp(i.impact?.timeSavingPct || 0, 0, 100);
 
@@ -1592,6 +1689,10 @@
                 const problem = ($("#dProblem").value || "").trim();
                 const beneficiary = ($("#dBeneficiary").value || "").trim();
                 const evidence = ($("#dEvidence").value || "").trim();
+                const coSample = Math.max(0, Number($("#dCoSample").value || 0));
+                const coScore = toNullableNumber($("#dCoScore").value, 1, 5);
+                const coPain = ($("#dCoPain").value || "").trim();
+                const coReco = ($("#dCoReco").value || "").trim();
                 const costSaving = Math.max(0, Number($("#dCostSaving").value || 0));
                 const timeSavingPct = clamp($("#dTimeSaving").value || 0, 0, 100);
                 const monOwner = ($("#dMonOwner").value || "").trim();
@@ -1612,6 +1713,13 @@
                 current.status = status;
                 current.progress = progress;
                 current.validation = { problem, beneficiary, evidence };
+                current.coCreation = {
+                    sampleSize: coSample,
+                    score: coScore,
+                    painPoints: coPain,
+                    recommendation: coReco,
+                    updatedAt: (coSample > 0 || coScore != null || coPain || coReco) ? nowISO() : null
+                };
                 current.impact = { ...(current.impact || {}), costSaving, timeSavingPct };
 
                 const prevMon = current.postMonitoring || {};
@@ -1653,7 +1761,7 @@
 
                 current.priority = inferPriority(current);
                 current.updatedAt = nowISO();
-                addChange(current, "حفظ تفاصيل", `${fromStage} → ${stage} • ${status}`);
+                addChange(current, "حفظ تفاصيل", `${fromStage} → ${stage} • ${status} • ${isCoCreationReady(current) ? "Co‑Creation جاهز" : "Co‑Creation ناقص"}`);
                 IS.audit("حفظ تفاصيل مبادرة", `${current.id} • ${fromStage}→${stage} • ${status}`);
                 IS.save();
 
@@ -1692,6 +1800,7 @@
                         tags: ["تشغيلي"],
                         organization: "إدارة التحسين",
                         validation: { problem: "ضعف دقة الأفكار", beneficiary: "المنسقون والمقيمون", evidence: "10 مقابلات أولية + استبيان داخلي" },
+                        coCreation: { sampleSize: 14, score: 4, painPoints: "تأخر الرد على مقدم الفكرة وتكرار النماذج", recommendation: "جاهز للتحكيم مع تبسيط واجهة الإدخال", updatedAt: iso },
                         impact: { costSaving: 180000, timeSavingPct: 25, implementationCost: 90000, operatingCost: 18000, horizonYears: 3, confidencePct: 80 },
                         postMonitoring: {
                             owner: "مدير التحسين",
@@ -1717,6 +1826,7 @@
                         tags: ["رقمنة"],
                         organization: "إدارة المعرفة",
                         validation: { problem: "تكرار أخطاء سابقة", beneficiary: "المبتكرون الجدد", evidence: "تحليل 12 مبادرة سابقة" },
+                        coCreation: { sampleSize: 6, score: 3, painPoints: "صعوبة الوصول إلى الدروس المستفادة بسرعة", recommendation: "إضافة بحث أسرع قبل التحكيم", updatedAt: iso },
                         impact: { costSaving: 260000, timeSavingPct: 31, implementationCost: 145000, operatingCost: 32000, horizonYears: 3, confidencePct: 84 },
                         postMonitoring: {
                             owner: "قائد المعرفة",
