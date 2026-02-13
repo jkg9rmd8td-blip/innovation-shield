@@ -55,6 +55,48 @@
       margin-top: 8px;
     }
 
+    .unified-main-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .unified-main-actions .btn,
+    .unified-main-actions a.btn {
+      min-height: 38px;
+      font-weight: 800;
+    }
+
+    .unified-main-actions .is-current {
+      border-color: rgba(97, 176, 255, .45);
+      background: rgba(77, 168, 255, .14);
+      color: #dfefff;
+      box-shadow: 0 8px 18px rgba(20, 91, 160, .30);
+    }
+
+    .empty-action-box {
+      border: 1px dashed rgba(255, 255, 255, .24);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, .03);
+      padding: 10px;
+      display: grid;
+      gap: 6px;
+    }
+
+    .empty-action-box p {
+      margin: 0;
+      color: var(--muted2);
+      font-size: 12px;
+    }
+
+    .empty-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
     .smart-search-row {
       display: grid;
       grid-template-columns: 1fr auto auto;
@@ -231,6 +273,7 @@
         <a href="../command/index.html">لوحة القيادة</a>
         <a href="../policies/index.html">السياسات</a>
         <a href="../report/index.html">التقرير التنفيذي</a>
+        <a href="../about/index.html">عن المنصة</a>
       </nav>
 
       <div class="topbar-actions">
@@ -241,6 +284,15 @@
         <button class="btn btn-primary" id="btnPrint">طباعة محضر</button>
       </div>
     </header>
+
+    <section class="panel reveal">
+      <div class="unified-main-actions">
+        <a href="../about/index.html" class="btn btn-soft">تعريف عن المنصة</a>
+        <button class="btn btn-primary" id="btnUnifiedStart">بدء مبادرة</button>
+        <a href="../map/index.html" class="btn btn-soft">الخريطة</a>
+        <a href="../judging/index.html" class="btn btn-soft is-current">التحكيم</a>
+      </div>
+    </section>
 
     <section class="panel reveal">
       <div class="panel-head">
@@ -321,8 +373,14 @@
           </table>
         </div>
 
-        <div class="empty-line" id="empty" style="display:none; margin-top:10px;">
-          لا توجد نتائج.
+        <div class="empty-line empty-action-box" id="empty" style="display:none; margin-top:10px;">
+          <strong>لا توجد نتائج ضمن عوامل التصفية الحالية.</strong>
+          <p>ماذا أفعل الآن؟ أعد الفلاتر أو ابدأ مبادرة جديدة ثم عد للتحكيم.</p>
+          <div class="empty-actions">
+            <button class="btn btn-soft" id="btnEmptyReset">إعادة الفلاتر</button>
+            <button class="btn btn-primary" id="btnEmptyStart">بدء مبادرة</button>
+            <a href="../map/index.html" class="btn btn-ghost">فتح الخريطة</a>
+          </div>
         </div>
 
         <div class="panel" style="margin-top:10px;">
@@ -1599,7 +1657,7 @@
 
         $("#count").textContent = `إجمالي: ${fmt(inis.length)} • مكتمل: ${fmt(inis.filter((x) => x.evalState === "مكتمل").length)}`;
         $("#pill").textContent = `${fmt(filtered.length)} نتائج`;
-        $("#empty").style.display = filtered.length ? "none" : "flex";
+        $("#empty").style.display = filtered.length ? "none" : "grid";
 
         $("#tb").innerHTML = filtered.map((i) => {
           const k = calcIndicators(i);
@@ -2101,6 +2159,19 @@
         });
       }
 
+      function openNewInitiativeFromJudging() {
+        localStorage.setItem("IS_OPEN_NEW_FROM_NAV", "1");
+        window.location.href = "../map/index.html";
+      }
+
+      function resetJudgingFilters() {
+        ["q", "qAi", "phase", "innovationType", "evalState", "priority", "orgFilter"].forEach((id) => {
+          const node = document.getElementById(id);
+          if (node) node.value = "";
+        });
+        renderTable();
+      }
+
       async function init() {
         await syncInitiativesFromApi({ silent: true });
         normalizeState();
@@ -2117,6 +2188,10 @@
         renderTable();
         loadSelectedToUI();
         toggleFastMode(false);
+
+        $("#btnUnifiedStart").addEventListener("click", openNewInitiativeFromJudging);
+        $("#btnEmptyStart").addEventListener("click", openNewInitiativeFromJudging);
+        $("#btnEmptyReset").addEventListener("click", resetJudgingFilters);
 
         $("#q").addEventListener("input", renderTable);
         $("#qAi").addEventListener("input", renderTable);

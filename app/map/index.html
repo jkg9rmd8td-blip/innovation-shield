@@ -267,7 +267,27 @@
             align-items: center;
         }
 
-        #btnNew {
+        .unified-main-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .unified-main-actions .btn,
+        .unified-main-actions a.btn {
+            min-height: 38px;
+            font-weight: 800;
+        }
+
+        .unified-main-actions .is-current {
+            border-color: rgba(97, 176, 255, .45);
+            background: rgba(77, 168, 255, .14);
+            color: #dfefff;
+            box-shadow: 0 8px 18px rgba(20, 91, 160, .30);
+        }
+
+        #btnUnifiedStart {
             box-shadow: 0 10px 24px rgba(12, 96, 182, .35);
             border: 1px solid rgba(97, 176, 255, .42);
             font-weight: 900;
@@ -451,6 +471,56 @@
             font-size: 11px;
         }
 
+        .new-form-head {
+            border: 1px dashed rgba(255, 255, 255, .20);
+            border-radius: 12px;
+            padding: 10px;
+            display: grid;
+            gap: 4px;
+            background: rgba(255, 255, 255, .03);
+            margin-bottom: 10px;
+        }
+
+        .new-form-head p {
+            margin: 0;
+            color: var(--muted2);
+            font-size: 12px;
+        }
+
+        .new-advanced.hidden {
+            display: none;
+        }
+
+        .new-advanced-toggle {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .empty-action-box {
+            border: 1px dashed rgba(255, 255, 255, .24);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .03);
+            padding: 10px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .empty-action-box p {
+            margin: 0;
+            color: var(--muted2);
+            font-size: 12px;
+        }
+
+        .empty-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
         .honor-list {
             margin: 0;
             padding: 0;
@@ -548,9 +618,17 @@
                 <button class="btn btn-soft" id="btnSeed">عينات</button>
                 <button class="btn btn-soft" id="btnLiveToggle">تشغيل Live</button>
                 <button class="btn btn-ghost" id="btnApiSettings">API</button>
-                <button class="btn btn-primary" id="btnNew">بدء مبادرة</button>
             </div>
         </header>
+
+        <section class="panel reveal">
+            <div class="unified-main-actions">
+                <a href="../about/index.html" class="btn btn-soft">تعريف عن المنصة</a>
+                <button class="btn btn-primary" id="btnUnifiedStart">بدء مبادرة</button>
+                <a href="../map/index.html" class="btn btn-soft is-current">الخريطة</a>
+                <a href="../judging/index.html" class="btn btn-soft">التحكيم</a>
+            </div>
+        </section>
 
         <section class="workspace-banner reveal">
             <div>
@@ -821,6 +899,18 @@
         <!-- BOARD -->
         <section class="board reveal" id="board"></section>
 
+        <section class="panel reveal" id="mapEmptyWrap" style="display:none;">
+            <div class="empty-action-box" id="mapEmptyAction">
+                <strong>لا توجد مبادرات ضمن النطاق الحالي.</strong>
+                <p>ماذا أفعل الآن؟ أعد الفلاتر، أو ابدأ مبادرة جديدة، أو حمّل عينات للتجربة السريعة.</p>
+                <div class="empty-actions">
+                    <button class="btn btn-soft" id="btnMapEmptyReset">إعادة الفلاتر</button>
+                    <button class="btn btn-primary" id="btnMapEmptyStart">بدء مبادرة</button>
+                    <button class="btn btn-ghost" id="btnMapEmptySeed">تحميل عينات</button>
+                </div>
+            </div>
+        </section>
+
         <!-- NEW MODAL -->
         <div class="modal hidden" id="modalNew">
             <div class="modal-backdrop" data-close></div>
@@ -828,6 +918,11 @@
                 <div class="mhead">
                     <div class="mtitle">إضافة مبادرة</div>
                     <button class="btn btn-ghost" data-close>إغلاق</button>
+                </div>
+
+                <div class="new-form-head">
+                    <strong>الحقول الأساسية</strong>
+                    <p>ابدأ بالمعلومات الأساسية فقط. يمكنك فتح الخيارات المتقدمة عند الحاجة.</p>
                 </div>
 
                 <div class="mgrid">
@@ -847,31 +942,6 @@
                     </div>
 
                     <div class="field">
-                        <div class="lbl">Template جاهز</div>
-                        <select id="nTemplate" class="select">
-                            <option value="">بدون Template</option>
-                            <option value="service-ops">تحسين تشغيلي</option>
-                            <option value="patient-exp">تجربة مستفيد</option>
-                            <option value="digital-ai">حل رقمي/ذكاء اصطناعي</option>
-                            <option value="quality-compliance">جودة وامتثال</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <div class="lbl">حالة البداية</div>
-                        <select id="nStatus" class="select">
-                            <option>مسودة</option>
-                            <option>قيد التحكيم</option>
-                            <option>قيد التطوير</option>
-                        </select>
-                    </div>
-
-                    <div class="field">
-                        <div class="lbl">الجهة</div>
-                        <input id="nOrg" placeholder="مثال: إدارة الجودة">
-                    </div>
-
-                    <div class="field">
                         <div class="lbl">الفريق</div>
                         <select id="nTeam" class="select"></select>
                     </div>
@@ -883,71 +953,105 @@
                         style="width:100%; border-radius:12px; border:1px solid rgba(53,82,110,.22); padding:10px; font-family:inherit;"></textarea>
                 </div>
 
-                <div class="panel" style="margin-top:10px;">
-                    <div class="panel-head">
-                        <h3>Validation Layer</h3>
-                        <span class="panel-note">لاختبار الاحتياج قبل التحكيم</span>
-                    </div>
-                    <div class="mgrid">
-                        <div class="field">
-                            <div class="lbl">المشكلة المؤكدة</div>
-                            <input id="nProblem" placeholder="ما المشكلة الفعلية؟">
-                        </div>
-                        <div class="field">
-                            <div class="lbl">الفئة المستفيدة</div>
-                            <input id="nBeneficiary" placeholder="مرضى / موظفين / أقسام ...">
-                        </div>
-                        <div class="field" style="grid-column:1/-1;">
-                            <div class="lbl">دليل الاحتياج / ملاحظات الاختبار</div>
-                            <textarea id="nEvidence" rows="3"
-                                style="width:100%; border-radius:12px; border:1px solid rgba(53,82,110,.22); padding:10px; font-family:inherit;"></textarea>
-                        </div>
-                        <div class="field">
-                            <div class="lbl">حجم عينة المرضى/المستفيدين</div>
-                            <input id="nCoSample" type="number" min="0" step="1" placeholder="مثال: 12">
-                        </div>
-                        <div class="field">
-                            <div class="lbl">تقييم العينة (1-5)</div>
-                            <input id="nCoScore" type="number" min="1" max="5" step="1" placeholder="مثال: 4">
-                        </div>
-                        <div class="field" style="grid-column:1/-1;">
-                            <div class="lbl">أبرز نقاط الألم</div>
-                            <input id="nCoPain" placeholder="مثال: طول الانتظار وصعوبة تنسيق الموعد">
-                        </div>
-                        <div class="field" style="grid-column:1/-1;">
-                            <div class="lbl">توصية العينة قبل التحكيم</div>
-                            <input id="nCoReco" placeholder="مثال: جاهز للتحكيم بعد توضيح رحلة المريض">
-                        </div>
-                    </div>
+                <div class="new-advanced-toggle">
+                    <button class="btn btn-soft" id="btnToggleNewAdvanced">إظهار الخيارات المتقدمة</button>
+                    <span class="panel-note">الحقول المتقدمة: القالب، التحقق، AI، وإعدادات مساحة العمل.</span>
                 </div>
 
-                <div class="panel" style="margin-top:10px;">
-                    <div class="panel-head">
-                        <h3>AI Co‑Pilot</h3>
-                        <span class="panel-note">صياغة الفكرة + اقتراح تحسينات تلقائيًا</span>
-                    </div>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <button class="btn btn-soft" id="nAiDraft">AI صياغة الفكرة</button>
-                        <button class="btn btn-soft" id="nAiImprove">AI تحسين الفكرة</button>
-                    </div>
-                    <textarea id="nAiOutput" class="ai-output" rows="4"
-                        placeholder="سيظهر هنا اقتراح الذكاء الاصطناعي..."></textarea>
-                </div>
+                <div id="nAdvancedBlock" class="new-advanced hidden">
+                    <div class="mgrid" style="margin-top:10px;">
+                        <div class="field">
+                            <div class="lbl">Template جاهز</div>
+                            <select id="nTemplate" class="select">
+                                <option value="">بدون Template</option>
+                                <option value="service-ops">تحسين تشغيلي</option>
+                                <option value="patient-exp">تجربة مستفيد</option>
+                                <option value="digital-ai">حل رقمي/ذكاء اصطناعي</option>
+                                <option value="quality-compliance">جودة وامتثال</option>
+                            </select>
+                        </div>
 
-                <div class="panel" style="margin-top:10px;">
-                    <div class="panel-head">
-                        <h3>إعداد مساحة العمل</h3>
-                        <span class="panel-note">إنشاء تلقائي عند حفظ المبادرة</span>
+                        <div class="field">
+                            <div class="lbl">حالة البداية</div>
+                            <select id="nStatus" class="select">
+                                <option>مسودة</option>
+                                <option>قيد التحكيم</option>
+                                <option>قيد التطوير</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <div class="lbl">الجهة</div>
+                            <input id="nOrg" placeholder="مثال: إدارة الجودة">
+                        </div>
                     </div>
-                    <div class="mgrid">
-                        <label class="field" style="display:flex; gap:8px; align-items:center;">
-                            <input id="nAutoWorkspace" type="checkbox" checked>
-                            <div class="lbl" style="margin:0;">إنشاء Workspace تلقائي</div>
-                        </label>
-                        <label class="field" style="display:flex; gap:8px; align-items:center;">
-                            <input id="nAutoAiTasks" type="checkbox" checked>
-                            <div class="lbl" style="margin:0;">توزيع مهام أولي بالذكاء الاصطناعي</div>
-                        </label>
+
+                    <div class="panel" style="margin-top:10px;">
+                        <div class="panel-head">
+                            <h3>Validation Layer</h3>
+                            <span class="panel-note">لاختبار الاحتياج قبل التحكيم</span>
+                        </div>
+                        <div class="mgrid">
+                            <div class="field">
+                                <div class="lbl">المشكلة المؤكدة</div>
+                                <input id="nProblem" placeholder="ما المشكلة الفعلية؟">
+                            </div>
+                            <div class="field">
+                                <div class="lbl">الفئة المستفيدة</div>
+                                <input id="nBeneficiary" placeholder="مرضى / موظفين / أقسام ...">
+                            </div>
+                            <div class="field" style="grid-column:1/-1;">
+                                <div class="lbl">دليل الاحتياج / ملاحظات الاختبار</div>
+                                <textarea id="nEvidence" rows="3"
+                                    style="width:100%; border-radius:12px; border:1px solid rgba(53,82,110,.22); padding:10px; font-family:inherit;"></textarea>
+                            </div>
+                            <div class="field">
+                                <div class="lbl">حجم عينة المرضى/المستفيدين</div>
+                                <input id="nCoSample" type="number" min="0" step="1" placeholder="مثال: 12">
+                            </div>
+                            <div class="field">
+                                <div class="lbl">تقييم العينة (1-5)</div>
+                                <input id="nCoScore" type="number" min="1" max="5" step="1" placeholder="مثال: 4">
+                            </div>
+                            <div class="field" style="grid-column:1/-1;">
+                                <div class="lbl">أبرز نقاط الألم</div>
+                                <input id="nCoPain" placeholder="مثال: طول الانتظار وصعوبة تنسيق الموعد">
+                            </div>
+                            <div class="field" style="grid-column:1/-1;">
+                                <div class="lbl">توصية العينة قبل التحكيم</div>
+                                <input id="nCoReco" placeholder="مثال: جاهز للتحكيم بعد توضيح رحلة المريض">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel" style="margin-top:10px;">
+                        <div class="panel-head">
+                            <h3>AI Co‑Pilot</h3>
+                            <span class="panel-note">صياغة الفكرة + اقتراح تحسينات تلقائيًا</span>
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <button class="btn btn-soft" id="nAiDraft">AI صياغة الفكرة</button>
+                            <button class="btn btn-soft" id="nAiImprove">AI تحسين الفكرة</button>
+                        </div>
+                        <textarea id="nAiOutput" class="ai-output" rows="4"
+                            placeholder="سيظهر هنا اقتراح الذكاء الاصطناعي..."></textarea>
+                    </div>
+
+                    <div class="panel" style="margin-top:10px;">
+                        <div class="panel-head">
+                            <h3>إعداد مساحة العمل</h3>
+                            <span class="panel-note">إنشاء تلقائي عند حفظ المبادرة</span>
+                        </div>
+                        <div class="mgrid">
+                            <label class="field" style="display:flex; gap:8px; align-items:center;">
+                                <input id="nAutoWorkspace" type="checkbox" checked>
+                                <div class="lbl" style="margin:0;">إنشاء Workspace تلقائي</div>
+                            </label>
+                            <label class="field" style="display:flex; gap:8px; align-items:center;">
+                                <input id="nAutoAiTasks" type="checkbox" checked>
+                                <div class="lbl" style="margin:0;">توزيع مهام أولي بالذكاء الاصطناعي</div>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -1363,6 +1467,7 @@
             };
             const PRIORITY_RANK = { "حرجة": 4, "عالية": 3, "متوسطة": 2, "منخفضة": 1 };
             const MAP_WELCOME_KEY = "IS_MAP_WELCOME_V3";
+            const MAP_OPEN_NEW_KEY = "IS_OPEN_NEW_FROM_NAV";
 
             const board = $("#board");
             let current = null;
@@ -2399,6 +2504,8 @@
                 normalizeState();
                 fillOrgFilter();
                 const list = filteredInitiatives();
+                const emptyWrap = $("#mapEmptyWrap");
+                if (emptyWrap) emptyWrap.style.display = list.length ? "none" : "";
                 renderWorkspaceHub(list);
                 renderKpiVisuals(list);
                 renderHonorBoard(list);
@@ -3131,9 +3238,18 @@
                 IS.toast("تمت إعادة الفلاتر ✅", "ok", 1400);
             }
 
+            function setNewAdvancedVisibility(isOpen) {
+                const block = $("#nAdvancedBlock");
+                const btn = $("#btnToggleNewAdvanced");
+                if (!block || !btn) return;
+                block.classList.toggle("hidden", !isOpen);
+                btn.textContent = isOpen ? "إخفاء الخيارات المتقدمة" : "إظهار الخيارات المتقدمة";
+            }
+
             function openNewFlow() {
                 fillTeams();
                 updateNewHintByTeam();
+                setNewAdvancedVisibility(false);
                 openNew();
             }
 
@@ -3171,8 +3287,14 @@
 
                 const openedBefore = localStorage.getItem(MAP_WELCOME_KEY) === "1";
                 if (!openedBefore) openWelcome();
+                if (localStorage.getItem(MAP_OPEN_NEW_KEY) === "1") {
+                    localStorage.removeItem(MAP_OPEN_NEW_KEY);
+                    localStorage.setItem(MAP_WELCOME_KEY, "1");
+                    closeWelcome();
+                    openNewFlow();
+                }
 
-                $("#btnNew").addEventListener("click", openNewFlow);
+                $("#btnUnifiedStart").addEventListener("click", openNewFlow);
                 $("#btnPathChallenges").addEventListener("click", () => scrollToSection("#criticalList"));
                 $("#btnPathBoard").addEventListener("click", () => scrollToSection("#board"));
                 $("#btnPathJudging").addEventListener("click", openJudgingShortcut);
@@ -3188,6 +3310,10 @@
                     closeWelcome();
                 }));
 
+                $("#btnToggleNewAdvanced").addEventListener("click", () => {
+                    const opened = !$("#nAdvancedBlock").classList.contains("hidden");
+                    setNewAdvancedVisibility(!opened);
+                });
                 $("#nTemplate").addEventListener("change", applyTemplatePreset);
                 $("#nTeam").addEventListener("change", updateNewHintByTeam);
                 $("#nAiDraft").addEventListener("click", () => applyAiDraftToNew("draft"));
@@ -3205,6 +3331,9 @@
                 });
 
                 $("#btnReset").addEventListener("click", resetFilters);
+                $("#btnMapEmptyReset").addEventListener("click", resetFilters);
+                $("#btnMapEmptyStart").addEventListener("click", openNewFlow);
+                $("#btnMapEmptySeed").addEventListener("click", seedMore);
 
                 $("#tAdd").addEventListener("click", addTask);
                 $("#tAiDistribute").addEventListener("click", runAiTaskDistributionCurrent);

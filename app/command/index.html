@@ -71,6 +71,26 @@
             font-size: 12px;
         }
 
+        .unified-main-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .unified-main-actions .btn,
+        .unified-main-actions a.btn {
+            min-height: 38px;
+            font-weight: 800;
+        }
+
+        .unified-main-actions .is-current {
+            border-color: rgba(97, 176, 255, 0.45);
+            background: rgba(77, 168, 255, 0.14);
+            color: #dfefff;
+            box-shadow: 0 8px 18px rgba(20, 91, 160, 0.30);
+        }
+
         .live-pill {
             border-color: var(--cmd-border);
             color: var(--cmd-text);
@@ -861,6 +881,28 @@
             color: var(--cmd-muted);
         }
 
+        .empty-action-box {
+            border: 1px dashed rgba(255, 255, 255, 0.24);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .empty-action-box p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--cmd-muted);
+        }
+
+        .empty-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
         @keyframes ripple {
             to {
                 transform: scale(4);
@@ -1015,6 +1057,15 @@
                 <button class="btn btn-primary" id="btnPrint">طباعة</button>
             </div>
         </header>
+
+        <section class="panel reveal skeletonable">
+            <div class="unified-main-actions">
+                <a href="../about/index.html" class="btn btn-soft">تعريف عن المنصة</a>
+                <button class="btn btn-primary" id="btnUnifiedStart">بدء مبادرة</button>
+                <a href="../map/index.html" class="btn btn-soft">الخريطة</a>
+                <a href="../judging/index.html" class="btn btn-soft">التحكيم</a>
+            </div>
+        </section>
 
         <section class="command-header-strip reveal skeletonable">
             <div class="header-metric">
@@ -1370,8 +1421,14 @@
                 </table>
             </div>
 
-            <div class="empty-line" id="empty" style="display:none; margin-top:10px;">
-                لا توجد نتائج وفق الفلاتر الحالية.
+            <div class="empty-line empty-action-box" id="empty" style="display:none; margin-top:10px;">
+                <strong>لا توجد نتائج وفق الفلاتر الحالية.</strong>
+                <p>ماذا أفعل الآن؟ أعد الفلاتر، أو ابدأ مبادرة جديدة، أو انتقل إلى التحكيم لمراجعة الحالات النشطة.</p>
+                <div class="empty-actions">
+                    <button class="btn btn-soft" id="btnEmptyReset">إعادة الفلاتر</button>
+                    <button class="btn btn-primary" id="btnEmptyStart">بدء مبادرة</button>
+                    <button class="btn btn-ghost" id="btnEmptyJudging">فتح التحكيم</button>
+                </div>
             </div>
         </section>
 
@@ -1407,7 +1464,13 @@
                     <tbody id="drillBody"></tbody>
                 </table>
             </div>
-            <div class="empty-line" id="drillEmpty" style="display:none; margin-top:10px;">لا توجد بيانات.</div>
+            <div class="empty-line empty-action-box" id="drillEmpty" style="display:none; margin-top:10px;">
+                <strong>لا توجد بيانات لهذا المؤشر.</strong>
+                <p>ماذا أفعل الآن؟ جرّب توسيع النطاق أو إعادة تعيين الفلاتر لعرض بيانات أكثر.</p>
+                <div class="empty-actions">
+                    <button class="btn btn-soft" id="btnDrillResetFilters">إعادة الفلاتر</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2178,7 +2241,7 @@
 
             function renderMainTable(list) {
                 $("#pill").textContent = `${fmt(list.length)} نتائج`;
-                $("#empty").style.display = list.length ? "none" : "flex";
+                $("#empty").style.display = list.length ? "none" : "grid";
 
                 $("#tb").innerHTML = list.map((i) => {
                     const tag = i.tags[0] || "—";
@@ -2427,6 +2490,20 @@
                 window.location.href = path;
             }
 
+            function openNewInitiativeFromCommand() {
+                localStorage.setItem("IS_OPEN_NEW_FROM_NAV", "1");
+                window.location.href = "../map/index.html";
+            }
+
+            function openJudgingFromCommand() {
+                const all = getAll();
+                let list = getFiltered(all);
+                if (commandMode) list = list.filter((i) => isCritical(i) || isStalled(i));
+                const first = list[0] || all[0];
+                if (first?.id) localStorage.setItem("is_selected_initiative", first.id);
+                window.location.href = "../judging/index.html";
+            }
+
             function drillRows(type, list) {
                 if (type === "total") return list.map((i) => ({ i, reason: "ضمن نطاق الفلاتر" }));
                 if (type === "judging") return list.filter((i) => i.status === "قيد التحكيم").map((i) => ({ i, reason: "بانتظار قرار التحكيم" }));
@@ -2473,7 +2550,7 @@
                         <td><button class="btn btn-soft" data-open-map="${esc(row.i.id)}">فتح</button></td>
                     </tr>
                 `).join("");
-                $("#drillEmpty").style.display = rows.length ? "none" : "flex";
+                $("#drillEmpty").style.display = rows.length ? "none" : "grid";
                 $("#modalDrill").classList.remove("hidden");
             }
 
@@ -2687,7 +2764,7 @@
                         el.addEventListener(evt, renderAll);
                     });
 
-                $("#btnReset").addEventListener("click", () => {
+                const resetAllFilters = () => {
                     ["q", "qSemantic", "stage", "status", "tag", "priorityFilter", "riskFilter", "orgFilter", "dateFrom", "dateTo"].forEach((id) => {
                         const el = document.getElementById(id);
                         if (el) el.value = "";
@@ -2695,7 +2772,18 @@
                     pushCommandEvent("إعادة تعيين الفلاتر", "Filters 2.0");
                     IS.save();
                     renderAll();
+                };
+
+                $("#btnReset").addEventListener("click", resetAllFilters);
+                $("#btnEmptyReset").addEventListener("click", resetAllFilters);
+                $("#btnDrillResetFilters").addEventListener("click", () => {
+                    closeDrill();
+                    resetAllFilters();
                 });
+
+                $("#btnUnifiedStart").addEventListener("click", openNewInitiativeFromCommand);
+                $("#btnEmptyStart").addEventListener("click", openNewInitiativeFromCommand);
+                $("#btnEmptyJudging").addEventListener("click", openJudgingFromCommand);
 
                 $("#btnRefresh").addEventListener("click", async () => {
                     document.body.classList.add("loading-skeleton");
