@@ -1,0 +1,48 @@
+import { Router } from "express";
+import healthRoute from "./health.js";
+import authRoute from "./auth.js";
+import initiativesRoute from "./initiatives.js";
+import judgingRoute from "./judging.js";
+import prototypesRoute from "./prototypes.js";
+import governanceRoute from "./governance.js";
+import auditRoute from "./audit.js";
+import accessRoute from "./access.js";
+import servicesRoute from "./services.js";
+import marketplaceRoute from "./marketplace.js";
+import integrationsRoute from "./integrations.js";
+import trainingRoute from "./training.js";
+import notificationsRoute from "./notifications.js";
+import innovationEngineRoute from "./innovation-engine.js";
+import prototypeBuilderRoute from "./prototype-builder.js";
+import workspaceRoute from "./workspace.js";
+import scoringRoute from "./scoring.js";
+import impactRoute from "./impact.js";
+import benchmarkingRoute from "./benchmarking.js";
+import analyticsRoute from "./analytics.js";
+import collaborationRoute from "./collaboration.js";
+
+const router = Router();
+
+router.use("/health", healthRoute);
+router.use("/auth", authRoute);
+router.use("/initiatives", initiativesRoute);
+router.use("/judging", judgingRoute);
+router.use("/prototypes", prototypesRoute);
+router.use("/governance", governanceRoute);
+router.use("/audit", auditRoute);
+router.use("/access", accessRoute);
+router.use("/services", servicesRoute);
+router.use("/marketplace", marketplaceRoute);
+router.use("/integrations", integrationsRoute);
+router.use("/training", trainingRoute);
+router.use("/notifications", notificationsRoute);
+router.use("/engine", innovationEngineRoute);
+router.use("/prototype-builder", prototypeBuilderRoute);
+router.use("/workspace", workspaceRoute);
+router.use("/scoring", scoringRoute);
+router.use("/impact", impactRoute);
+router.use("/benchmarking", benchmarkingRoute);
+router.use("/analytics", analyticsRoute);
+router.use("/collaboration", collaborationRoute);
+
+export default router;

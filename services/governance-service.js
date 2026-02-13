@@ -3,8 +3,8 @@ import { PERMISSIONS, ACTIONS } from "../core/constants.js";
 import { requirePermission } from "../guards/permission-guard.js";
 
 export function signPledge(user, pledgeText) {
-  const guard = requirePermission(user, PERMISSIONS.GOVERNANCE_APPROVE);
-  if (!guard.ok) throw new Error("FORBIDDEN_GOVERNANCE_APPROVE");
+  const guard = requirePermission(user, PERMISSIONS.GOVERNANCE_PLEDGE_SIGN);
+  if (!guard.ok) throw new Error("FORBIDDEN_GOVERNANCE_PLEDGE_SIGN");
 
   let after = null;
   mutateState((state) => {
@@ -13,6 +13,7 @@ export function signPledge(user, pledgeText) {
       userId: user.id,
       userName: user.name,
       role: user.role,
+      roleLabel: user.roleLabel,
       pledgeText,
       at: new Date().toISOString(),
     };
@@ -22,15 +23,15 @@ export function signPledge(user, pledgeText) {
   });
 
   return {
-    action: ACTIONS.GOVERNANCE_ACCEPT,
+    action: ACTIONS.GOVERNANCE_PLEDGE_SIGN,
     before: null,
     after,
   };
 }
 
 export function approveConfidentiality(user, note) {
-  const guard = requirePermission(user, PERMISSIONS.GOVERNANCE_APPROVE);
-  if (!guard.ok) throw new Error("FORBIDDEN_CONFIDENTIALITY_APPROVAL");
+  const guard = requirePermission(user, PERMISSIONS.GOVERNANCE_CONFIDENTIALITY_APPROVE);
+  if (!guard.ok) throw new Error("FORBIDDEN_GOVERNANCE_CONFIDENTIALITY_APPROVE");
 
   let after = null;
   mutateState((state) => {
@@ -39,6 +40,7 @@ export function approveConfidentiality(user, note) {
       userId: user.id,
       userName: user.name,
       role: user.role,
+      roleLabel: user.roleLabel,
       note: note || "موافقة سرية",
       at: new Date().toISOString(),
     };

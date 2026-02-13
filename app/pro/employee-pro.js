@@ -18,6 +18,13 @@
 
   function fmt(n){ return new Intl.NumberFormat("ar-SA").format(n||0); }
   function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+  function fromEmployeeDir(){
+    const p = (window.location && window.location.pathname ? window.location.pathname : "").replace(/\\/g, "/");
+    return p.indexOf("/app/employee/") !== -1;
+  }
+  function componentPath(page){
+    return fromEmployeeDir() ? `../components/${page}` : page;
+  }
 
   function calcPoints(initiatives){
     // Simple scoring model (demo):
@@ -85,7 +92,7 @@
           <div class="row-sub">${escapeHtml(i.id)} • ${escapeHtml(i.stage)} • ${escapeHtml(i.status)}${i.score!=null?` • نتيجة: ${fmt(i.score)}`:""}</div>
         </div>
         <div class="row-actions">
-          <a class="btn ghost sm" href="initiative.html?id=${encodeURIComponent(i.id)}">فتح</a>
+          <a class="btn ghost sm" href="${componentPath("initiative.html")}?id=${encodeURIComponent(i.id)}">فتح</a>
         </div>
       </div>
     `).join("") || `<div class="muted">لا توجد مبادرات بعد.</div>`;
@@ -181,7 +188,7 @@
     };
 
     // buttons
-    document.getElementById("pf_new").onclick = () => location.href = "submit.html";
+    document.getElementById("pf_new").onclick = () => location.href = componentPath("submit.html");
     document.getElementById("pf_print").onclick = () => {
       localStorage.setItem("is_employee_print_v1", JSON.stringify({
         ts: new Date().toISOString(),
@@ -195,7 +202,7 @@
   function escapeHtml(str){
     return String(str ?? "")
       .replaceAll("&","&amp;").replaceAll("<","&lt;")
-      .replaceAll(">","&gt;").replaceAll('"',"quot;")
+      .replaceAll(">","&gt;").replaceAll('"',"&quot;")
       .replaceAll("'","&#039;");
   }
 

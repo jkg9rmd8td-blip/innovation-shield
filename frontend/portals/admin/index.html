@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Innovation Shield V2 | Admin Portal</title>
+  <link rel="stylesheet" href="../../shared/design-system/tokens.css" />
+  <link rel="stylesheet" href="../../shared/styles/reset.css" />
+  <link rel="stylesheet" href="../../shared/styles/base.css" />
+  <link rel="stylesheet" href="../../shared/styles/utilities.css" />
+  <link rel="stylesheet" href="../../shared/styles/theme-apple.css" />
+  <link rel="stylesheet" href="../../shared/design-system/layout.css" />
+  <link rel="stylesheet" href="../../shared/design-system/components.css" />
+  <link rel="stylesheet" href="../../shared/shell/shell.css" />
+</head>
+<body>
+  <header class="topbar" data-topbar></header>
+
+  <section class="app-shell" data-portal-root>
+    <aside data-sidebar></aside>
+    <main class="content">
+      <section class="card apple-glass">
+        <div class="portal-header">
+          <div>
+            <h1 class="portal-title">Admin Operations Hub</h1>
+            <p class="portal-subtitle">Role matrix, audit chain, and platform governance in one place.</p>
+          </div>
+        </div>
+        <div class="grid-cards" data-kpi-grid></div>
+      </section>
+
+      <section id="audit" class="card apple-glass stack">
+        <h2>Audit Stream</h2>
+        <div class="table-wrap">
+          <table class="table">
+            <thead><tr><th>Action</th><th>Operation</th><th>User</th><th>Time</th></tr></thead>
+            <tbody id="auditRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card apple-glass stack">
+        <h2>Role Matrix</h2>
+        <div id="roleMatrix"></div>
+      </section>
+    </main>
+  </section>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

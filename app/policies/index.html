@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>درع الابتكار | Policy Center</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/app.css" />
+    <style>
+        .workflow-track {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .workflow-step {
+            border: 1px solid rgba(9, 52, 74, 0.12);
+            border-radius: 12px;
+            padding: 8px;
+            background: #fff;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 800;
+            color: #496677;
+        }
+
+        .workflow-step.is-active {
+            border-color: rgba(20, 129, 101, 0.35);
+            color: #0d664a;
+            background: rgba(20, 129, 101, 0.1);
+        }
+
+        .workflow-step.is-done {
+            border-color: rgba(26, 112, 161, 0.3);
+            color: #175e88;
+            background: rgba(26, 112, 161, 0.1);
+        }
+
+        .workflow-bar {
+            margin-top: 10px;
+            height: 8px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: rgba(9, 52, 74, 0.12);
+        }
+
+        .workflow-bar span {
+            display: block;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #14866e, #1a6f96);
+            transition: width .25s ease;
+        }
+
+        .policy-table th,
+        .policy-table td {
+            font-size: 12px;
+        }
+
+        .policy-table td small {
+            display: block;
+            color: #5b7688;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .policy-alerts {
+            margin: 0;
+            padding-right: 18px;
+            display: grid;
+            gap: 6px;
+        }
+
+        .policy-register-tools {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .governance-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .link-table th,
+        .link-table td {
+            font-size: 12px;
+        }
+
+        .policy-history {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        .policy-history li {
+            border: 1px solid rgba(9, 52, 74, 0.12);
+            border-radius: 12px;
+            background: #fff;
+            padding: 8px 10px;
+        }
+
+        .api-hint {
+            color: #496577;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .workflow-track {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .policy-register-tools {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .governance-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .workflow-track,
+            .policy-register-tools {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="career-body">
+
+    <div class="platform-bg">
+        <div class="mesh mesh-1"></div>
+        <div class="mesh mesh-2"></div>
+        <div class="mesh mesh-3"></div>
+    </div>
+
+    <div class="platform-shell">
+
+        <header class="platform-topbar reveal">
+            <div class="topbar-brand">
+                <div class="brand-mark">IS</div>
+                <div>
+                    <h1 class="topbar-title">Policy Center</h1>
+                    <p class="topbar-sub">Workflow • Compliance KPIs • Audit • Expiry Alerts • Map Linking</p>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <a href="../../index.html">الرئيسية</a>
+                <a href="../map/index.html">خريطة الابتكار</a>
+                <a href="../prototype/index.html">النماذج الأولية</a>
+                <a href="../employee/index.html">مسار الموظف</a>
+                <a href="../judging/index.html">التحكيم</a>
+                <a href="../command/index.html">لوحة القيادة</a>
+                <a href="../policies/index.html" class="active">السياسات</a>
+                <a href="../report/index.html">التقرير التنفيذي</a>
+            </nav>
+
+            <div class="topbar-actions">
+                <span class="live-pill">🏛️ Governance Active</span>
+                <button class="btn btn-soft" id="btnWorkflowNext">مرحلة تالية</button>
+                <button class="btn btn-soft" id="btnApiSettings">API</button>
+                <button class="btn btn-primary" id="btnAccept">قبول التعهد</button>
+                <button class="btn btn-ghost" id="btnExport">طباعة PDF</button>
+            </div>
+        </header>
+
+        <section class="stats-grid reveal">
+            <div class="stat-card stat-a">
+                <p>عدد السياسات</p>
+                <h3 id="kPolicies">—</h3>
+                <small>Policy Register</small>
+            </div>
+            <div class="stat-card stat-b">
+                <p>سياسات منشورة</p>
+                <h3 id="kActive">—</h3>
+                <small>جاهزة للتطبيق</small>
+            </div>
+            <div class="stat-card stat-c">
+                <p>سياسات منتهية قريبًا</p>
+                <h3 id="kExpiring">—</h3>
+                <small>خلال 60 يوم</small>
+            </div>
+            <div class="stat-card stat-d">
+                <p>متوسط الامتثال</p>
+                <h3 id="kCompliance">—</h3>
+                <small>Compliance KPIs</small>
+            </div>
+            <div class="stat-card stat-e">
+                <p>حالة NDA</p>
+                <h3 id="kNda">—</h3>
+                <small id="ndaAt">—</small>
+            </div>
+        </section>
+
+        <section class="insights-grid reveal">
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>تعهد السرية (NDA)</h3>
+                    <span class="panel-note" id="ndaState">—</span>
+                </div>
+                <p class="hero-sub" style="margin-top:0;">
+                    قبول التعهد شرط لتفعيل المشاركة الداخلية للملفات، عرض النماذج في التحكيم، وربط الابتكارات مع الجهات الخارجية.
+                </p>
+                <div class="readiness-box" style="margin-top:10px;">
+                    <div class="readiness-meta">
+                        <span>جاهزية السرية</span>
+                        <strong id="ndaBadge">—</strong>
+                    </div>
+                    <div class="progress-track"><span id="ndaBar"></span></div>
+                    <p class="points-line" id="ndaHint">—</p>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                    <button class="btn btn-primary" data-accept-policy>أوافق على التعهد</button>
+                    <button class="btn btn-soft" id="btnRevoke">إلغاء (تجريبي)</button>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>Workflow اعتماد السياسات</h3>
+                    <span class="panel-note" id="workflowState">—</span>
+                </div>
+                <div class="workflow-track" id="workflowSteps"></div>
+                <div class="workflow-bar"><span id="workflowBar"></span></div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                    <button class="btn btn-soft" id="btnWorkflowBack">رجوع مرحلة</button>
+                    <button class="btn btn-primary" id="btnWorkflowForward">اعتماد المرحلة</button>
+                </div>
+            </section>
+        </section>
+
+        <section class="insights-grid reveal">
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>تنبيهات انتهاء السياسات</h3>
+                    <span class="panel-note">Expiry Alerts</span>
+                </div>
+                <ul class="policy-alerts" id="expiryAlerts"></ul>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>Governance Dashboard</h3>
+                    <span class="panel-note">مؤشرات الحوكمة الداخلية</span>
+                </div>
+                <ul class="metric-list" id="governanceKpis"></ul>
+            </section>
+        </section>
+
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>سجل السياسات</h3>
+                <span class="panel-note">Policy Center Register</span>
+            </div>
+            <div class="policy-register-tools">
+                <input id="pQ" placeholder="بحث بعنوان السياسة أو المعرف..." />
+                <select id="pStatus">
+                    <option value="">كل الحالات</option>
+                </select>
+                <input id="pOwner" placeholder="بحث بالمالك..." />
+                <select id="pStage">
+                    <option value="">كل مراحل الابتكار</option>
+                </select>
+            </div>
+            <div class="table-wrap" style="margin-top:10px;">
+                <table class="proto-table policy-table">
+                    <thead>
+                        <tr>
+                            <th>المعرف</th>
+                            <th>اسم السياسة</th>
+                            <th>الإصدار</th>
+                            <th>الحالة</th>
+                            <th>المالك</th>
+                            <th>الانتهاء</th>
+                            <th>الامتثال</th>
+                            <th>الربط</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="policyBody"></tbody>
+                </table>
+            </div>
+            <div class="empty-line" id="policyEmpty" style="display:none; margin-top:10px;">لا توجد سياسات مطابقة للفلاتر.</div>
+        </section>
+
+        <section class="insights-grid reveal">
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>ربط السياسات بخريطة الابتكار</h3>
+                    <span class="panel-note">Policy → Initiative Mapping</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="proto-table link-table">
+                        <thead>
+                            <tr>
+                                <th>المعرف</th>
+                                <th>المبادرة</th>
+                                <th>المرحلة</th>
+                                <th>التصنيف</th>
+                                <th>سياسات مطبقة</th>
+                                <th>إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="linkBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>سجل التدقيق</h3>
+                    <span class="panel-note">آخر 16 حدث</span>
+                </div>
+                <ul class="timeline" id="audit"></ul>
+            </section>
+        </section>
+
+    </div>
+
+    <div class="modal hidden" id="modalPolicy">
+        <div class="modal-backdrop" data-close-policy></div>
+        <div class="modal-card" style="max-width:760px; width:min(760px, calc(100vw - 24px));">
+            <div class="modal-head">
+                <h3 id="policyModalTitle">تفاصيل السياسة</h3>
+                <button class="modal-close" data-close-policy>✕</button>
+            </div>
+            <div class="form-grid">
+                <label>الحالة</label>
+                <select id="pmStatus"></select>
+                <label>نسبة الامتثال (%)</label>
+                <input id="pmCompliance" type="number" min="0" max="100" />
+                <label>ملاحظة تغيير</label>
+                <input id="pmNote" placeholder="وصف مختصر للتعديل..." />
+            </div>
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+                <button class="btn btn-soft" id="pmAddNote">إضافة للسجل</button>
+                <button class="btn btn-primary" id="pmSave">حفظ التغييرات</button>
+            </div>
+            <h4 style="margin:14px 0 8px;">سجل التغييرات</h4>
+            <ul class="policy-history" id="policyHistory"></ul>
+        </div>
+    </div>
+
+    <div class="modal hidden" id="modalApi">
+        <div class="modal-backdrop" data-close-api></div>
+        <div class="modal-card" style="max-width:560px; width:min(560px, calc(100vw - 24px));">
+            <div class="modal-head">
+                <h3>إعدادات API</h3>
+                <button class="modal-close" data-close-api>✕</button>
+            </div>
+            <div class="form-grid">
+                <label>API Base URL</label>
+                <input id="apiBaseInput" placeholder="http://127.0.0.1:8080" dir="ltr" />
+            </div>
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+                <button class="btn btn-soft" id="btnApiTest">اختبار الاتصال</button>
+                <button class="btn btn-primary" id="btnApiSave">حفظ</button>
+            </div>
+            <p class="api-hint" id="apiStateHint">عند الحفظ سيتم استخدام البيانات المحلية إذا تعذر الاتصال.</p>
+        </div>
+    </div>
+
+    <script src="../../assets/js/app.js"></script>
+    <script>
+        (() => {
+            "use strict";
+            const $ = (s, r = document) => r.querySelector(s);
+            const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+            const IS = window.IS;
+            const API_BASE_KEY = "IS_API_BASE";
+
+            const fmt = (n) => new Intl.NumberFormat("ar-SA").format(Number(n || 0));
+            const esc = (v) => String(v ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+            const clamp = (n, a, b) => Math.max(a, Math.min(b, Number(n || 0)));
+            const nowISO = () => new Date().toISOString();
+            const normalize = (t) => String(t || "").toLowerCase().trim().replace(/\s+/g, " ");
+
+            const WORKFLOW_STEPS = ["صياغة", "مراجعة قانونية", "اعتماد لجنة", "نشر رسمي", "متابعة امتثال"];
+            const POLICY_STATUS = ["مسودة", "قيد المراجعة", "معتمدة", "منشورة", "منتهية"];
+
+            let activePolicyId = null;
+
+            function defaultPolicyCenter() {
+                return {
+                    workflowStage: WORKFLOW_STEPS[0],
+                    policies: [
+                        {
+                            id: "POL-1001",
+                            title: "سياسة سرية الابتكار",
+                            owner: "الإدارة القانونية",
+                            version: "2.1",
+                            status: "منشورة",
+                            compliancePct: 94,
+                            effectiveDate: "2026-01-01",
+                            expiryDate: "2026-12-31",
+                            linkedStages: ["الفكرة", "النموذج الأولي", "التحكيم"],
+                            linkedTags: ["تقني", "جودة", "رقمنة"],
+                            history: [
+                                { at: "2026-01-04T10:15:00", by: "Legal", note: "تحديث بنود مشاركة الملفات" },
+                                { at: "2026-01-22T14:30:00", by: "Governance", note: "اعتماد نهائي من اللجنة" }
+                            ]
+                        },
+                        {
+                            id: "POL-1002",
+                            title: "سياسة تعارض المصالح للمحكمين",
+                            owner: "إدارة الحوكمة",
+                            version: "1.4",
+                            status: "معتمدة",
+                            compliancePct: 88,
+                            effectiveDate: "2026-01-15",
+                            expiryDate: "2026-08-30",
+                            linkedStages: ["التقييم", "التحكيم", "الاعتماد"],
+                            linkedTags: ["تشغيلي", "مالي"],
+                            history: [
+                                { at: "2026-01-18T11:10:00", by: "Audit", note: "إضافة بند الإفصاح المسبق" }
+                            ]
+                        },
+                        {
+                            id: "POL-1003",
+                            title: "سياسة حماية بيانات النماذج الأولية",
+                            owner: "إدارة الأمن السيبراني",
+                            version: "1.2",
+                            status: "قيد المراجعة",
+                            compliancePct: 79,
+                            effectiveDate: "2026-02-01",
+                            expiryDate: "2026-06-20",
+                            linkedStages: ["النموذج الأولي", "التجربة", "التطبيق"],
+                            linkedTags: ["تقني", "سريري", "رقمنة"],
+                            history: [
+                                { at: "2026-02-03T09:05:00", by: "Cyber", note: "إدراج متطلبات تشفير النسخ الأولية" }
+                            ]
+                        }
+                    ],
+                    updatedAt: nowISO()
+                };
+            }
+
+            function ensurePolicyCenter() {
+                if (!IS.state.policyCenter || typeof IS.state.policyCenter !== "object") {
+                    IS.state.policyCenter = defaultPolicyCenter();
+                }
+                IS.state.policyCenter.workflowStage = IS.state.policyCenter.workflowStage || WORKFLOW_STEPS[0];
+                IS.state.policyCenter.policies = Array.isArray(IS.state.policyCenter.policies)
+                    ? IS.state.policyCenter.policies
+                    : defaultPolicyCenter().policies;
+
+                IS.state.policyCenter.policies = IS.state.policyCenter.policies.map((p) => ({
+                    id: String(p.id || `POL-${Math.floor(1000 + Math.random() * 9000)}`),
+                    title: String(p.title || "سياسة بدون عنوان"),
+                    owner: String(p.owner || "غير محدد"),
+                    version: String(p.version || "1.0"),
+                    status: POLICY_STATUS.includes(p.status) ? p.status : "مسودة",
+                    compliancePct: clamp(Number(p.compliancePct || 0), 0, 100),
+                    effectiveDate: String(p.effectiveDate || nowISO().slice(0, 10)),
+                    expiryDate: String(p.expiryDate || nowISO().slice(0, 10)),
+                    linkedStages: Array.isArray(p.linkedStages) ? p.linkedStages.map((x) => String(x || "")).filter(Boolean) : [],
+                    linkedTags: Array.isArray(p.linkedTags) ? p.linkedTags.map((x) => String(x || "")).filter(Boolean) : [],
+                    history: Array.isArray(p.history) ? p.history : []
+                }));
+            }
+
+            function daysTo(dateText) {
+                const t = new Date(dateText).getTime();
+                if (!Number.isFinite(t)) return 999;
+                return Math.ceil((t - Date.now()) / (24 * 60 * 60 * 1000));
+            }
+
+            function statusClass(status) {
+                if (status === "منشورة" || status === "معتمدة") return "is-good";
+                if (status === "قيد المراجعة") return "is-mid";
+                if (status === "منتهية") return "is-bad";
+                return "is-low";
+            }
+
+            function getPolicies() {
+                return (IS.state.policyCenter?.policies || []);
+            }
+
+            function getApiBase() {
+                return (localStorage.getItem(API_BASE_KEY) || "http://127.0.0.1:8080").trim();
+            }
+
+            function setApiBase(v) {
+                const base = String(v || "").trim().replace(/\/$/, "");
+                localStorage.setItem(API_BASE_KEY, base);
+                return base;
+            }
+
+            function openApiModal() {
+                $("#apiBaseInput").value = getApiBase();
+                $("#apiStateHint").textContent = "عند الحفظ سيتم استخدام البيانات المحلية إذا تعذر الاتصال.";
+                $("#modalApi").classList.remove("hidden");
+            }
+
+            function closeApiModal() {
+                $("#modalApi").classList.add("hidden");
+            }
+
+            function withTimeout(promise, timeoutMs = 3200) {
+                return Promise.race([
+                    promise,
+                    new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutMs))
+                ]);
+            }
+
+            async function apiRequest(path, { method = "GET", body, timeoutMs = 3400 } = {}) {
+                const res = await withTimeout(fetch(`${getApiBase()}${path}`, {
+                    method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: body ? JSON.stringify(body) : undefined
+                }), timeoutMs);
+                if (!res.ok) {
+                    const txt = await res.text().catch(() => "");
+                    throw new Error(`HTTP ${res.status} ${txt}`);
+                }
+                return await res.json().catch(() => null);
+            }
+
+            function renderNDA() {
+                const accepted = !!(IS.state.policies && IS.state.policies.accepted);
+                const acceptedAt = IS.state.policies?.acceptedAt;
+                $("#ndaState").textContent = accepted ? "مقبول ✅" : "غير مقبول";
+                $("#ndaBadge").textContent = accepted ? "مفعّل" : "غير مفعّل";
+                $("#ndaBar").style.width = accepted ? "100%" : "24%";
+                $("#ndaHint").textContent = accepted
+                    ? "التعهد مفعّل: مشاركة الملفات والتحكيم متاحة ضمن الصلاحيات."
+                    : "التعهد غير مفعّل: سيتم تقييد المشاركة والرفع في المسارات الحساسة.";
+                $("#btnAccept").disabled = accepted;
+                $("#btnAccept").textContent = accepted ? "تم القبول" : "قبول التعهد";
+                $("#kNda").textContent = accepted ? "مفعّل" : "غير مفعل";
+                $("#ndaAt").textContent = acceptedAt ? `منذ ${(acceptedAt || "").slice(0, 10)}` : "بانتظار القبول";
+            }
+
+            function renderWorkflow() {
+                const stage = IS.state.policyCenter.workflowStage;
+                const idx = Math.max(0, WORKFLOW_STEPS.indexOf(stage));
+
+                $("#workflowState").textContent = `الحالة الحالية: ${stage}`;
+                $("#workflowSteps").innerHTML = WORKFLOW_STEPS.map((step, i) => {
+                    const cls = i < idx ? "workflow-step is-done" : (i === idx ? "workflow-step is-active" : "workflow-step");
+                    return `<div class="${cls}">${esc(step)}</div>`;
+                }).join("");
+                $("#workflowBar").style.width = `${Math.round(((idx + 1) / WORKFLOW_STEPS.length) * 100)}%`;
+            }
+
+            function renderKpis() {
+                const policies = getPolicies();
+                const total = policies.length;
+                const active = policies.filter((p) => p.status === "منشورة").length;
+                const expiring = policies.filter((p) => {
+                    const d = daysTo(p.expiryDate);
+                    return d >= 0 && d <= 60;
+                }).length;
+                const complianceAvg = total
+                    ? Math.round(policies.reduce((sum, p) => sum + Number(p.compliancePct || 0), 0) / total)
+                    : 0;
+
+                $("#kPolicies").textContent = fmt(total);
+                $("#kActive").textContent = fmt(active);
+                $("#kExpiring").textContent = fmt(expiring);
+                $("#kCompliance").textContent = `${fmt(complianceAvg)}%`;
+            }
+
+            function renderExpiryAlerts() {
+                const policies = getPolicies();
+                const alerts = policies
+                    .map((p) => ({ p, days: daysTo(p.expiryDate) }))
+                    .filter((x) => x.days <= 60)
+                    .sort((a, b) => a.days - b.days);
+
+                if (!alerts.length) {
+                    $("#expiryAlerts").innerHTML = `<li>لا توجد سياسات تنتهي خلال 60 يوم.</li>`;
+                    return;
+                }
+
+                $("#expiryAlerts").innerHTML = alerts.map((x) => {
+                    const state = x.days < 0 ? "انتهت" : (x.days === 0 ? "تنتهي اليوم" : `متبقي ${fmt(x.days)} يوم`);
+                    return `<li><strong>${esc(x.p.id)}</strong> — ${esc(x.p.title)} <span>(${state})</span></li>`;
+                }).join("");
+            }
+
+            function renderGovernanceKpis() {
+                const policies = getPolicies();
+                const ndaAccepted = !!IS.state.policies?.accepted;
+                const draft = policies.filter((p) => p.status === "مسودة").length;
+                const review = policies.filter((p) => p.status === "قيد المراجعة").length;
+                const published = policies.filter((p) => p.status === "منشورة").length;
+                const avgCompliance = policies.length
+                    ? Math.round(policies.reduce((sum, p) => sum + Number(p.compliancePct || 0), 0) / policies.length)
+                    : 0;
+
+                $("#governanceKpis").innerHTML = `
+                    <li><span>جاهزية NDA</span><strong>${ndaAccepted ? "مفعلة" : "غير مفعلة"}</strong></li>
+                    <li><span>سياسات مسودة</span><strong>${fmt(draft)}</strong></li>
+                    <li><span>سياسات قيد المراجعة</span><strong>${fmt(review)}</strong></li>
+                    <li><span>سياسات منشورة</span><strong>${fmt(published)}</strong></li>
+                    <li><span>متوسط الامتثال</span><strong>${fmt(avgCompliance)}%</strong></li>
+                    <li><span>مرحلة Workflow الحالية</span><strong>${esc(IS.state.policyCenter.workflowStage)}</strong></li>
+                `;
+            }
+
+            function readPolicyFilters() {
+                return {
+                    q: normalize($("#pQ").value),
+                    status: $("#pStatus").value || "",
+                    owner: normalize($("#pOwner").value),
+                    stage: $("#pStage").value || ""
+                };
+            }
+
+            function fillPolicyFilters() {
+                const policies = getPolicies();
+                const keepStatus = $("#pStatus").value;
+                const keepStage = $("#pStage").value;
+                const stages = Array.from(new Set((IS.state.stages || []).concat(policies.flatMap((p) => p.linkedStages || [])).filter(Boolean)));
+
+                $("#pStatus").innerHTML = `<option value="">كل الحالات</option>` + POLICY_STATUS.map((s) => `<option>${esc(s)}</option>`).join("");
+                $("#pStage").innerHTML = `<option value="">كل مراحل الابتكار</option>` + stages.map((s) => `<option>${esc(s)}</option>`).join("");
+
+                $("#pStatus").value = keepStatus;
+                $("#pStage").value = keepStage;
+            }
+
+            function filteredPolicies() {
+                const filters = readPolicyFilters();
+                return getPolicies().filter((p) => {
+                    const hay = normalize(`${p.id} ${p.title} ${p.owner} ${p.version} ${(p.linkedStages || []).join(" ")}`);
+                    const okQ = !filters.q || hay.includes(filters.q);
+                    const okStatus = !filters.status || p.status === filters.status;
+                    const okOwner = !filters.owner || normalize(p.owner).includes(filters.owner);
+                    const okStage = !filters.stage || (p.linkedStages || []).includes(filters.stage);
+                    return okQ && okStatus && okOwner && okStage;
+                });
+            }
+
+            function renderPolicyTable() {
+                const rows = filteredPolicies();
+                $("#policyEmpty").style.display = rows.length ? "none" : "flex";
+
+                $("#policyBody").innerHTML = rows.map((p) => {
+                    const d = daysTo(p.expiryDate);
+                    const expiryText = d < 0 ? `منتهية منذ ${fmt(Math.abs(d))} يوم` : `بعد ${fmt(d)} يوم`;
+                    return `
+                        <tr>
+                            <td><strong>${esc(p.id)}</strong></td>
+                            <td>${esc(p.title)}<small>${esc((p.linkedStages || []).join(" • ") || "بدون ربط")}</small></td>
+                            <td>${esc(p.version)}</td>
+                            <td><span class="status-badge ${statusClass(p.status)}">${esc(p.status)}</span></td>
+                            <td>${esc(p.owner)}</td>
+                            <td>${esc(p.expiryDate)}<small>${esc(expiryText)}</small></td>
+                            <td>${fmt(p.compliancePct)}%</td>
+                            <td>${fmt((p.linkedTags || []).length)} وسوم</td>
+                            <td><button class="btn btn-soft" data-open-policy="${esc(p.id)}">إدارة</button></td>
+                        </tr>
+                    `;
+                }).join("");
+            }
+
+            function renderMapLinks() {
+                const initiatives = (IS.state.initiatives || []);
+                const policies = getPolicies().filter((p) => p.status !== "منتهية");
+
+                const rows = initiatives.slice(0, 18).map((i) => {
+                    const tags = Array.isArray(i.tags) ? i.tags : [];
+                    const matched = policies.filter((p) => {
+                        const stageMatch = (p.linkedStages || []).includes(i.stage);
+                        const tagMatch = tags.some((t) => (p.linkedTags || []).includes(t));
+                        return stageMatch || tagMatch;
+                    });
+                    return { i, matched };
+                });
+
+                $("#linkBody").innerHTML = rows.length
+                    ? rows.map((row) => `
+                        <tr>
+                            <td><strong>${esc(row.i.id)}</strong></td>
+                            <td>${esc(row.i.title || "—")}</td>
+                            <td>${esc(row.i.stage || "—")}</td>
+                            <td>${esc((row.i.tags || ["—"])[0])}</td>
+                            <td>${fmt(row.matched.length)} سياسة</td>
+                            <td><button class="btn btn-soft" data-open-map="${esc(row.i.id)}">فتح بالخريطة</button></td>
+                        </tr>
+                    `).join("")
+                    : `<tr><td colspan="6">لا توجد مبادرات للربط حاليًا.</td></tr>`;
+            }
+
+            function renderAudit() {
+                const items = (IS.state.audit || []).slice(0, 16);
+                $("#audit").innerHTML = items.map((a) => `
+                    <li class="timeline-item">
+                        <h4>${esc(a.title || "حدث")}</h4>
+                        <p>${esc(a.meta || "")}</p>
+                        <div class="time">${esc((a.at || "").slice(0, 19).replace("T", " • "))}</div>
+                    </li>
+                `).join("");
+            }
+
+            function getPolicyById(id) {
+                return getPolicies().find((p) => p.id === id) || null;
+            }
+
+            function openPolicyModal(id) {
+                const p = getPolicyById(id);
+                if (!p) return;
+                activePolicyId = id;
+                $("#policyModalTitle").textContent = `${p.id} — ${p.title}`;
+                $("#pmStatus").innerHTML = POLICY_STATUS.map((s) => `<option>${esc(s)}</option>`).join("");
+                $("#pmStatus").value = p.status;
+                $("#pmCompliance").value = p.compliancePct;
+                $("#pmNote").value = "";
+
+                $("#policyHistory").innerHTML = (p.history || []).length
+                    ? p.history.map((h) => `
+                        <li>
+                            <strong>${esc((h.at || "").slice(0, 19).replace("T", " • "))}</strong>
+                            <div>${esc(h.note || "")}</div>
+                            <small>${esc(h.by || "System")}</small>
+                        </li>
+                    `).join("")
+                    : `<li>لا يوجد سجل تغييرات بعد.</li>`;
+
+                $("#modalPolicy").classList.remove("hidden");
+            }
+
+            function closePolicyModal() {
+                activePolicyId = null;
+                $("#modalPolicy").classList.add("hidden");
+            }
+
+            function mutateActivePolicy(mutator) {
+                if (!activePolicyId) return null;
+                const policies = getPolicies();
+                const idx = policies.findIndex((p) => p.id === activePolicyId);
+                if (idx < 0) return null;
+                mutator(policies[idx]);
+                IS.state.policyCenter.updatedAt = nowISO();
+                IS.save();
+                return policies[idx];
+            }
+
+            function addPolicyHistory(policy, note, by = "Policy Center") {
+                policy.history = policy.history || [];
+                policy.history.unshift({ at: nowISO(), by, note });
+                policy.history = policy.history.slice(0, 30);
+            }
+
+            async function syncPoliciesFromApi({ silent = true } = {}) {
+                try {
+                    const payload = await apiRequest("/api/v2/governance/policies", { method: "GET", timeoutMs: 3600 });
+                    const rows = Array.isArray(payload?.items) ? payload.items : (Array.isArray(payload) ? payload : []);
+                    if (rows.length) {
+                        const normalized = rows.map((p) => ({
+                            id: String(p.id || p.policyId || `POL-${Math.floor(1000 + Math.random() * 9000)}`),
+                            title: String(p.title || p.name || "سياسة"),
+                            owner: String(p.owner || p.department || "غير محدد"),
+                            version: String(p.version || "1.0"),
+                            status: POLICY_STATUS.includes(String(p.status || "")) ? String(p.status) : "مسودة",
+                            compliancePct: clamp(Number(p.compliancePct || p.compliance || 0), 0, 100),
+                            effectiveDate: String(p.effectiveDate || nowISO().slice(0, 10)),
+                            expiryDate: String(p.expiryDate || nowISO().slice(0, 10)),
+                            linkedStages: Array.isArray(p.linkedStages) ? p.linkedStages : [],
+                            linkedTags: Array.isArray(p.linkedTags) ? p.linkedTags : [],
+                            history: Array.isArray(p.history) ? p.history : []
+                        }));
+                        IS.state.policyCenter.policies = normalized;
+                        IS.audit("مزامنة Policy Center من API", `${fmt(normalized.length)} سياسة`);
+                        IS.save();
+                    }
+                    if (!silent) IS.toast("تمت مزامنة السياسات ✅", "ok", 1700);
+                    return { ok: true, count: rows.length };
+                } catch (err) {
+                    if (!silent) IS.toast("تعذر مزامنة السياسات، تم استخدام البيانات المحلية.", "warn", 2300);
+                    return { ok: false, error: String(err?.message || err) };
+                }
+            }
+
+            function renderAll() {
+                fillPolicyFilters();
+                renderNDA();
+                renderWorkflow();
+                renderKpis();
+                renderExpiryAlerts();
+                renderGovernanceKpis();
+                renderPolicyTable();
+                renderMapLinks();
+                renderAudit();
+
+                $$('[data-open-policy]').forEach((b) => {
+                    b.addEventListener('click', () => openPolicyModal(b.getAttribute('data-open-policy')));
+                });
+                $$('[data-open-map]').forEach((b) => {
+                    b.addEventListener('click', () => {
+                        localStorage.setItem('is_selected_initiative', b.getAttribute('data-open-map'));
+                        window.location.href = '../map/index.html';
+                    });
+                });
+            }
+
+            async function init() {
+                ensurePolicyCenter();
+                IS.audit("فتح Policy Center", "policies");
+                IS.save();
+
+                await syncPoliciesFromApi({ silent: true });
+                renderAll();
+
+                $("#btnAccept").addEventListener("click", () => {
+                    const btn = document.querySelector("[data-accept-policy]");
+                    if (btn) btn.click();
+                    IS.audit("تأكيد تعهد السرية من Policy Center", "NDA");
+                    IS.save();
+                    renderAll();
+                });
+
+                $("#btnRevoke").addEventListener("click", () => {
+                    IS.state.policies.accepted = false;
+                    IS.state.policies.acceptedAt = null;
+                    IS.audit("إلغاء تعهد السرية (تجريبي)", "NDA");
+                    IS.save();
+                    IS.toast("تم إلغاء التعهد (تجريبي)", "warn", 1900);
+                    renderAll();
+                });
+
+                $("#btnWorkflowForward").addEventListener("click", () => {
+                    const idx = WORKFLOW_STEPS.indexOf(IS.state.policyCenter.workflowStage);
+                    if (idx < WORKFLOW_STEPS.length - 1) {
+                        IS.state.policyCenter.workflowStage = WORKFLOW_STEPS[idx + 1];
+                        IS.audit("تقدم Workflow السياسات", IS.state.policyCenter.workflowStage);
+                        IS.save();
+                        renderAll();
+                    }
+                });
+
+                $("#btnWorkflowBack").addEventListener("click", () => {
+                    const idx = WORKFLOW_STEPS.indexOf(IS.state.policyCenter.workflowStage);
+                    if (idx > 0) {
+                        IS.state.policyCenter.workflowStage = WORKFLOW_STEPS[idx - 1];
+                        IS.audit("إرجاع Workflow السياسات", IS.state.policyCenter.workflowStage);
+                        IS.save();
+                        renderAll();
+                    }
+                });
+
+                $("#btnWorkflowNext").addEventListener("click", () => {
+                    const idx = WORKFLOW_STEPS.indexOf(IS.state.policyCenter.workflowStage);
+                    IS.state.policyCenter.workflowStage = WORKFLOW_STEPS[(idx + 1) % WORKFLOW_STEPS.length];
+                    IS.audit("تحديث سريع لمسار اعتماد السياسات", IS.state.policyCenter.workflowStage);
+                    IS.save();
+                    renderAll();
+                });
+
+                $("#btnExport").addEventListener("click", () => {
+                    IS.audit("طباعة Policy Center", "export/pdf");
+                    IS.save();
+                    window.print();
+                });
+
+                $("#pQ").addEventListener("input", renderAll);
+                $("#pOwner").addEventListener("input", renderAll);
+                $("#pStatus").addEventListener("change", renderAll);
+                $("#pStage").addEventListener("change", renderAll);
+
+                $("#pmAddNote").addEventListener("click", () => {
+                    const note = String($("#pmNote").value || "").trim();
+                    if (!note) {
+                        IS.toast("أدخل ملاحظة أولًا", "warn", 1400);
+                        return;
+                    }
+                    const p = mutateActivePolicy((policy) => {
+                        addPolicyHistory(policy, note, "Policy Manager");
+                    });
+                    if (!p) return;
+                    IS.audit("إضافة ملاحظة لسجل سياسة", p.id);
+                    $("#pmNote").value = "";
+                    renderAll();
+                    openPolicyModal(p.id);
+                });
+
+                $("#pmSave").addEventListener("click", () => {
+                    const nextStatus = $("#pmStatus").value;
+                    const nextCompliance = clamp(Number($("#pmCompliance").value || 0), 0, 100);
+                    const note = String($("#pmNote").value || "").trim();
+
+                    const p = mutateActivePolicy((policy) => {
+                        const beforeStatus = policy.status;
+                        const beforeCompliance = policy.compliancePct;
+                        policy.status = POLICY_STATUS.includes(nextStatus) ? nextStatus : policy.status;
+                        policy.compliancePct = nextCompliance;
+                        if (note) addPolicyHistory(policy, note, "Policy Manager");
+                        if (beforeStatus !== policy.status || beforeCompliance !== policy.compliancePct) {
+                            addPolicyHistory(policy, `تحديث الحالة إلى ${policy.status} وامتثال ${policy.compliancePct}%`, "Policy Center");
+                        }
+                    });
+                    if (!p) return;
+                    IS.audit("تحديث سياسة", p.id);
+                    IS.save();
+                    renderAll();
+                    openPolicyModal(p.id);
+                    IS.toast("تم حفظ التغييرات ✅", "ok", 1600);
+                });
+
+                $("#btnApiSettings").addEventListener("click", openApiModal);
+                $("#btnApiSave").addEventListener("click", async () => {
+                    const base = setApiBase($("#apiBaseInput").value);
+                    $("#apiStateHint").textContent = `تم حفظ العنوان: ${base || "(فارغ)"}`;
+                    const res = await syncPoliciesFromApi({ silent: true });
+                    if (res.ok) {
+                        IS.toast("تم حفظ الإعدادات والاتصال ناجح ✅", "ok", 1800);
+                        closeApiModal();
+                        renderAll();
+                    } else {
+                        IS.toast("تم حفظ الإعدادات مع اعتماد البيانات المحلية.", "warn", 2000);
+                    }
+                });
+
+                $("#btnApiTest").addEventListener("click", async () => {
+                    const base = setApiBase($("#apiBaseInput").value);
+                    $("#apiStateHint").textContent = "جارٍ اختبار الاتصال...";
+                    const res = await syncPoliciesFromApi({ silent: true });
+                    if (res.ok) {
+                        $("#apiStateHint").textContent = `نجاح الاتصال (${base}) • السياسات: ${fmt(res.count || 0)}`;
+                        IS.toast("الاتصال ناجح ✅", "ok", 1600);
+                        renderAll();
+                    } else {
+                        $("#apiStateHint").textContent = "فشل الاتصال، سيتم استخدام البيانات المحلية.";
+                        IS.toast("الاتصال غير متاح", "warn", 1700);
+                    }
+                });
+
+                $$('[data-close-policy]').forEach((el) => el.addEventListener('click', closePolicyModal));
+                $$('[data-close-api]').forEach((el) => el.addEventListener('click', closeApiModal));
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        closePolicyModal();
+                        closeApiModal();
+                    }
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", init);
+        })();
+    </script>
+
+</body>
+
+</html>

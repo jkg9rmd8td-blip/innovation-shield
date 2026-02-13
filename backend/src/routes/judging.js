@@ -96,7 +96,7 @@ router.post(
 
       await writeAudit({
         user: req.user,
-        action: AUDIT_ACTIONS.INITIATIVE_APPROVE,
+        action: AUDIT_ACTIONS.REWARD_DISTRIBUTION,
         operation: "reward_distribution",
         entityId: id,
         before,

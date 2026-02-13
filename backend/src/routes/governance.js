@@ -10,7 +10,7 @@ const router = Router();
 router.post(
   "/pledge",
   authRequired,
-  requirePermission(PERMISSIONS.GOVERNANCE_APPROVE),
+  requirePermission(PERMISSIONS.GOVERNANCE_PLEDGE_SIGN),
   async (req, res, next) => {
     try {
       const pledgeText = String(req.body?.pledgeText || "").trim();
@@ -19,7 +19,7 @@ router.post(
       const row = await addPledge({ user: req.user, text: pledgeText });
       await writeAudit({
         user: req.user,
-        action: AUDIT_ACTIONS.GOVERNANCE_PLEDGE,
+        action: AUDIT_ACTIONS.GOVERNANCE_PLEDGE_SIGN,
         operation: "submit_pledge",
         entityId: row.id,
         before: null,
@@ -36,7 +36,7 @@ router.post(
 router.post(
   "/confidentiality",
   authRequired,
-  requirePermission(PERMISSIONS.GOVERNANCE_APPROVE),
+  requirePermission(PERMISSIONS.GOVERNANCE_CONFIDENTIALITY_APPROVE),
   async (req, res, next) => {
     try {
       const note = String(req.body?.note || "موافقة سرية");
@@ -44,7 +44,7 @@ router.post(
 
       await writeAudit({
         user: req.user,
-        action: AUDIT_ACTIONS.GOVERNANCE_CONFIDENTIALITY,
+        action: AUDIT_ACTIONS.GOVERNANCE_CONFIDENTIALITY_APPROVE,
         operation: "submit_confidentiality_approval",
         entityId: row.id,
         before: null,

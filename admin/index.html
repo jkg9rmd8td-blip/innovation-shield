@@ -1,47 +1,18 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>درع الابتكار | مركز الإدارة</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../ui/luxe.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Innovation Shield V2 Redirect</title>
+  <meta http-equiv="refresh" content="0;url=/frontend/portals/admin/index.html" />
 </head>
 <body>
-  <main class="container">
-    <section class="panel">
-      <h1 style="margin-top:0">لوحة الإدارة العليا</h1>
-      <div class="hero-note"><span class="dot"></span><span id="who">—</span></div>
-      <div style="margin-top:10px;"><a class="pill" href="judging.html">الانتقال إلى مسار التحكيم الاحترافي</a></div>
-      <div style="margin-top:10px;">
-        <div class="small muted">صلاحيات الدور</div>
-        <div id="adminPerms" style="margin-top:6px;"></div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <h3>الخدمات المتاحة للدور</h3>
-      <div id="adminServices" class="grid" style="margin-top:10px;"></div>
-    </section>
-
-    <section class="panel">
-      <h3>Role Matrix</h3>
-      <table class="tbl-lite"><thead><tr><th>الدور</th><th>الصلاحيات</th></tr></thead><tbody id="matrix"></tbody></table>
-    </section>
-
-    <section class="panel">
-      <h3>إدارة المبادرات</h3>
-      <table class="tbl-lite"><thead><tr><th>المعرف</th><th>العنوان</th><th>الحالة</th><th>المتوسط</th><th>إجراء</th></tr></thead><tbody id="initiatives"></tbody></table>
-    </section>
-
-    <section class="panel">
-      <h3>Audit Log (قبل/بعد)</h3>
-      <table class="tbl-lite"><thead><tr><th>الوقت</th><th>المستخدم</th><th>العملية</th><th>الإجراء</th><th>قبل</th><th>بعد</th></tr></thead><tbody id="audit"></tbody></table>
-    </section>
-  </main>
-
-  <script type="module" src="../ui/admin-dashboard.js"></script>
+  <script>
+    const target = '/frontend/portals/admin/index.html';
+    const q = location.search || "";
+    const h = location.hash || "";
+    location.replace(target + q + h);
+  </script>
+  <p>Redirecting to V2 portal...</p>
 </body>
 </html>

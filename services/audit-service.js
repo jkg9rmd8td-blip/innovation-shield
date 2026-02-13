@@ -2,7 +2,7 @@ import { readJson, writeJson, nowISO } from "../core/storage.js";
 
 const KEY = "AUDIT_LOG";
 
-export function listAuditLogs(limit = 100) {
+export function listAuditLogs(limit = 120) {
   return readJson(KEY, []).slice(0, limit);
 }
 
@@ -10,7 +10,9 @@ export function logAudit({ user, action, operation, before, after, entityId }) {
   const logs = readJson(KEY, []);
   logs.unshift({
     id: `AUD-${Math.random().toString(16).slice(2, 8)}`,
-    user: user ? { id: user.id, name: user.name, role: user.role } : null,
+    user: user
+      ? { id: user.id, name: user.name, role: user.role, roleLabel: user.roleLabel }
+      : null,
     at: nowISO(),
     action,
     operation,
@@ -18,7 +20,8 @@ export function logAudit({ user, action, operation, before, after, entityId }) {
     before: before ?? null,
     after: after ?? null,
   });
-  writeJson(KEY, logs.slice(0, 500));
+
+  writeJson(KEY, logs.slice(0, 1000));
 }
 
 export function withAudit(handler, { action, operation, entityIdResolver } = {}) {

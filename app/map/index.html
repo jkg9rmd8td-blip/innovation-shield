@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>درع الابتكار | خريطة الابتكار</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/app.css" />
+    <style>
+        .map-controls-grid {
+            display: grid;
+            grid-template-columns: 1.4fr repeat(7, minmax(110px, 1fr)) auto;
+            gap: 8px;
+        }
+
+        .map-mini-analytics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .stage-mini-card {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .04);
+            padding: 8px;
+            min-height: 90px;
+            display: grid;
+            gap: 4px;
+        }
+
+        .stage-mini-card p {
+            margin: 0;
+            color: var(--muted2);
+            font-size: 11px;
+        }
+
+        .stage-mini-card strong {
+            font-size: 15px;
+            font-weight: 900;
+        }
+
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .heat-cell {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            min-height: 66px;
+            padding: 8px;
+            display: grid;
+            align-content: space-between;
+            background: rgba(255, 255, 255, .03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .heat-cell::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(145deg, rgba(255, 90, 122, .28), rgba(255, 214, 106, .20), rgba(66, 246, 231, .14));
+            opacity: var(--heat, 0.12);
+            pointer-events: none;
+        }
+
+        .critical-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        .critical-list li {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .03);
+            padding: 8px;
+        }
+
+        .critical-list .meta {
+            margin-top: 4px;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .live-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .14);
+            background: rgba(255, 255, 255, .05);
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .live-switch.is-on {
+            border-color: rgba(57, 229, 140, .30);
+            background: rgba(57, 229, 140, .14);
+        }
+
+        .map-card-kpis {
+            display: grid;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .map-card-kpis small {
+            color: var(--muted2);
+            font-size: 10px;
+        }
+
+        .detail-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .change-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 8px;
+            max-height: 220px;
+            overflow: auto;
+        }
+
+        .change-list li {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .03);
+            padding: 8px;
+        }
+
+        .change-list .time {
+            display: block;
+            color: var(--muted2);
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 1200px) {
+            .map-controls-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .map-mini-analytics,
+            .heatmap-grid,
+            .detail-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="career-body">
+
+    <div class="platform-bg">
+        <div class="mesh mesh-1"></div>
+        <div class="mesh mesh-2"></div>
+        <div class="mesh mesh-3"></div>
+    </div>
+
+    <div class="platform-shell">
+
+        <!-- TOPBAR -->
+        <header class="platform-topbar reveal">
+            <div class="topbar-brand">
+                <div class="brand-mark">IS</div>
+                <div>
+                    <h1 class="topbar-title">خريطة الابتكار التفاعلية</h1>
+                    <p class="topbar-sub">ابتكار حر + تحديات واقعية + AI مساعد + تحكيم بشري عادل</p>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <a href="../../index.html">الرئيسية</a>
+                <a href="../map/index.html" class="active">خريطة الابتكار</a>
+                <a href="../prototype/index.html">النماذج الأولية</a>
+                <a href="../employee/index.html">مسار الموظف</a>
+                <a href="../judging/index.html">التحكيم</a>
+                <a href="../command/index.html">لوحة القيادة</a>
+                <a href="../policies/index.html">السياسات</a>
+                <a href="../report/index.html">التقرير التنفيذي</a>
+            </nav>
+
+            <div class="topbar-actions">
+                <span class="live-pill">🧭 Kanban Live</span>
+                <span class="live-switch" id="liveState">LIVE: OFF</span>
+                <button class="btn btn-soft" id="btnSeed">عينات</button>
+                <button class="btn btn-soft" id="btnLiveToggle">تشغيل Live</button>
+                <button class="btn btn-ghost" id="btnApiSettings">API</button>
+                <button class="btn btn-primary" id="btnNew">إضافة مبادرة</button>
+            </div>
+        </header>
+
+        <section class="workspace-banner reveal">
+            <div>
+                <span class="eyebrow">Innovation Arena</span>
+                <h2 class="hero-title" style="margin-top:8px;">
+                    اختر: إما إطلاق فكرة حرة أو تبنّي تحدٍ حقيقي من التجمع
+                </h2>
+                <p class="hero-sub">
+                    هذه الخريطة تجمع بين مبادرات الموظفين الحرة والمشاكل التشغيلية/الخدمية الحقيقية.
+                    بعد اختيار المسار، يساعدك AI في بناء الفكرة، ثم تنتقل إلى تحكيم بشري يضمن الجودة والعدالة.
+                </p>
+            </div>
+            <div class="quality-pill">
+                Employee • Patient • Ops • Quality • Tech • HR
+            </div>
+        </section>
+
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>مسارات الابتكار المفتوحة</h3>
+                <span class="panel-note">حرية كاملة ضمن احتياج حقيقي</span>
+            </div>
+            <ul class="insight-list" style="margin:0;">
+                <li>ابتكر لأي مسار تحسين: الموظف، المريض، التشغيل، الجودة، التقنية، الموارد البشرية.</li>
+                <li>أو اختر تحديًا فعليًا من قائمة التحديات الواقعية وتنافس على حلّه.</li>
+                <li>استخدم AI لصياغة المشكلة والحل وMVP والأثر قبل التقديم.</li>
+                <li>انتقل للتحكيم البشري لضمان العدالة والدقة وجودة القرار.</li>
+            </ul>
+        </section>
+
+        <!-- CONTROLS -->
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>التحكم</h3>
+                <span class="panel-note">اسحب البطاقة بين الأعمدة لتغيير المرحلة أو دفعها للتحكيم</span>
+            </div>
+
+            <div class="table-tools map-controls-grid">
+                <input id="q" placeholder="بحث سريع (عنوان/معرف/تصنيف)…" />
+                <input id="qSemantic" placeholder="بحث دلالي Semantic Search…" />
+                <select id="status">
+                    <option value="">كل الحالات</option>
+                    <option>مسودة</option>
+                    <option>قيد التحكيم</option>
+                    <option>قيد التطوير</option>
+                    <option>معتمد</option>
+                    <option>مرفوض</option>
+                    <option>مطبق</option>
+                </select>
+
+                <select id="tag">
+                    <option value="">كل التصنيفات</option>
+                </select>
+                <select id="maturityFilter">
+                    <option value="">كل مستويات النضج</option>
+                    <option value="low">منخفض</option>
+                    <option value="mid">متوسط</option>
+                    <option value="high">مرتفع</option>
+                </select>
+                <select id="riskFilter">
+                    <option value="">كل المخاطر</option>
+                    <option value="low">مخاطر منخفضة</option>
+                    <option value="mid">مخاطر متوسطة</option>
+                    <option value="high">مخاطر مرتفعة</option>
+                </select>
+                <select id="priorityFilter">
+                    <option value="">كل الأولويات</option>
+                    <option>حرجة</option>
+                    <option>عالية</option>
+                    <option>متوسطة</option>
+                    <option>منخفضة</option>
+                </select>
+                <select id="orgFilter">
+                    <option value="">كل الجهات</option>
+                </select>
+                <input id="dateFrom" type="date" />
+                <input id="dateTo" type="date" />
+
+                <span class="table-count" id="pill">—</span>
+                <button class="btn btn-ghost" id="btnReset">إعادة</button>
+            </div>
+        </section>
+
+        <section class="insights-grid reveal">
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>Mini Analytics حسب المرحلة</h3>
+                    <span class="panel-note">Count • Maturity • Risk</span>
+                </div>
+                <div class="map-mini-analytics" id="stageMiniAnalytics"></div>
+            </section>
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>خريطة حرارية المبادرات</h3>
+                    <span class="panel-note">Heatmap حسب المرحلة والأولوية</span>
+                </div>
+                <div class="heatmap-grid" id="mapHeat"></div>
+            </section>
+        </section>
+
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>سوق التحديات الواقعية</h3>
+                <span class="panel-note">قائمة مشاكل/مبادرات حرجة تحتاج حلولًا تنافسية</span>
+            </div>
+            <ul class="critical-list" id="criticalList"></ul>
+        </section>
+
+        <!-- BOARD -->
+        <section class="board reveal" id="board"></section>
+
+        <!-- NEW MODAL -->
+        <div class="modal hidden" id="modalNew">
+            <div class="modal-backdrop" data-close></div>
+            <div class="modal-card">
+                <div class="mhead">
+                    <div class="mtitle">إضافة مبادرة</div>
+                    <button class="btn btn-ghost" data-close>إغلاق</button>
+                </div>
+
+                <div class="mgrid">
+                    <div class="field">
+                        <div class="lbl">العنوان</div>
+                        <input id="nTitle" placeholder="مثال: أتمتة مسار…">
+                    </div>
+
+                    <div class="field">
+                        <div class="lbl">التصنيف</div>
+                        <select id="nTag" class="select"></select>
+                    </div>
+
+                    <div class="field">
+                        <div class="lbl">المرحلة</div>
+                        <select id="nStage" class="select"></select>
+                    </div>
+
+                    <div class="field">
+                        <div class="lbl">Template جاهز</div>
+                        <select id="nTemplate" class="select">
+                            <option value="">بدون Template</option>
+                            <option value="service-ops">تحسين تشغيلي</option>
+                            <option value="patient-exp">تجربة مستفيد</option>
+                            <option value="digital-ai">حل رقمي/ذكاء اصطناعي</option>
+                            <option value="quality-compliance">جودة وامتثال</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <div class="lbl">حالة البداية</div>
+                        <select id="nStatus" class="select">
+                            <option>مسودة</option>
+                            <option>قيد التحكيم</option>
+                            <option>قيد التطوير</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <div class="lbl">الجهة</div>
+                        <input id="nOrg" placeholder="مثال: إدارة الجودة">
+                    </div>
+                </div>
+
+                <div class="field" style="margin-top:10px;">
+                    <div class="lbl">ملخص سريع</div>
+                    <textarea id="nDesc" rows="4"
+                        style="width:100%; border-radius:12px; border:1px solid rgba(53,82,110,.22); padding:10px; font-family:inherit;"></textarea>
+                </div>
+
+                <div class="panel" style="margin-top:10px;">
+                    <div class="panel-head">
+                        <h3>Validation Layer</h3>
+                        <span class="panel-note">لاختبار الاحتياج قبل التحكيم</span>
+                    </div>
+                    <div class="mgrid">
+                        <div class="field">
+                            <div class="lbl">المشكلة المؤكدة</div>
+                            <input id="nProblem" placeholder="ما المشكلة الفعلية؟">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">الفئة المستفيدة</div>
+                            <input id="nBeneficiary" placeholder="مرضى / موظفين / أقسام ...">
+                        </div>
+                        <div class="field" style="grid-column:1/-1;">
+                            <div class="lbl">دليل الاحتياج / ملاحظات الاختبار</div>
+                            <textarea id="nEvidence" rows="3"
+                                style="width:100%; border-radius:12px; border:1px solid rgba(53,82,110,.22); padding:10px; font-family:inherit;"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mfoot">
+                    <div class="mtext" id="nHint">سيتم إنشاء معرف تلقائي + إضافة سجل تدقيق.</div>
+                    <button class="btn btn-primary" id="nCreate">إنشاء</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- DETAILS MODAL -->
+        <div class="modal hidden" id="modalDetails">
+            <div class="modal-backdrop" data-close2></div>
+            <div class="modal-card">
+                <div class="mhead">
+                    <div class="mtitle" id="dTitle">تفاصيل</div>
+                    <button class="btn btn-ghost" data-close2>إغلاق</button>
+                </div>
+
+                <div class="mgrid">
+                    <div class="field">
+                        <div class="lbl">المعرف</div>
+                        <input id="dId" disabled>
+                    </div>
+
+                    <div class="field">
+                        <div class="lbl">المرحلة</div>
+                        <select id="dStage" class="select"></select>
+                    </div>
+
+                    <div class="field">
+                        <div class="lbl">الحالة</div>
+                        <select id="dStatus" class="select">
+                            <option>مسودة</option>
+                            <option>قيد التحكيم</option>
+                            <option>قيد التطوير</option>
+                            <option>معتمد</option>
+                            <option>مرفوض</option>
+                            <option>مطبق</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <div class="lbl">التقدم %</div>
+                        <input id="dProgress" type="number" min="0" max="100" step="1">
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:10px;">
+                    <div class="panel-head">
+                        <h3>Prototype (اختياري)</h3>
+                        <span class="panel-note">جاهزية + دعم</span>
+                    </div>
+
+                    <div class="mgrid">
+                        <div class="field">
+                            <div class="lbl">القالب</div>
+                            <select id="pTemplate" class="select">
+                                <option value="">—</option>
+                                <option>Dashboard</option>
+                                <option>Landing Page</option>
+                                <option>Chatbot</option>
+                                <option>Mobile Mockup</option>
+                                <option>Data Flow Diagram</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <div class="lbl">التقدم %</div>
+                            <input id="pProgress" type="number" min="0" max="100" step="1" value="0">
+                        </div>
+
+                        <div class="field">
+                            <div class="lbl">وحدة الدعم</div>
+                            <select id="pSupport" class="select">
+                                <option>Prototype Support Unit</option>
+                                <option>UI/UX</option>
+                                <option>Development</option>
+                                <option>Analytics</option>
+                            </select>
+                        </div>
+
+                        <div class="field">
+                            <div class="lbl">الحالة</div>
+                            <select id="pStatus" class="select">
+                                <option>قيد التطوير</option>
+                                <option>جاهز للتحكيم</option>
+                                <option>مكتمل</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:10px;">
+                    <div class="panel-head">
+                        <h3>Validation + Impact</h3>
+                        <span class="panel-note">جاهزية المشكلة + أثر اقتصادي تقديري</span>
+                    </div>
+                    <div class="mgrid">
+                        <div class="field">
+                            <div class="lbl">المشكلة المؤكدة</div>
+                            <input id="dProblem" placeholder="وصف مختصر للمشكلة">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">الفئة المستفيدة</div>
+                            <input id="dBeneficiary" placeholder="من المتأثر؟">
+                        </div>
+                        <div class="field" style="grid-column:1/-1;">
+                            <div class="lbl">دليل الاحتياج / نتائج مقابلات</div>
+                            <textarea id="dEvidence" rows="3"
+                                style="width:100%; border-radius:12px; border:1px solid rgba(53,82,110,.22); padding:10px; font-family:inherit;"></textarea>
+                        </div>
+                        <div class="field">
+                            <div class="lbl">توفير سنوي تقديري (ريال)</div>
+                            <input id="dCostSaving" type="number" min="0" step="1000" value="0">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">تخفيض وقت الخدمة (%)</div>
+                            <input id="dTimeSaving" type="number" min="0" max="100" step="1" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:10px;">
+                    <div class="panel-head">
+                        <h3>Post-Implementation Monitoring</h3>
+                        <span class="panel-note">متابعة 3/6 أشهر ومقارنة المتوقع بالفعلي</span>
+                    </div>
+                    <div class="mgrid">
+                        <div class="field">
+                            <div class="lbl">مسؤول المتابعة</div>
+                            <input id="dMonOwner" placeholder="اسم المسؤول">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">ملاحظات المتابعة</div>
+                            <input id="dMonNotes" placeholder="ملاحظات مختصرة">
+                        </div>
+
+                        <div class="field">
+                            <div class="lbl">المتوقع: توفير سنوي (SAR)</div>
+                            <input id="dMonExpectedSaving" type="number" min="0" step="1000" value="0">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">المتوقع: خفض وقت (%)</div>
+                            <input id="dMonExpectedTime" type="number" min="0" max="100" step="1" value="0">
+                        </div>
+
+                        <div class="field">
+                            <div class="lbl">فعلي 3 أشهر: توفير (SAR)</div>
+                            <input id="dMon3Saving" type="number" min="0" step="1000">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">فعلي 3 أشهر: خفض وقت (%)</div>
+                            <input id="dMon3Time" type="number" min="0" max="100" step="1">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">فعلي 3 أشهر: تحسن جودة (%)</div>
+                            <input id="dMon3Quality" type="number" min="0" max="100" step="1">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">فعلي 3 أشهر: رضا المستفيد (%)</div>
+                            <input id="dMon3Sat" type="number" min="0" max="100" step="1">
+                        </div>
+
+                        <div class="field">
+                            <div class="lbl">فعلي 6 أشهر: توفير (SAR)</div>
+                            <input id="dMon6Saving" type="number" min="0" step="1000">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">فعلي 6 أشهر: خفض وقت (%)</div>
+                            <input id="dMon6Time" type="number" min="0" max="100" step="1">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">فعلي 6 أشهر: تحسن جودة (%)</div>
+                            <input id="dMon6Quality" type="number" min="0" max="100" step="1">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">فعلي 6 أشهر: رضا المستفيد (%)</div>
+                            <input id="dMon6Sat" type="number" min="0" max="100" step="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:10px;">
+                    <div class="panel-head">
+                        <h3>مهام سريعة</h3>
+                        <span class="panel-note">Todo • Doing • Done</span>
+                    </div>
+
+                    <div class="mgrid">
+                        <div class="field">
+                            <div class="lbl">عنوان المهمة</div>
+                            <input id="tTitle" placeholder="مثال: توثيق النتائج">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">المسؤول</div>
+                            <input id="tOwner" placeholder="مثال: عضو 2">
+                        </div>
+                        <div class="field">
+                            <div class="lbl">الحالة</div>
+                            <select id="tCol" class="select">
+                                <option value="todo">Todo</option>
+                                <option value="doing">Doing</option>
+                                <option value="done">Done</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <div class="lbl">تاريخ الاستحقاق</div>
+                            <input id="tDue" type="date">
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+                        <button class="btn btn-soft" id="tAdd">إضافة مهمة</button>
+                        <span class="table-count" id="tCount">—</span>
+                    </div>
+
+                    <ul class="insight-list" id="tList" style="margin-top:10px;"></ul>
+                </div>
+
+                <div class="detail-grid-2">
+                    <div class="panel" style="margin-top:10px;">
+                        <div class="panel-head">
+                            <h3>تعليقات وملاحظات</h3>
+                            <span class="panel-note">Collaboration</span>
+                        </div>
+                        <div class="mgrid">
+                            <div class="field">
+                                <div class="lbl">تعليق جديد</div>
+                                <input id="dCommentText" placeholder="اكتب تعليقًا..." />
+                            </div>
+                            <div class="field">
+                                <div class="lbl">كاتب التعليق</div>
+                                <input id="dCommentAuthor" placeholder="اسم الموظف / @mention">
+                            </div>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <button class="btn btn-soft" id="dCommentAdd">إضافة تعليق</button>
+                        </div>
+                        <ul class="change-list" id="dComments" style="margin-top:10px;"></ul>
+                    </div>
+
+                    <div class="panel" style="margin-top:10px;">
+                        <div class="panel-head">
+                            <h3>مرفقات وتاريخ التغيير</h3>
+                            <span class="panel-note">Attachments • Change Log</span>
+                        </div>
+                        <div class="mgrid">
+                            <div class="field">
+                                <div class="lbl">اسم المرفق</div>
+                                <input id="dFileName" placeholder="مثال: business-case.pdf">
+                            </div>
+                            <div class="field">
+                                <div class="lbl">نوع المرفق</div>
+                                <select id="dFileType" class="select">
+                                    <option>Document</option>
+                                    <option>Image</option>
+                                    <option>Pitch</option>
+                                    <option>Prototype</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-top:8px;">
+                            <button class="btn btn-soft" id="dFileAdd">إضافة مرفق</button>
+                        </div>
+                        <ul class="change-list" id="dFiles" style="margin-top:10px;"></ul>
+                        <div class="hr"></div>
+                        <ul class="change-list" id="dChangeLog"></ul>
+                    </div>
+                </div>
+
+                <div class="mfoot">
+                    <div class="mtext">التعديل هنا ينعكس في لوحة القيادة والتحكيم.</div>
+                    <button class="btn btn-primary" id="dSave">حفظ</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal hidden" id="modalApi">
+            <div class="modal-backdrop" data-close-api></div>
+            <div class="modal-card">
+                <div class="mhead">
+                    <div class="mtitle">إعدادات الربط API</div>
+                    <button class="btn btn-ghost" data-close-api>إغلاق</button>
+                </div>
+                <div class="field">
+                    <div class="lbl">API Base URL</div>
+                    <input id="apiBaseInput" placeholder="http://127.0.0.1:8080" dir="ltr" />
+                </div>
+                <div class="mfoot">
+                    <div class="mtext" id="apiStateHint">يمكن تغيير العنوان دون إعادة تحميل الصفحة.</div>
+                    <button class="btn btn-soft" id="btnApiTest">اختبار الاتصال</button>
+                    <button class="btn btn-primary" id="btnApiSave">حفظ</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="../../assets/js/app.js"></script>
+
+    <script>
+        (() => {
+            "use strict";
+
+            const $ = (s, r = document) => r.querySelector(s);
+            const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+            const IS = window.IS;
+
+            const fmt = (n) => new Intl.NumberFormat("ar-SA").format(Number(n || 0));
+            const clamp = (n, a, b) => Math.max(a, Math.min(b, Number(n || 0)));
+            const nowISO = () => new Date().toISOString();
+            const esc = (v) => String(v ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+            const normalize = (v) => String(v || "")
+                .toLowerCase()
+                .replace(/[أإآ]/g, "ا")
+                .replace(/ة/g, "ه")
+                .replace(/ى/g, "ي")
+                .replace(/\s+/g, " ")
+                .trim();
+            const toNullableNumber = (v, min = 0, max = null) => {
+                if (v == null || v === "") return null;
+                const n = Number(v);
+                if (!Number.isFinite(n)) return null;
+                let out = n;
+                if (min != null) out = Math.max(min, out);
+                if (max != null) out = Math.min(max, out);
+                return out;
+            };
+
+            const API_BASE_KEY = "IS_API_BASE";
+            const DEFAULT_API_BASE = localStorage.getItem(API_BASE_KEY) || "http://127.0.0.1:8080";
+            const SEARCH_ALIASES = {
+                "اللجنه": "اللجنة",
+                "لجنه": "اللجنة",
+                "جوده": "جودة",
+                "حرجه": "حرجة",
+                "رقمي": "رقمنة",
+                "ai": "ذكاء",
+                "ذكاء": "ذكاء"
+            };
+            const PRIORITY_RANK = { "حرجة": 4, "عالية": 3, "متوسطة": 2, "منخفضة": 1 };
+
+            const board = $("#board");
+            let current = null;
+            let liveMode = false;
+            let liveTimer = null;
+
+            const TEMPLATE_PRESETS = {
+                "service-ops": {
+                    tag: "تشغيلي",
+                    stage: "التقييم",
+                    status: "قيد التحكيم",
+                    title: "تحسين مسار تشغيلي",
+                    desc: "تحسين رحلة تشغيلية وتقليل الهدر التشغيلي.",
+                    problem: "تأخر في إنجاز العمليات اليومية.",
+                    beneficiary: "الفرق التشغيلية",
+                    evidence: "تحليل دورة التشغيل خلال 90 يوم."
+                },
+                "patient-exp": {
+                    tag: "تجربة مستفيد",
+                    stage: "الفكرة",
+                    status: "مسودة",
+                    title: "تحسين تجربة المستفيد",
+                    desc: "مبادرة لرفع رضا المستفيد وتقليل زمن الانتظار.",
+                    problem: "تذبذب تجربة المستفيد بين الأقسام.",
+                    beneficiary: "المرضى والزوار",
+                    evidence: "ملاحظات ميدانية + استبيانات رضا."
+                },
+                "digital-ai": {
+                    tag: "رقمنة",
+                    stage: "النموذج الأولي",
+                    status: "قيد التطوير",
+                    title: "حل رقمي مدعوم بالذكاء الاصطناعي",
+                    desc: "تحويل إجراء يدوي إلى خدمة رقمية ذكية.",
+                    problem: "الاعتماد على إجراءات يدوية بطيئة.",
+                    beneficiary: "الموظفون والمستفيدون",
+                    evidence: "قياس زمن الخدمة قبل الرقمنة."
+                },
+                "quality-compliance": {
+                    tag: "جودة",
+                    stage: "التقييم",
+                    status: "قيد التحكيم",
+                    title: "تعزيز جودة وامتثال",
+                    desc: "مبادرة لضبط الجودة ورفع الامتثال التشغيلي.",
+                    problem: "تفاوت في تطبيق معايير الجودة.",
+                    beneficiary: "الإدارة الإشرافية",
+                    evidence: "تقارير تدقيق داخلية."
+                }
+            };
+
+            const openNew = () => $("#modalNew").classList.remove("hidden");
+            const closeNew = () => $("#modalNew").classList.add("hidden");
+            const openDetails = () => $("#modalDetails").classList.remove("hidden");
+            const closeDetails = () => $("#modalDetails").classList.add("hidden");
+            const openApiModal = () => {
+                $("#apiBaseInput").value = getApiBase();
+                $("#apiStateHint").textContent = "يمكن تغيير العنوان دون إعادة تحميل الصفحة.";
+                $("#modalApi").classList.remove("hidden");
+            };
+            const closeApiModal = () => $("#modalApi").classList.add("hidden");
+
+            $$('[data-close]').forEach((b) => b.addEventListener("click", closeNew));
+            $$("#modalNew .modal-backdrop").forEach((b) => b.addEventListener("click", closeNew));
+            $$('[data-close2]').forEach((b) => b.addEventListener("click", closeDetails));
+            $$("#modalDetails .modal-backdrop").forEach((b) => b.addEventListener("click", closeDetails));
+            $$('[data-close-api]').forEach((b) => b.addEventListener("click", closeApiModal));
+            $$("#modalApi .modal-backdrop").forEach((b) => b.addEventListener("click", closeApiModal));
+
+            function getApiBase() {
+                return (localStorage.getItem(API_BASE_KEY) || DEFAULT_API_BASE).replace(/\/+$/, "");
+            }
+
+            function setApiBase(nextBase) {
+                const clean = String(nextBase || "").trim().replace(/\/+$/, "");
+                if (!clean) return null;
+                localStorage.setItem(API_BASE_KEY, clean);
+                return clean;
+            }
+
+            function withTimeout(promise, ms = 3200) {
+                let timer = null;
+                const timeout = new Promise((_, reject) => {
+                    timer = setTimeout(() => reject(new Error("REQUEST_TIMEOUT")), ms);
+                });
+                return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+            }
+
+            async function apiRequest(path, { method = "GET", body, timeoutMs = 3200 } = {}) {
+                const res = await withTimeout(fetch(`${getApiBase()}${path}`, {
+                    method,
+                    headers: { "Content-Type": "application/json" },
+                    body: body ? JSON.stringify(body) : undefined
+                }), timeoutMs);
+
+                let json = null;
+                try { json = await res.json(); } catch { json = null; }
+                if (!res.ok) {
+                    const msg = json?.error?.message || json?.message || `${res.status}`;
+                    throw new Error(`API_${msg}`);
+                }
+                return json;
+            }
+
+            function mapStageToLocal(stageValue) {
+                const raw = normalize(stageValue || "");
+                const map = {
+                    "idea_submission": "الفكرة",
+                    "screening": "التقييم",
+                    "evaluation": "التقييم",
+                    "team_formation": "تشكيل الفريق",
+                    "prototype": "النموذج الأولي",
+                    "development": "التطوير",
+                    "pilot": "التجربة",
+                    "approval": "الاعتماد",
+                    "legal_protection": "الاعتماد",
+                    "launch": "التطبيق"
+                };
+                if (map[raw]) return map[raw];
+                return String(stageValue || "الفكرة");
+            }
+
+            function mapStatusToLocal(statusValue) {
+                const raw = normalize(statusValue || "");
+                const map = {
+                    "draft": "مسودة",
+                    "in_review": "قيد التحكيم",
+                    "in_progress": "قيد التطوير",
+                    "pilot": "مرحلة التجربة",
+                    "approved": "معتمد",
+                    "rejected": "مرفوض",
+                    "launched": "مطبق"
+                };
+                if (map[raw]) return map[raw];
+                return String(statusValue || "مسودة");
+            }
+
+            function mapStageToApi(stageValue) {
+                const raw = normalize(stageValue || "");
+                const map = {
+                    "الفكره": "idea_submission",
+                    "الفكرة": "idea_submission",
+                    "التقييم": "evaluation",
+                    "تشكيل الفريق": "team_formation",
+                    "النموذج الاولي": "prototype",
+                    "النموذج الأولي": "prototype",
+                    "التطوير": "development",
+                    "التجربه": "pilot",
+                    "التجربة": "pilot",
+                    "الاعتماد": "approval",
+                    "التطبيق": "launch"
+                };
+                if (map[raw]) return map[raw];
+                if (String(stageValue || "").includes("_")) return String(stageValue).trim();
+                return "evaluation";
+            }
+
+            function mapStatusToApi(statusValue) {
+                const raw = normalize(statusValue || "");
+                const map = {
+                    "مسوده": "draft",
+                    "مسودة": "draft",
+                    "قيد التحكيم": "in_review",
+                    "قيد التطوير": "in_progress",
+                    "مرحله التجربه": "pilot",
+                    "مرحلة التجربة": "pilot",
+                    "معتمد": "approved",
+                    "مرفوض": "rejected",
+                    "مطبق": "launched"
+                };
+                if (map[raw]) return map[raw];
+                if (String(statusValue || "").includes("_")) return String(statusValue).trim();
+                return "in_review";
+            }
+
+            function calcRiskProfile(profile) {
+                const p = profile || {};
+                const vals = [
+                    clamp(p.operational || 2, 1, 5),
+                    clamp(p.financial || 2, 1, 5),
+                    clamp(p.technical || 2, 1, 5),
+                    clamp(p.quality || 2, 1, 5),
+                    clamp(p.experience || 2, 1, 5)
+                ];
+                const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+                const indexPct = Math.round((avg / 5) * 100);
+                const mitigation = clamp(p.mitigationEffectivenessPct || 0, 0, 100);
+                const residualPct = Math.round(indexPct * (1 - mitigation / 100));
+                const level = residualPct >= 70 ? "مرتفع" : (residualPct >= 40 ? "متوسط" : "منخفض");
+                return { indexPct, residualPct, level };
+            }
+
+            function getScore(i) {
+                if (Number.isFinite(Number(i?.score))) return clamp(i.score, 0, 100);
+                const r = i?.rubric || {};
+                const vals = ["problem", "feasible", "impact", "prototype", "risk"].map((k) => clamp(r[k] || 0, 0, 5));
+                const sum = vals.reduce((a, b) => a + b, 0);
+                return Math.round((sum / 25) * 100);
+            }
+
+            function calcMaturity(i) {
+                const score = getScore(i);
+                const progress = clamp(i?.prototype?.progress ?? i?.progress ?? 0, 0, 100);
+                const validation = i?.validation || {};
+                const v = ["problem", "beneficiary", "evidence"].filter((k) => String(validation[k] || "").trim()).length;
+                const validationPct = Math.round((v / 3) * 100);
+                return clamp(Math.round((score * 0.45) + (progress * 0.35) + (validationPct * 0.20)), 0, 100);
+            }
+
+            function inferPriority(i) {
+                const maturity = calcMaturity(i);
+                const risk = calcRiskProfile(i?.riskProfile || {}).residualPct;
+                const urgency = Math.round((risk * 0.48) + ((100 - maturity) * 0.32) + ((100 - clamp(i?.progress || 0, 0, 100)) * 0.20));
+                if (urgency >= 72) return "حرجة";
+                if (urgency >= 56) return "عالية";
+                if (urgency >= 40) return "متوسطة";
+                return "منخفضة";
+            }
+
+            function bucketMaturity(i) {
+                const m = calcMaturity(i);
+                if (m >= 75) return "high";
+                if (m >= 50) return "mid";
+                return "low";
+            }
+
+            function bucketRisk(i) {
+                const r = calcRiskProfile(i?.riskProfile || {}).residualPct;
+                if (r >= 70) return "high";
+                if (r >= 40) return "mid";
+                return "low";
+            }
+
+            function ensureShape(i) {
+                i.tags = Array.isArray(i.tags) ? i.tags : [];
+                i.validation = i.validation || { problem: "", beneficiary: "", evidence: "" };
+                i.impact = i.impact || { costSaving: 0, timeSavingPct: 0, implementationCost: 0, operatingCost: 0, horizonYears: 3, confidencePct: 75 };
+                i.riskProfile = i.riskProfile || { operational: 2, financial: 2, technical: 2, quality: 2, experience: 2, mitigationEffectivenessPct: 0, mitigationPlan: "", owner: "", reviewCycle: "شهري" };
+                i.postMonitoring = i.postMonitoring || {
+                    owner: "",
+                    notes: "",
+                    expected: { annualSaving: 0, timeSavingPct: 0 },
+                    m3: { annualSaving: null, timeSavingPct: null, qualityImprovementPct: null, satisfactionPct: null, recordedAt: null },
+                    m6: { annualSaving: null, timeSavingPct: null, qualityImprovementPct: null, satisfactionPct: null, recordedAt: null }
+                };
+                i.tasks = Array.isArray(i.tasks) ? i.tasks : [];
+                i.comments = Array.isArray(i.comments) ? i.comments : [];
+                i.files = Array.isArray(i.files) ? i.files : [];
+                i.changeLog = Array.isArray(i.changeLog) ? i.changeLog : [];
+                i.organization = String(i.organization || i.org || i.department || "التجمع الصحي بالطائف");
+                i.score = Number.isFinite(Number(i.score)) ? clamp(i.score, 0, 100) : i.score ?? null;
+                i.stage = i.stage || "الفكرة";
+                i.status = i.status || "مسودة";
+                i.progress = clamp(i.progress || i.prototype?.progress || 0, 0, 100);
+                i.updatedAt = i.updatedAt || nowISO();
+                i.priority = i.priority || inferPriority(i);
+            }
+
+            function normalizeState() {
+                IS.state.initiatives = IS.state.initiatives || [];
+                IS.state.initiatives.forEach(ensureShape);
+            }
+
+            function addChange(i, action, details = "") {
+                if (!i) return;
+                i.changeLog = Array.isArray(i.changeLog) ? i.changeLog : [];
+                i.changeLog.unshift({ at: nowISO(), action, details });
+                if (i.changeLog.length > 80) i.changeLog = i.changeLog.slice(0, 80);
+            }
+
+            function getTaxonomy() {
+                return IS.state.taxonomy || ["تقني", "تشغيلي", "سريري", "تجربة مستفيد", "جودة", "مالي", "رقمنة"];
+            }
+
+            function fillStages() {
+                const st = IS.state.stages || ["الفكرة", "التقييم", "تشكيل الفريق", "النموذج الأولي", "التطوير", "التجربة", "الاعتماد", "التطبيق"];
+                $("#nStage").innerHTML = st.map((s) => `<option>${esc(s)}</option>`).join("");
+                $("#dStage").innerHTML = st.map((s) => `<option>${esc(s)}</option>`).join("");
+            }
+
+            function fillTaxonomy() {
+                const taxonomy = getTaxonomy();
+                $("#tag").innerHTML = `<option value="">كل التصنيفات</option>` + taxonomy.map((t) => `<option>${esc(t)}</option>`).join("");
+                $("#nTag").innerHTML = taxonomy.map((t) => `<option>${esc(t)}</option>`).join("");
+            }
+
+            function fillOrgFilter() {
+                const inis = IS.state.initiatives || [];
+                const node = $("#orgFilter");
+                const keep = node.value;
+                const orgs = Array.from(new Set(inis.map((i) => String(i.organization || "").trim()).filter(Boolean)));
+                node.innerHTML = `<option value="">كل الجهات</option>${orgs.map((o) => `<option>${esc(o)}</option>`).join("")}`;
+                if (orgs.includes(keep)) node.value = keep;
+            }
+
+            function semanticMatch(i, query) {
+                const q = normalize(query);
+                if (!q) return true;
+                const bag = normalize([
+                    i.id,
+                    i.title,
+                    i.stage,
+                    i.status,
+                    i.organization,
+                    i.priority,
+                    ...(i.tags || []),
+                    i.validation?.problem,
+                    i.validation?.beneficiary,
+                    i.validation?.evidence,
+                    ...(i.comments || []).map((c) => c.text)
+                ].join(" "));
+                const tokens = q.split(" ").filter(Boolean);
+                return tokens.every((tok) => {
+                    const alias = SEARCH_ALIASES[tok];
+                    return bag.includes(tok) || (alias && bag.includes(normalize(alias)));
+                });
+            }
+
+            function getFilters() {
+                return {
+                    q: normalize($("#q").value || ""),
+                    qSemantic: normalize($("#qSemantic").value || ""),
+                    status: ($("#status").value || "").trim(),
+                    tag: ($("#tag").value || "").trim(),
+                    maturity: ($("#maturityFilter").value || "").trim(),
+                    risk: ($("#riskFilter").value || "").trim(),
+                    priority: ($("#priorityFilter").value || "").trim(),
+                    org: ($("#orgFilter").value || "").trim(),
+                    dateFrom: $("#dateFrom").value || "",
+                    dateTo: $("#dateTo").value || ""
+                };
+            }
+
+            function filteredInitiatives() {
+                const f = getFilters();
+                const inis = IS.state.initiatives || [];
+                return inis.filter((i) => {
+                    const hay = normalize(`${i.id} ${i.title} ${(i.tags || []).join(" ")} ${i.stage} ${i.status} ${i.organization} ${i.priority}`);
+                    const okQ = !f.q || hay.includes(f.q);
+                    const okSemantic = !f.qSemantic || semanticMatch(i, f.qSemantic);
+                    const okStatus = !f.status || i.status === f.status;
+                    const okTag = !f.tag || (i.tags || []).includes(f.tag);
+                    const okMaturity = !f.maturity || bucketMaturity(i) === f.maturity;
+                    const okRisk = !f.risk || bucketRisk(i) === f.risk;
+                    const okPriority = !f.priority || i.priority === f.priority;
+                    const okOrg = !f.org || i.organization === f.org;
+
+                    const updated = new Date(i.updatedAt || i.createdAt || nowISO());
+                    const from = f.dateFrom ? new Date(`${f.dateFrom}T00:00:00`) : null;
+                    const to = f.dateTo ? new Date(`${f.dateTo}T23:59:59`) : null;
+                    const okDateFrom = !from || updated >= from;
+                    const okDateTo = !to || updated <= to;
+
+                    return okQ && okSemantic && okStatus && okTag && okMaturity && okRisk && okPriority && okOrg && okDateFrom && okDateTo;
+                }).sort((a, b) => {
+                    const pa = PRIORITY_RANK[a.priority] || 0;
+                    const pb = PRIORITY_RANK[b.priority] || 0;
+                    if (pb !== pa) return pb - pa;
+                    return new Date(b.updatedAt || 0).getTime() - new Date(a.updatedAt || 0).getTime();
+                });
+            }
+
+            function badgeClass(i) {
+                return (i.status === "معتمد" || i.status === "مطبق") ? "is-good"
+                    : (i.status === "مرفوض") ? "is-mid"
+                        : (i.stage === "النموذج الأولي") ? "is-mid"
+                            : "is-low";
+            }
+
+            function renderStageMiniAnalytics(list) {
+                const stages = IS.state.stages || [];
+                const rows = stages.map((s) => {
+                    const bucket = list.filter((i) => i.stage === s);
+                    const count = bucket.length;
+                    const maturity = count ? Math.round(bucket.reduce((sum, i) => sum + calcMaturity(i), 0) / count) : 0;
+                    const risk = count ? Math.round(bucket.reduce((sum, i) => sum + calcRiskProfile(i.riskProfile).residualPct, 0) / count) : 0;
+                    return { stage: s, count, maturity, risk };
+                });
+
+                $("#stageMiniAnalytics").innerHTML = rows.map((r) => `
+                    <article class="stage-mini-card">
+                        <p>${esc(r.stage)}</p>
+                        <strong>${fmt(r.count)} مبادرة</strong>
+                        <small>نضج متوسط: ${r.maturity}%</small>
+                        <small>خطر متبقي: ${r.risk}%</small>
+                    </article>
+                `).join("");
+            }
+
+            function renderHeatmap(list) {
+                const stages = IS.state.stages || [];
+                const maxCount = Math.max(1, ...stages.map((s) => list.filter((i) => i.stage === s).length));
+                $("#mapHeat").innerHTML = stages.map((s) => {
+                    const items = list.filter((i) => i.stage === s);
+                    const high = items.filter((i) => i.priority === "حرجة" || i.priority === "عالية").length;
+                    const heat = (items.length / maxCount) * 0.85;
+                    return `
+                        <article class="heat-cell" style="--heat:${heat.toFixed(2)};">
+                            <strong>${esc(s)}</strong>
+                            <small>${fmt(items.length)} إجمالي • ${fmt(high)} عالي/حرج</small>
+                        </article>
+                    `;
+                }).join("");
+            }
+
+            function renderCriticalQueue(list) {
+                const critical = list.filter((i) => i.priority === "حرجة" || i.priority === "عالية").slice(0, 10);
+                $("#criticalList").innerHTML = critical.length ? critical.map((i) => {
+                    const maturity = calcMaturity(i);
+                    const risk = calcRiskProfile(i.riskProfile).residualPct;
+                    return `
+                        <li>
+                            <strong>${esc(i.id)} — ${esc(i.title)}</strong>
+                            <div class="meta">
+                                <span class="status-badge ${i.priority === "حرجة" ? "is-bad" : "is-mid"}">${esc(i.priority)}</span>
+                                <span class="status-badge is-low">نضج ${maturity}%</span>
+                                <span class="status-badge ${risk >= 70 ? "is-bad" : (risk >= 40 ? "is-mid" : "is-good")}">خطر ${risk}%</span>
+                                <button class="btn btn-soft sm" data-open="${esc(i.id)}">تفاصيل</button>
+                                <button class="btn btn-ghost sm" data-j="${esc(i.id)}">تحكيم</button>
+                                <button class="btn btn-ghost sm" data-e="${esc(i.id)}">موظف</button>
+                            </div>
+                        </li>
+                    `;
+                }).join("") : `<li>لا توجد مبادرات حرجة أو عالية الأولوية حالياً.</li>`;
+
+                $$('[data-open]', $("#criticalList")).forEach((b) => b.addEventListener("click", () => showDetails(b.getAttribute("data-open"))));
+                $$('[data-j]', $("#criticalList")).forEach((b) => b.addEventListener("click", () => goJudging(b.getAttribute("data-j"))));
+                $$('[data-e]', $("#criticalList")).forEach((b) => b.addEventListener("click", () => goEmployee(b.getAttribute("data-e"))));
+            }
+
+            function goJudging(id) {
+                IS.setSelectedInitiative(id);
+                IS.audit("فتح التحكيم من الخريطة", id);
+                IS.save();
+                location.href = "../judging/index.html";
+            }
+
+            function goEmployee(id) {
+                IS.setSelectedInitiative(id);
+                IS.audit("فتح مسار الموظف من الخريطة", id);
+                IS.save();
+                location.href = "../employee/index.html";
+            }
+
+            function renderBoard(list) {
+                const stages = IS.state.stages || [];
+                $("#pill").textContent = `${fmt(list.length)} نتائج`;
+
+                board.innerHTML = stages.map((s) => `
+                    <section class="col" data-stage="${esc(s)}">
+                        <div class="col-head">
+                            <h3>${esc(s)}</h3>
+                            <span class="table-count">${fmt(list.filter((i) => i.stage === s).length)}</span>
+                        </div>
+                        <div class="dropzone" data-drop="${esc(s)}"></div>
+                    </section>
+                `).join("");
+
+                $$(".dropzone").forEach((z) => {
+                    z.addEventListener("dragover", (e) => {
+                        e.preventDefault();
+                        z.classList.add("is-over");
+                    });
+                    z.addEventListener("dragleave", () => z.classList.remove("is-over"));
+                    z.addEventListener("drop", async (e) => {
+                        e.preventDefault();
+                        z.classList.remove("is-over");
+                        const id = e.dataTransfer.getData("text/is_id");
+                        const toStage = z.getAttribute("data-drop");
+                        await moveToStage(id, toStage);
+                    });
+                });
+
+                list.forEach((i) => {
+                    const zone = document.querySelector(`.dropzone[data-drop="${i.stage}"]`);
+                    if (!zone) return;
+                    const tag = (i.tags && i.tags[0]) ? i.tags[0] : "—";
+                    const score = Number.isFinite(Number(i.score)) ? `${clamp(i.score, 0, 100)}%` : "—";
+                    const prog = clamp(i.progress || 0, 0, 100);
+                    const risk = calcRiskProfile(i.riskProfile).residualPct;
+                    const maturity = calcMaturity(i);
+                    const protoProgress = clamp(i.prototype?.progress || 0, 0, 100);
+
+                    const card = document.createElement("article");
+                    card.className = "kan-card";
+                    card.setAttribute("draggable", "true");
+                    card.setAttribute("data-id", i.id);
+                    card.innerHTML = `
+                        <div class="khead">
+                            <div class="kid">${esc(i.id)}</div>
+                            <span class="status-badge ${badgeClass(i)}">${esc(i.status || "مسودة")}</span>
+                        </div>
+                        <div class="ktitle">${esc(i.title || "")}</div>
+                        <div class="kmeta">
+                            <span class="status-badge is-low">${esc(tag)}</span>
+                            <span class="status-badge ${i.priority === "حرجة" ? "is-bad" : (i.priority === "عالية" ? "is-mid" : "is-low")}">${esc(i.priority)}</span>
+                        </div>
+                        <div class="mini">
+                            <div class="mini-progress"><span style="width:${prog}%"></span></div>
+                            <small>تقدم: ${fmt(prog)}% • نتيجة: ${score}</small>
+                        </div>
+                        <div class="map-card-kpis">
+                            <small>نضج: ${maturity}% • خطر: ${risk}%</small>
+                            <small>جهة: ${esc(i.organization || "—")}</small>
+                        </div>
+                        ${i.prototype ? `<div class="mini"><div class="mini-progress"><span style="width:${protoProgress}%"></span></div><small>Prototype: ${fmt(protoProgress)}%</small></div>` : ""}
+                        <div class="kactions">
+                            <button class="btn btn-soft sm" data-open="${esc(i.id)}">تفاصيل</button>
+                            <button class="btn btn-ghost sm" data-j="${esc(i.id)}">للتحكيم</button>
+                            <button class="btn btn-ghost sm" data-e="${esc(i.id)}">مسار الموظف</button>
+                        </div>
+                    `;
+
+                    card.addEventListener("dragstart", (e) => {
+                        e.dataTransfer.setData("text/is_id", i.id);
+                        card.classList.add("is-drag");
+                    });
+                    card.addEventListener("dragend", () => card.classList.remove("is-drag"));
+                    zone.appendChild(card);
+                });
+
+                $$('[data-open]').forEach((b) => b.addEventListener("click", () => showDetails(b.getAttribute("data-open"))));
+                $$('[data-j]').forEach((b) => b.addEventListener("click", () => goJudging(b.getAttribute("data-j"))));
+                $$('[data-e]').forEach((b) => b.addEventListener("click", () => goEmployee(b.getAttribute("data-e"))));
+            }
+
+            function renderAll() {
+                normalizeState();
+                fillOrgFilter();
+                const list = filteredInitiatives();
+                renderStageMiniAnalytics(list);
+                renderHeatmap(list);
+                renderCriticalQueue(list);
+                renderBoard(list);
+            }
+
+            function newId(prefix = "I") {
+                const rnd = Math.floor(1000 + Math.random() * 8999);
+                return `${prefix}-${rnd}`;
+            }
+
+            async function moveToStage(id, stage) {
+                const i = (IS.state.initiatives || []).find((x) => x.id === id);
+                if (!i || !stage || i.stage === stage) return;
+
+                const from = i.stage;
+                i.stage = stage;
+                if (stage === "التقييم" && i.status === "مسودة") i.status = "قيد التحكيم";
+                if (stage === "النموذج الأولي" && i.status === "قيد التحكيم") i.status = "قيد التطوير";
+                if (stage === "الاعتماد" && i.status === "قيد التطوير") i.status = "معتمد";
+                if (stage === "التطبيق" && i.status === "معتمد") i.status = "مطبق";
+
+                i.updatedAt = nowISO();
+                i.priority = inferPriority(i);
+                addChange(i, "نقل مرحلة", `${from} → ${stage}`);
+                IS.audit("نقل مرحلة", `${id} • ${from} → ${stage}`);
+                IS.save();
+
+                try {
+                    await apiRequest(`/api/v2/initiatives/${encodeURIComponent(i.id)}`, {
+                        method: "PATCH",
+                        body: {
+                            stage: mapStageToApi(i.stage),
+                            status: mapStatusToApi(i.status)
+                        }
+                    });
+                } catch {
+                    IS.toast("تم النقل محليًا، وتعذر مزامنة API حالياً.", "warn", 1800);
+                }
+
+                renderAll();
+                IS.toast("تم نقل المرحلة ✅", "ok", 1400);
+            }
+
+            function applyTemplatePreset() {
+                const key = $("#nTemplate").value;
+                if (!key || !TEMPLATE_PRESETS[key]) return;
+                const t = TEMPLATE_PRESETS[key];
+                if (!$("#nTitle").value.trim()) $("#nTitle").value = t.title;
+                if (!$("#nDesc").value.trim()) $("#nDesc").value = t.desc;
+                if (!$("#nProblem").value.trim()) $("#nProblem").value = t.problem;
+                if (!$("#nBeneficiary").value.trim()) $("#nBeneficiary").value = t.beneficiary;
+                if (!$("#nEvidence").value.trim()) $("#nEvidence").value = t.evidence;
+                if (t.tag) $("#nTag").value = t.tag;
+                if (t.stage) $("#nStage").value = t.stage;
+                if (t.status) $("#nStatus").value = t.status;
+            }
+
+            async function createInitiative() {
+                const title = ($("#nTitle").value || "").trim();
+                if (!title) {
+                    IS.toast("اكتب عنوان المبادرة أولاً.", "warn", 2200);
+                    return;
+                }
+
+                const tag = $("#nTag").value;
+                const stage = $("#nStage").value;
+                const status = $("#nStatus").value;
+                const desc = ($("#nDesc").value || "").trim();
+                const problem = ($("#nProblem").value || "").trim();
+                const beneficiary = ($("#nBeneficiary").value || "").trim();
+                const evidence = ($("#nEvidence").value || "").trim();
+                const nOrg = ($("#nOrg").value || "").trim() || "التجمع الصحي بالطائف";
+                const template = $("#nTemplate").value;
+
+                const iso = nowISO();
+                const item = {
+                    id: newId("I"),
+                    title,
+                    stage,
+                    status,
+                    progress: status === "مسودة" ? 10 : (status === "قيد التحكيم" ? 25 : 32),
+                    score: null,
+                    rubric: null,
+                    minutes: "",
+                    desc,
+                    tags: [tag || getTaxonomy()[0]],
+                    ownerTeam: "T-1001",
+                    organization: nOrg,
+                    validation: { problem, beneficiary, evidence },
+                    impact: { costSaving: 0, timeSavingPct: 0, implementationCost: 0, operatingCost: 0, horizonYears: 3, confidencePct: 75 },
+                    postMonitoring: {
+                        owner: "قائد المبادرة",
+                        expected: { annualSaving: 0, timeSavingPct: 0 },
+                        m3: { annualSaving: null, timeSavingPct: null, qualityImprovementPct: null, satisfactionPct: null, recordedAt: null },
+                        m6: { annualSaving: null, timeSavingPct: null, qualityImprovementPct: null, satisfactionPct: null, recordedAt: null },
+                        notes: ""
+                    },
+                    prototype: stage === "النموذج الأولي" ? {
+                        id: newId("P"),
+                        template: "Dashboard",
+                        support: "Prototype Support Unit",
+                        scope: template ? `Template: ${template}` : "نسخة أولية",
+                        progress: 10,
+                        status: "قيد التطوير",
+                        createdAt: iso
+                    } : null,
+                    tasks: [],
+                    comments: [],
+                    files: [],
+                    changeLog: [],
+                    createdAt: iso,
+                    updatedAt: iso
+                };
+
+                ensureShape(item);
+                item.priority = inferPriority(item);
+                addChange(item, "إنشاء مبادرة", `Template: ${template || "—"}`);
+
+                IS.state.initiatives.unshift(item);
+                IS.audit("إضافة مبادرة", `${item.id} • ${title}`);
+                IS.save();
+
+                try {
+                    const payload = await apiRequest("/api/v2/initiatives", {
+                        method: "POST",
+                        body: {
+                            title: item.title,
+                            stage: mapStageToApi(item.stage),
+                            status: mapStatusToApi(item.status)
+                        }
+                    });
+                    const rid = payload?.data?.id;
+                    if (rid && !IS.state.initiatives.some((x) => x.id === rid)) {
+                        item.id = rid;
+                        addChange(item, "ربط معرف API", rid);
+                    }
+                } catch {
+                    IS.toast("تم إنشاء المبادرة محليًا، وتعذر الربط مع API حالياً.", "warn", 2000);
+                }
+
+                ["#nTitle", "#nDesc", "#nProblem", "#nBeneficiary", "#nEvidence", "#nOrg"].forEach((id) => { $(id).value = ""; });
+                $("#nTemplate").value = "";
+                closeNew();
+                renderAll();
+                IS.toast("تم إنشاء المبادرة ✅", "ok", 1700);
+            }
+
+            function showDetails(id) {
+                const i = (IS.state.initiatives || []).find((x) => x.id === id);
+                if (!i) return;
+                ensureShape(i);
+                current = i;
+
+                $("#dTitle").textContent = `تفاصيل المبادرة — ${i.title}`;
+                $("#dId").value = i.id;
+                $("#dStage").value = i.stage;
+                $("#dStatus").value = i.status || "مسودة";
+                $("#dProgress").value = clamp(i.progress || 0, 0, 100);
+
+                $("#pTemplate").value = i.prototype?.template || "";
+                $("#pProgress").value = clamp(i.prototype?.progress || 0, 0, 100);
+                $("#pSupport").value = i.prototype?.support || "Prototype Support Unit";
+                $("#pStatus").value = i.prototype?.status || "قيد التطوير";
+
+                $("#dProblem").value = i.validation?.problem || "";
+                $("#dBeneficiary").value = i.validation?.beneficiary || "";
+                $("#dEvidence").value = i.validation?.evidence || "";
+                $("#dCostSaving").value = Math.max(0, Number(i.impact?.costSaving || 0));
+                $("#dTimeSaving").value = clamp(i.impact?.timeSavingPct || 0, 0, 100);
+
+                const mon = i.postMonitoring || {};
+                const setNullable = (id2, value) => { $(id2).value = (value == null ? "" : value); };
+                $("#dMonOwner").value = mon.owner || "";
+                $("#dMonNotes").value = mon.notes || "";
+                $("#dMonExpectedSaving").value = Math.max(0, Number(mon.expected?.annualSaving ?? i.impact?.costSaving ?? 0));
+                $("#dMonExpectedTime").value = clamp(mon.expected?.timeSavingPct ?? i.impact?.timeSavingPct ?? 0, 0, 100);
+                setNullable("#dMon3Saving", mon.m3?.annualSaving ?? null);
+                setNullable("#dMon3Time", mon.m3?.timeSavingPct ?? null);
+                setNullable("#dMon3Quality", mon.m3?.qualityImprovementPct ?? null);
+                setNullable("#dMon3Sat", mon.m3?.satisfactionPct ?? null);
+                setNullable("#dMon6Saving", mon.m6?.annualSaving ?? null);
+                setNullable("#dMon6Time", mon.m6?.timeSavingPct ?? null);
+                setNullable("#dMon6Quality", mon.m6?.qualityImprovementPct ?? null);
+                setNullable("#dMon6Sat", mon.m6?.satisfactionPct ?? null);
+
+                renderTasks();
+                renderComments();
+                renderFiles();
+                renderChangeLog();
+
+                IS.audit("فتح تفاصيل مبادرة", i.id);
+                IS.save();
+                openDetails();
+            }
+
+            function renderTasks() {
+                if (!current) return;
+                current.tasks = current.tasks || [];
+                $("#tCount").textContent = `${fmt(current.tasks.length)} مهام`;
+                $("#tList").innerHTML = current.tasks.map((t) => {
+                    const badge = t.col === "done" ? "is-good" : (t.col === "doing" ? "is-mid" : "is-low");
+                    const due = t.due ? ` • ${t.due}` : "";
+                    return `
+                        <li>
+                            <strong>${esc(t.title)}</strong>
+                            <div style="margin-top:4px; display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                                <span class="status-badge ${badge}">${esc(String(t.col || "todo").toUpperCase())}</span>
+                                <span class="status-badge is-low">${esc(t.owner || "—")}${due}</span>
+                                <button class="btn btn-ghost sm" data-del="${esc(t.id)}">حذف</button>
+                            </div>
+                        </li>
+                    `;
+                }).join("");
+
+                $$('[data-del]', $("#tList")).forEach((b) => b.addEventListener("click", () => {
+                    const tid = b.getAttribute("data-del");
+                    current.tasks = current.tasks.filter((x) => x.id !== tid);
+                    current.updatedAt = nowISO();
+                    addChange(current, "حذف مهمة", tid);
+                    IS.audit("حذف مهمة", `${current.id} • ${tid}`);
+                    IS.save();
+                    renderTasks();
+                    renderAll();
+                }));
+            }
+
+            function addTask() {
+                if (!current) return;
+                const title = ($("#tTitle").value || "").trim();
+                if (!title) { IS.toast("اكتب عنوان المهمة.", "warn"); return; }
+                const owner = ($("#tOwner").value || "").trim() || "عضو";
+                const col = $("#tCol").value;
+                const due = $("#tDue").value || "";
+
+                const id = newId("TK");
+                current.tasks.unshift({ id, title, owner, col, due });
+                current.updatedAt = nowISO();
+                addChange(current, "إضافة مهمة", `${id} • ${title}`);
+                IS.audit("إضافة مهمة", `${current.id} • ${id}`);
+                IS.save();
+
+                ["#tTitle", "#tOwner", "#tDue"].forEach((id2) => { $(id2).value = ""; });
+                renderTasks();
+                renderAll();
+                IS.toast("تمت إضافة المهمة ✅", "ok", 1500);
+            }
+
+            function renderComments() {
+                if (!current) return;
+                current.comments = current.comments || [];
+                $("#dComments").innerHTML = current.comments.length ? current.comments.map((c) => `
+                    <li>
+                        <strong>${esc(c.author || "موظف")}</strong>
+                        <div>${esc(c.text || "")}</div>
+                        <span class="time">${new Date(c.at || nowISO()).toLocaleString("ar-SA")}</span>
+                    </li>
+                `).join("") : `<li>لا توجد تعليقات بعد.</li>`;
+            }
+
+            function addComment() {
+                if (!current) return;
+                const text = ($("#dCommentText").value || "").trim();
+                const author = ($("#dCommentAuthor").value || "").trim() || "موظف";
+                if (!text) { IS.toast("اكتب التعليق أولاً.", "warn", 1400); return; }
+
+                current.comments.unshift({ id: newId("CM"), text, author, at: nowISO() });
+                current.updatedAt = nowISO();
+                addChange(current, "إضافة تعليق", `${author}`);
+                IS.audit("تعليق على مبادرة", `${current.id} • ${author}`);
+                IS.save();
+                $("#dCommentText").value = "";
+                $("#dCommentAuthor").value = "";
+                renderComments();
+            }
+
+            function renderFiles() {
+                if (!current) return;
+                current.files = current.files || [];
+                $("#dFiles").innerHTML = current.files.length ? current.files.map((f) => `
+                    <li>
+                        <strong>${esc(f.fileName || "file")}</strong>
+                        <div>${esc(f.fileType || "Document")} • ${esc(f.addedBy || "موظف")}</div>
+                        <span class="time">${new Date(f.at || nowISO()).toLocaleString("ar-SA")}</span>
+                    </li>
+                `).join("") : `<li>لا توجد مرفقات بعد.</li>`;
+            }
+
+            function addFile() {
+                if (!current) return;
+                const fileName = ($("#dFileName").value || "").trim();
+                const fileType = $("#dFileType").value || "Document";
+                if (!fileName) {
+                    IS.toast("اكتب اسم المرفق أولاً.", "warn", 1500);
+                    return;
+                }
+                current.files.unshift({ id: newId("F"), fileName, fileType, addedBy: "موظف", at: nowISO() });
+                current.updatedAt = nowISO();
+                addChange(current, "إضافة مرفق", fileName);
+                IS.audit("إضافة مرفق", `${current.id} • ${fileName}`);
+                IS.save();
+                $("#dFileName").value = "";
+                renderFiles();
+            }
+
+            function renderChangeLog() {
+                if (!current) return;
+                current.changeLog = current.changeLog || [];
+                $("#dChangeLog").innerHTML = current.changeLog.length ? current.changeLog.map((c) => `
+                    <li>
+                        <strong>${esc(c.action || "تحديث")}</strong>
+                        <div>${esc(c.details || "—")}</div>
+                        <span class="time">${new Date(c.at || nowISO()).toLocaleString("ar-SA")}</span>
+                    </li>
+                `).join("") : `<li>لا يوجد سجل تغييرات بعد.</li>`;
+            }
+
+            async function saveDetails() {
+                if (!current) return;
+
+                const stage = $("#dStage").value;
+                const status = $("#dStatus").value;
+                const progress = clamp($("#dProgress").value || 0, 0, 100);
+                const problem = ($("#dProblem").value || "").trim();
+                const beneficiary = ($("#dBeneficiary").value || "").trim();
+                const evidence = ($("#dEvidence").value || "").trim();
+                const costSaving = Math.max(0, Number($("#dCostSaving").value || 0));
+                const timeSavingPct = clamp($("#dTimeSaving").value || 0, 0, 100);
+                const monOwner = ($("#dMonOwner").value || "").trim();
+                const monNotes = ($("#dMonNotes").value || "").trim();
+                const monExpectedSaving = Math.max(0, Number($("#dMonExpectedSaving").value || 0));
+                const monExpectedTime = clamp($("#dMonExpectedTime").value || 0, 0, 100);
+                const mon3Saving = toNullableNumber($("#dMon3Saving").value, 0);
+                const mon3Time = toNullableNumber($("#dMon3Time").value, 0, 100);
+                const mon3Quality = toNullableNumber($("#dMon3Quality").value, 0, 100);
+                const mon3Sat = toNullableNumber($("#dMon3Sat").value, 0, 100);
+                const mon6Saving = toNullableNumber($("#dMon6Saving").value, 0);
+                const mon6Time = toNullableNumber($("#dMon6Time").value, 0, 100);
+                const mon6Quality = toNullableNumber($("#dMon6Quality").value, 0, 100);
+                const mon6Sat = toNullableNumber($("#dMon6Sat").value, 0, 100);
+
+                const fromStage = current.stage;
+                current.stage = stage;
+                current.status = status;
+                current.progress = progress;
+                current.validation = { problem, beneficiary, evidence };
+                current.impact = { ...(current.impact || {}), costSaving, timeSavingPct };
+
+                const prevMon = current.postMonitoring || {};
+                const has3m = [mon3Saving, mon3Time, mon3Quality, mon3Sat].some((v) => v != null);
+                const has6m = [mon6Saving, mon6Time, mon6Quality, mon6Sat].some((v) => v != null);
+                current.postMonitoring = {
+                    owner: monOwner,
+                    notes: monNotes,
+                    expected: {
+                        annualSaving: monExpectedSaving,
+                        timeSavingPct: monExpectedTime
+                    },
+                    m3: {
+                        annualSaving: mon3Saving,
+                        timeSavingPct: mon3Time,
+                        qualityImprovementPct: mon3Quality,
+                        satisfactionPct: mon3Sat,
+                        recordedAt: has3m ? (prevMon.m3?.recordedAt || nowISO()) : null
+                    },
+                    m6: {
+                        annualSaving: mon6Saving,
+                        timeSavingPct: mon6Time,
+                        qualityImprovementPct: mon6Quality,
+                        satisfactionPct: mon6Sat,
+                        recordedAt: has6m ? (prevMon.m6?.recordedAt || nowISO()) : null
+                    }
+                };
+
+                const tpl = $("#pTemplate").value;
+                if (tpl) {
+                    current.prototype = current.prototype || { id: newId("P"), createdAt: nowISO() };
+                    current.prototype.template = tpl;
+                    current.prototype.progress = clamp($("#pProgress").value || 0, 0, 100);
+                    current.prototype.support = $("#pSupport").value;
+                    current.prototype.status = $("#pStatus").value;
+                } else {
+                    current.prototype = null;
+                }
+
+                current.priority = inferPriority(current);
+                current.updatedAt = nowISO();
+                addChange(current, "حفظ تفاصيل", `${fromStage} → ${stage} • ${status}`);
+                IS.audit("حفظ تفاصيل مبادرة", `${current.id} • ${fromStage}→${stage} • ${status}`);
+                IS.save();
+
+                try {
+                    await apiRequest(`/api/v2/initiatives/${encodeURIComponent(current.id)}`, {
+                        method: "PATCH",
+                        body: {
+                            stage: mapStageToApi(current.stage),
+                            status: mapStatusToApi(current.status)
+                        }
+                    });
+                } catch {
+                    IS.toast("تعذر مزامنة التعديل مع API. تم حفظه محليًا.", "warn", 1800);
+                }
+
+                IS.toast("تم الحفظ ✅", "ok", 1600);
+                renderAll();
+                closeDetails();
+            }
+
+            function seedMore() {
+                const len = (IS.state.initiatives || []).length;
+                if (len >= 10) {
+                    IS.toast("العينات موجودة بالفعل 👌", "warn");
+                    return;
+                }
+
+                const iso = nowISO();
+                IS.state.initiatives.unshift(
+                    {
+                        id: "I-3881",
+                        title: "أداة تحقق من صحة الفكرة (Validation)",
+                        stage: "التقييم",
+                        status: "قيد التحكيم",
+                        progress: 38,
+                        tags: ["تشغيلي"],
+                        organization: "إدارة التحسين",
+                        validation: { problem: "ضعف دقة الأفكار", beneficiary: "المنسقون والمقيمون", evidence: "10 مقابلات أولية + استبيان داخلي" },
+                        impact: { costSaving: 180000, timeSavingPct: 25, implementationCost: 90000, operatingCost: 18000, horizonYears: 3, confidencePct: 80 },
+                        postMonitoring: {
+                            owner: "مدير التحسين",
+                            expected: { annualSaving: 180000, timeSavingPct: 25 },
+                            m3: { annualSaving: 92000, timeSavingPct: 14, qualityImprovementPct: 12, satisfactionPct: 78, recordedAt: iso },
+                            m6: { annualSaving: null, timeSavingPct: null, qualityImprovementPct: null, satisfactionPct: null, recordedAt: null },
+                            notes: "نتائج أولية مبشرة بعد 3 أشهر."
+                        },
+                        prototype: null,
+                        tasks: [],
+                        comments: [],
+                        files: [],
+                        changeLog: [{ at: iso, action: "إنشاء عينة", details: "Seed" }],
+                        createdAt: iso,
+                        updatedAt: iso
+                    },
+                    {
+                        id: "I-3884",
+                        title: "مكتبة المعرفة الصحية (Knowledge Hub)",
+                        stage: "النموذج الأولي",
+                        status: "قيد التطوير",
+                        progress: 52,
+                        tags: ["رقمنة"],
+                        organization: "إدارة المعرفة",
+                        validation: { problem: "تكرار أخطاء سابقة", beneficiary: "المبتكرون الجدد", evidence: "تحليل 12 مبادرة سابقة" },
+                        impact: { costSaving: 260000, timeSavingPct: 31, implementationCost: 145000, operatingCost: 32000, horizonYears: 3, confidencePct: 84 },
+                        postMonitoring: {
+                            owner: "قائد المعرفة",
+                            expected: { annualSaving: 260000, timeSavingPct: 31 },
+                            m3: { annualSaving: 150000, timeSavingPct: 20, qualityImprovementPct: 18, satisfactionPct: 82, recordedAt: iso },
+                            m6: { annualSaving: 278000, timeSavingPct: 33, qualityImprovementPct: 24, satisfactionPct: 88, recordedAt: iso },
+                            notes: "تم تجاوز المستهدف في الشهر السادس."
+                        },
+                        prototype: { id: "P-4884", template: "Landing Page", support: "Prototype Support Unit", scope: "مكتبة + قوالب", progress: 40, status: "قيد التطوير", createdAt: iso },
+                        tasks: [],
+                        comments: [],
+                        files: [],
+                        changeLog: [{ at: iso, action: "إنشاء عينة", details: "Seed" }],
+                        createdAt: iso,
+                        updatedAt: iso
+                    }
+                );
+
+                normalizeState();
+                IS.audit("إضافة عينات للخريطة", "seed");
+                IS.save();
+                IS.toast("تمت إضافة عينات ✅", "ok", 1600);
+                renderAll();
+            }
+
+            async function syncInitiativesFromApi({ silent = true } = {}) {
+                try {
+                    const payload = await apiRequest("/api/v2/initiatives", { method: "GET", timeoutMs: 3600 });
+                    const rows = Array.isArray(payload?.data) ? payload.data : [];
+                    if (!rows.length) return { loaded: false, count: 0 };
+
+                    const remote = rows.map((r) => ({
+                        id: r.id,
+                        title: r.title || "مبادرة بدون عنوان",
+                        stage: mapStageToLocal(r.stage),
+                        status: mapStatusToLocal(r.status),
+                        score: Number.isFinite(Number(r.averageScore)) ? clamp(r.averageScore, 0, 100) : null,
+                        progress: clamp(({
+                            "idea_submission": 12,
+                            "screening": 22,
+                            "evaluation": 34,
+                            "team_formation": 44,
+                            "prototype": 56,
+                            "development": 66,
+                            "pilot": 76,
+                            "approval": 86,
+                            "launch": 96
+                        }[String(r.stage)] || 24), 0, 100),
+                        updatedAt: r.updatedAt || r.createdAt || nowISO(),
+                        organization: r.ownerName || "التجمع الصحي بالطائف",
+                        tags: []
+                    }));
+
+                    const local = IS.state.initiatives || [];
+                    const localMap = new Map(local.map((i) => [i.id, i]));
+
+                    const merged = remote.map((r) => ({
+                        ...(localMap.get(r.id) || {}),
+                        ...r,
+                        tags: Array.isArray(localMap.get(r.id)?.tags) ? localMap.get(r.id).tags : [],
+                        tasks: Array.isArray(localMap.get(r.id)?.tasks) ? localMap.get(r.id).tasks : [],
+                        comments: Array.isArray(localMap.get(r.id)?.comments) ? localMap.get(r.id).comments : [],
+                        files: Array.isArray(localMap.get(r.id)?.files) ? localMap.get(r.id).files : [],
+                        changeLog: Array.isArray(localMap.get(r.id)?.changeLog) ? localMap.get(r.id).changeLog : []
+                    }));
+
+                    local.forEach((item) => {
+                        if (!merged.some((x) => x.id === item.id)) merged.push(item);
+                    });
+
+                    IS.state.initiatives = merged;
+                    normalizeState();
+                    IS.save();
+                    if (!silent) IS.toast(`تمت مزامنة ${fmt(remote.length)} مبادرة من API`, "ok", 1400);
+                    return { loaded: true, count: remote.length };
+                } catch (err) {
+                    if (!silent) IS.toast("تعذر المزامنة من API. تم الاعتماد على البيانات المحلية.", "warn", 1700);
+                    return { loaded: false, count: 0, error: err?.message || "API_UNAVAILABLE" };
+                }
+            }
+
+            function setLiveMode(nextState) {
+                liveMode = !!nextState;
+                const badge = $("#liveState");
+                badge.textContent = `LIVE: ${liveMode ? "ON" : "OFF"}`;
+                badge.classList.toggle("is-on", liveMode);
+                $("#btnLiveToggle").textContent = liveMode ? "إيقاف Live" : "تشغيل Live";
+
+                if (liveTimer) {
+                    clearInterval(liveTimer);
+                    liveTimer = null;
+                }
+                if (liveMode) {
+                    liveTimer = setInterval(async () => {
+                        await syncInitiativesFromApi({ silent: true });
+                        renderAll();
+                    }, 20000);
+                }
+            }
+
+            function resetFilters() {
+                ["#q", "#qSemantic", "#status", "#tag", "#maturityFilter", "#riskFilter", "#priorityFilter", "#orgFilter", "#dateFrom", "#dateTo"].forEach((id) => {
+                    const node = $(id);
+                    if (!node) return;
+                    if (node.tagName === "SELECT") node.value = "";
+                    else node.value = "";
+                });
+                renderAll();
+                IS.toast("تمت إعادة الفلاتر ✅", "ok", 1400);
+            }
+
+            async function init() {
+                fillStages();
+                fillTaxonomy();
+                await syncInitiativesFromApi({ silent: true });
+                normalizeState();
+
+                IS.audit("فتح خريطة الابتكار", "map");
+                IS.save();
+
+                const sel = IS.getSelectedInitiative();
+                if (sel) IS.toast(`المبادرة المحددة: ${sel}`, "ok", 1600);
+
+                renderAll();
+                setLiveMode(false);
+
+                $("#btnNew").addEventListener("click", openNew);
+                $("#nTemplate").addEventListener("change", applyTemplatePreset);
+                $("#nCreate").addEventListener("click", createInitiative);
+
+                $("#btnSeed").addEventListener("click", seedMore);
+                $("#btnLiveToggle").addEventListener("click", () => setLiveMode(!liveMode));
+                $("#btnApiSettings").addEventListener("click", openApiModal);
+
+                ["q", "qSemantic", "status", "tag", "maturityFilter", "riskFilter", "priorityFilter", "orgFilter", "dateFrom", "dateTo"].forEach((id) => {
+                    const node = document.getElementById(id);
+                    if (!node) return;
+                    node.addEventListener(node.tagName === "INPUT" && node.type !== "date" ? "input" : "change", renderAll);
+                });
+
+                $("#btnReset").addEventListener("click", resetFilters);
+
+                $("#tAdd").addEventListener("click", addTask);
+                $("#dSave").addEventListener("click", saveDetails);
+                $("#dCommentAdd").addEventListener("click", addComment);
+                $("#dFileAdd").addEventListener("click", addFile);
+
+                $("#btnApiSave").addEventListener("click", async () => {
+                    const nextBase = setApiBase($("#apiBaseInput").value);
+                    if (!nextBase) {
+                        $("#apiStateHint").textContent = "اكتب عنوان API صحيح أولاً.";
+                        return;
+                    }
+                    $("#apiStateHint").textContent = "جارِ التحقق من الاتصال...";
+                    const result = await syncInitiativesFromApi({ silent: true });
+                    if (result.loaded) {
+                        $("#apiStateHint").textContent = `تم الحفظ والاتصال ناجح (${fmt(result.count)} مبادرة).`;
+                        renderAll();
+                    } else {
+                        $("#apiStateHint").textContent = "تم حفظ العنوان لكن الاتصال غير متاح حاليًا.";
+                    }
+                });
+
+                $("#btnApiTest").addEventListener("click", async () => {
+                    $("#apiStateHint").textContent = "جارِ اختبار الاتصال...";
+                    const result = await syncInitiativesFromApi({ silent: true });
+                    if (result.loaded) {
+                        $("#apiStateHint").textContent = `الاتصال ناجح (${fmt(result.count)} مبادرة).`;
+                    } else {
+                        $("#apiStateHint").textContent = "فشل الاتصال. راجع العنوان أو تشغيل الـbackend.";
+                    }
+                });
+            }
+
+            document.addEventListener("DOMContentLoaded", () => {
+                init().catch(() => {
+                    normalizeState();
+                    renderAll();
+                    setLiveMode(false);
+                });
+            });
+        })();
+    </script>
+
+</body>
+
+</html>

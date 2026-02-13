@@ -1,8 +1,10 @@
 import { pool } from "../db/pool.js";
+import { INITIATIVE_STATUS } from "../core/constants.js";
 import { scoreByRubric, average } from "./scoringService.js";
 
 export async function addEvaluation({ initiativeId, judgeId, judgeName, marks }) {
   const score = scoreByRubric(marks);
+
   await pool.query(
     `INSERT INTO initiative_scores (initiative_id, judge_id, judge_name, marks, score)
      VALUES ($1,$2,$3,$4,$5)`,
@@ -16,8 +18,13 @@ export async function addEvaluation({ initiativeId, judgeId, judgeName, marks })
   const avg = average(scoreRows.map((r) => Number(r.score)));
 
   await pool.query(
-    `UPDATE initiatives SET average_score = $2, status = $3, updated_at = now() WHERE id = $1`,
-    [initiativeId, avg, "قيد التحكيم"]
+    `UPDATE initiatives
+     SET average_score = $2,
+         status = $3,
+         stage = COALESCE(stage, 'evaluation'),
+         updated_at = now()
+     WHERE id = $1`,
+    [initiativeId, avg, INITIATIVE_STATUS.IN_REVIEW]
   );
 
   return { score, averageScore: avg };

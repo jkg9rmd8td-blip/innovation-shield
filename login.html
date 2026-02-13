@@ -1,60 +1,106 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>درع الابتكار | الدخول</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="ui/luxe.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Innovation Shield V2 | Demo Auth</title>
+  <link rel="stylesheet" href="frontend/shared/design-system/tokens.css" />
+  <link rel="stylesheet" href="frontend/shared/styles/reset.css" />
+  <link rel="stylesheet" href="frontend/shared/styles/base.css" />
+  <link rel="stylesheet" href="frontend/shared/design-system/components.css" />
   <style>
-    .wrap { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
-    .card { width: min(920px, 100%); border: 1px solid var(--line); border-radius: 24px; background: var(--card); box-shadow: var(--shadow); padding: 22px; }
-    .grid-auth { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 900px) { .grid-auth { grid-template-columns: 1fr; } }
-    .err { display:none; margin-top:10px; color:#ffd2d2; border:1px solid rgba(251,113,133,.35); border-radius:12px; padding:10px; background:rgba(251,113,133,.12); }
+    main {
+      width: min(520px, 100% - 32px);
+      margin-top: 52px;
+    }
+    .login-card { padding: 20px; }
+    .login-card h1 { margin: 0 0 8px; }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 13px; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .error { margin-top: 8px; color: var(--danger); min-height: 20px; }
+    .hint { margin-top: 10px; color: var(--muted); font-size: 12px; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="card">
-      <h1 style="margin-top:0">دخول المنصة</h1>
-      <p class="muted">اختر الدور لتجربة Role Matrix والصلاحيات الفعلية.</p>
+  <main>
+    <section class="card apple-glass login-card">
+      <h1>Demo Login (V2)</h1>
+      <p class="muted">Bilingual-ready auth flow. Default API base: <code>http://127.0.0.1:8080</code></p>
 
-      <div class="grid-auth">
-        <div>
-          <label>الاسم</label>
-          <input id="name" value="موظف الابتكار" />
-        </div>
-        <div>
-          <label>المعرف</label>
-          <input id="identifier" value="employee-001" />
-        </div>
+      <div class="field">
+        <label for="apiBase">API Base</label>
+        <input class="input" id="apiBase" placeholder="http://127.0.0.1:8080" />
       </div>
 
-      <label style="margin-top:10px;">الدور</label>
-      <select id="role">
-        <option value="employee">موظف</option>
-        <option value="lead">قائد</option>
-        <option value="judge">محكم</option>
-        <option value="supervisor">مشرف</option>
-        <option value="executive">إدارة عليا</option>
-      </select>
-
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">
-        <button id="loginBtn" class="primary">دخول</button>
-        <button type="button" data-demo="employee" class="pill">موظف</button>
-        <button type="button" data-demo="lead" class="pill">قائد</button>
-        <button type="button" data-demo="judge" class="pill">محكم</button>
-        <button type="button" data-demo="supervisor" class="pill">مشرف</button>
-        <button type="button" data-demo="executive" class="pill">إدارة عليا</button>
+      <div class="field">
+        <label for="name">Name</label>
+        <input class="input" id="name" value="Demo User" />
       </div>
 
-      <div id="err" class="err"></div>
+      <div class="field">
+        <label for="role">Role</label>
+        <select class="select" id="role">
+          <option value="innovator">innovator</option>
+          <option value="evaluator">evaluator</option>
+          <option value="manager">manager</option>
+          <option value="committee">committee</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="department">Department</label>
+        <input class="input" id="department" value="Innovation" />
+      </div>
+
+      <div class="actions">
+        <button class="btn primary" id="loginBtn" type="button">Sign in</button>
+        <button class="btn ghost" id="langBtn" type="button">AR/EN</button>
+      </div>
+
+      <div class="error" id="error"></div>
+      <div class="hint">Portal mapping: innovator -> Employee, evaluator -> Judging, manager/committee -> Admin.</div>
     </section>
-  </div>
+  </main>
 
-  <script type="module" src="ui/login.js"></script>
+  <script type="module">
+    import { setApiBase, api } from "./frontend/shared/core/api-client.js";
+    import { saveSession } from "./frontend/shared/core/auth-client.js";
+    import { toggleLang } from "./frontend/shared/i18n/index.js";
+
+    const mapPortal = {
+      innovator: "/frontend/portals/employee/index.html",
+      evaluator: "/frontend/portals/judging/index.html",
+      manager: "/frontend/portals/admin/index.html",
+      committee: "/frontend/portals/admin/index.html",
+    };
+
+    const apiBase = document.getElementById("apiBase");
+    const error = document.getElementById("error");
+    apiBase.value = localStorage.getItem("IS_API_BASE") || "http://127.0.0.1:8080";
+
+    document.getElementById("langBtn")?.addEventListener("click", () => {
+      toggleLang();
+      location.reload();
+    });
+
+    document.getElementById("loginBtn")?.addEventListener("click", async () => {
+      error.textContent = "";
+      try {
+        setApiBase(apiBase.value.trim() || "http://127.0.0.1:8080");
+        const payload = {
+          name: document.getElementById("name").value.trim(),
+          role: document.getElementById("role").value,
+          department: document.getElementById("department").value.trim(),
+        };
+
+        const res = await api("/api/v2/auth/session", { method: "POST", body: payload, auth: false });
+        saveSession(res.data);
+        location.href = mapPortal[payload.role] || "/frontend/portals/employee/index.html";
+      } catch (err) {
+        error.textContent = err.message || "Login failed";
+      }
+    });
+  </script>
 </body>
 </html>

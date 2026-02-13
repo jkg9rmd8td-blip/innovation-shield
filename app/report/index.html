@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>درع الابتكار | التقرير التنفيذي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/app.css" />
+    <style>
+        .report-hero {
+            border: 1px solid rgba(9, 52, 74, 0.14);
+            border-radius: 16px;
+            padding: 14px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(242, 249, 255, 0.94));
+        }
+
+        .report-hero p {
+            margin: 6px 0 0;
+            color: #3f5e70;
+            font-weight: 700;
+        }
+
+        .report-tools {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .heatmap-cell {
+            border: 1px solid rgba(9, 52, 74, 0.12);
+            border-radius: 12px;
+            background: #fff;
+            padding: 10px;
+        }
+
+        .heatmap-cell strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .heatmap-cell small {
+            color: #587386;
+            font-weight: 700;
+            display: block;
+        }
+
+        .h-low {
+            box-shadow: inset 0 0 0 2px rgba(21, 133, 105, 0.16);
+        }
+
+        .h-mid {
+            box-shadow: inset 0 0 0 2px rgba(191, 144, 30, 0.2);
+        }
+
+        .h-high {
+            box-shadow: inset 0 0 0 2px rgba(162, 57, 58, 0.25);
+        }
+
+        .org-table,
+        .drill-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .org-table th,
+        .org-table td,
+        .drill-table th,
+        .drill-table td {
+            border-bottom: 1px solid rgba(9, 52, 74, 0.08);
+            padding: 8px;
+            text-align: right;
+            font-size: 12px;
+        }
+
+        .org-table th,
+        .drill-table th {
+            color: #38586a;
+            font-weight: 800;
+        }
+
+        .list-cards {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 9px;
+        }
+
+        .list-card {
+            border: 1px solid rgba(9, 52, 74, 0.12);
+            border-radius: 12px;
+            background: #fff;
+            padding: 10px;
+        }
+
+        .list-card strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .timeline-lite {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 8px;
+        }
+
+        .timeline-lite li {
+            border: 1px solid rgba(9, 52, 74, 0.12);
+            border-radius: 12px;
+            background: #fff;
+            padding: 8px 10px;
+        }
+
+        .drill-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .drill-actions .btn {
+            font-size: 12px;
+            padding: 5px 9px;
+        }
+
+        .api-hint {
+            color: #496577;
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 1024px) {
+            .report-tools {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .heatmap-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .report-tools,
+            .heatmap-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="career-body">
+
+    <div class="platform-bg">
+        <div class="mesh mesh-1"></div>
+        <div class="mesh mesh-2"></div>
+        <div class="mesh mesh-3"></div>
+    </div>
+
+    <div class="platform-shell">
+
+        <header class="platform-topbar reveal">
+            <div class="topbar-brand">
+                <div class="brand-mark">IS</div>
+                <div>
+                    <h1 class="topbar-title">التقرير التنفيذي</h1>
+                    <p class="topbar-sub">Executive KPIs • Heatmap • AI Analysis • Org Comparison • Timeline</p>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <a href="../../index.html">الرئيسية</a>
+                <a href="../map/index.html">خريطة الابتكار</a>
+                <a href="../prototype/index.html">النماذج الأولية</a>
+                <a href="../employee/index.html">مسار الموظف</a>
+                <a href="../judging/index.html">التحكيم</a>
+                <a href="../command/index.html">لوحة القيادة</a>
+                <a href="../policies/index.html">السياسات</a>
+                <a href="../report/index.html" class="active">التقرير التنفيذي</a>
+            </nav>
+
+            <div class="topbar-actions">
+                <span class="live-pill" id="reportScopePill">Scope: Full</span>
+                <button class="btn btn-soft" id="btnRefresh">تحديث</button>
+                <button class="btn btn-ghost" id="btnApiSettings">API</button>
+                <button class="btn btn-soft" id="btnBackCommand">لوحة القيادة</button>
+                <button class="btn btn-primary" id="btnExportPdf">PDF</button>
+            </div>
+        </header>
+
+        <section class="panel reveal">
+            <div class="report-hero">
+                <h3 style="margin:0;">ملخص تنفيذي بصري</h3>
+                <p id="reportStamp">—</p>
+                <p id="reportNarrative">—</p>
+            </div>
+            <div class="report-tools">
+                <input id="rQ" placeholder="بحث بعنوان المبادرة أو المعرف..." />
+                <select id="rStage">
+                    <option value="">كل المراحل</option>
+                </select>
+                <select id="rOrg">
+                    <option value="">كل الجهات</option>
+                </select>
+                <select id="rPriority">
+                    <option value="">كل الأولويات</option>
+                    <option value="حرجة">حرجة</option>
+                    <option value="عالية">عالية</option>
+                    <option value="متوسطة">متوسطة</option>
+                    <option value="منخفضة">منخفضة</option>
+                </select>
+            </div>
+        </section>
+
+        <section class="stats-grid reveal">
+            <div class="stat-card stat-a"><p>إجمالي المبادرات</p><h3 id="kTotal">—</h3><small>ضمن النطاق</small></div>
+            <div class="stat-card stat-b"><p>معتمدة / مطبقة</p><h3 id="kApplied">—</h3><small>جاهزة للتوسع</small></div>
+            <div class="stat-card stat-c"><p>الأثر الاقتصادي السنوي</p><h3 id="kEconomic">—</h3><small>SAR</small></div>
+            <div class="stat-card stat-d"><p>متوسط توقع النجاح AI</p><h3 id="kAi">—</h3><small>Prediction Score</small></div>
+            <div class="stat-card stat-e"><p>مخاطر حرجة</p><h3 id="kRisk">—</h3><small>Residual ≥ 70%</small></div>
+            <div class="stat-card stat-f"><p>جهات مشاركة</p><h3 id="kOrgs">—</h3><small>Org Count</small></div>
+        </section>
+
+        <section class="insights-grid reveal">
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>Heatmap تنفيذي</h3>
+                    <span class="panel-note">حسب المرحلة والمخاطر</span>
+                </div>
+                <div class="heatmap-grid" id="heatmapGrid"></div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>مقارنة الجهات</h3>
+                    <span class="panel-note">Count • Applied • AI • Risk</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="org-table">
+                        <thead>
+                            <tr>
+                                <th>الجهة</th>
+                                <th>عدد</th>
+                                <th>معتمد/مطبق</th>
+                                <th>متوسط AI</th>
+                                <th>متوسط الخطر</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orgRows"></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <section class="insights-grid reveal">
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>المبادرات الحرجة</h3>
+                    <span class="panel-note">Critical / High Priority</span>
+                </div>
+                <ul class="list-cards" id="criticalList"></ul>
+            </section>
+
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>تحليل AI</h3>
+                    <span class="panel-note">Top Signals</span>
+                </div>
+                <ul class="list-cards" id="aiInsights"></ul>
+            </section>
+        </section>
+
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>Timeline الإنجازات</h3>
+                <span class="panel-note">إنجازات وتحولات رئيسية</span>
+            </div>
+            <ul class="timeline-lite" id="achievementTimeline"></ul>
+        </section>
+
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>Drill-down المؤشرات</h3>
+                <span class="panel-note" id="drillHint">اختر مؤشرًا للعرض التفصيلي</span>
+            </div>
+            <div class="drill-actions">
+                <button class="btn btn-soft" data-drill="critical">حرجة</button>
+                <button class="btn btn-soft" data-drill="applied">معتمدة/مطبقة</button>
+                <button class="btn btn-soft" data-drill="risk">مخاطر مرتفعة</button>
+                <button class="btn btn-soft" data-drill="aiLow">AI منخفض</button>
+                <button class="btn btn-soft" data-drill="economic">أثر اقتصادي أعلى</button>
+            </div>
+            <div class="table-wrap">
+                <table class="drill-table">
+                    <thead>
+                        <tr>
+                            <th>المعرف</th>
+                            <th>العنوان</th>
+                            <th>الجهة</th>
+                            <th>المرحلة</th>
+                            <th>الحالة</th>
+                            <th>المؤشر</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="drillBody"></tbody>
+                </table>
+            </div>
+            <div class="empty-line" id="drillEmpty" style="display:none; margin-top:10px;">لا توجد نتائج ضمن هذا المؤشر.</div>
+        </section>
+
+    </div>
+
+    <div class="modal hidden" id="modalApi">
+        <div class="modal-backdrop" data-close-api></div>
+        <div class="modal-card" style="max-width:560px; width:min(560px, calc(100vw - 24px));">
+            <div class="modal-head">
+                <h3>إعدادات API</h3>
+                <button class="modal-close" data-close-api>✕</button>
+            </div>
+            <div class="form-grid">
+                <label>API Base URL</label>
+                <input id="apiBaseInput" placeholder="http://127.0.0.1:8080" dir="ltr" />
+            </div>
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+                <button class="btn btn-soft" id="btnApiTest">اختبار الاتصال</button>
+                <button class="btn btn-primary" id="btnApiSave">حفظ</button>
+            </div>
+            <p class="api-hint" id="apiStateHint">عند الحفظ سيتم استخدام البيانات المحلية إذا تعذر الاتصال.</p>
+        </div>
+    </div>
+
+    <script src="../../assets/js/app.js"></script>
+    <script>
+        (() => {
+            "use strict";
+            const $ = (s, r = document) => r.querySelector(s);
+            const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+            const IS = window.IS;
+            const API_BASE_KEY = "IS_API_BASE";
+
+            const fmt = (n) => new Intl.NumberFormat("ar-SA").format(Number(n || 0));
+            const esc = (v) => String(v ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/\"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+            const clamp = (n, a, b) => Math.max(a, Math.min(b, Number(n || 0)));
+            const normalize = (t) => String(t || "").toLowerCase().trim().replace(/\s+/g, " ");
+
+            let drillMode = "critical";
+            let scopedIds = null;
+
+            function getApiBase() {
+                return (localStorage.getItem(API_BASE_KEY) || "http://127.0.0.1:8080").trim();
+            }
+
+            function setApiBase(v) {
+                const base = String(v || "").trim().replace(/\/$/, "");
+                localStorage.setItem(API_BASE_KEY, base);
+                return base;
+            }
+
+            function openApiModal() {
+                $("#apiBaseInput").value = getApiBase();
+                $("#apiStateHint").textContent = "عند الحفظ سيتم استخدام البيانات المحلية إذا تعذر الاتصال.";
+                $("#modalApi").classList.remove("hidden");
+            }
+
+            function closeApiModal() {
+                $("#modalApi").classList.add("hidden");
+            }
+
+            function withTimeout(promise, timeoutMs = 3400) {
+                return Promise.race([
+                    promise,
+                    new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), timeoutMs))
+                ]);
+            }
+
+            async function apiRequest(path, { method = "GET", body, timeoutMs = 3600 } = {}) {
+                const res = await withTimeout(fetch(`${getApiBase()}${path}`, {
+                    method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: body ? JSON.stringify(body) : undefined
+                }), timeoutMs);
+                if (!res.ok) {
+                    const txt = await res.text().catch(() => "");
+                    throw new Error(`HTTP ${res.status} ${txt}`);
+                }
+                return await res.json().catch(() => null);
+            }
+
+            function calcEconomicImpact(impact) {
+                const model = impact || {};
+                const saving = Math.max(0, Number(model.costSaving || 0));
+                const implementationCost = Math.max(0, Number(model.implementationCost || 0));
+                const operatingCost = Math.max(0, Number(model.operatingCost || 0));
+                const horizonYears = clamp(Number(model.horizonYears || 3), 1, 5);
+                const confidencePct = clamp(Number(model.confidencePct || 75), 10, 100);
+                const adjustedSaving = Math.round(saving * (confidencePct / 100));
+                const netAnnual = adjustedSaving - operatingCost;
+                const netOverHorizon = (netAnnual * horizonYears) - implementationCost;
+                const roiPct = implementationCost > 0 ? Math.round((netOverHorizon / implementationCost) * 100) : 0;
+                return { netAnnual, roiPct };
+            }
+
+            function calcRiskProfile(profile) {
+                const p = profile || {};
+                const vals = [
+                    clamp(Number(p.operational || 2), 1, 5),
+                    clamp(Number(p.financial || 2), 1, 5),
+                    clamp(Number(p.technical || 2), 1, 5),
+                    clamp(Number(p.quality || 2), 1, 5),
+                    clamp(Number(p.experience || 2), 1, 5)
+                ];
+                const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+                const indexPct = Math.round((avg / 5) * 100);
+                const mitigationEffectivenessPct = clamp(Number(p.mitigationEffectivenessPct || 0), 0, 100);
+                const residualPct = Math.round(indexPct * (1 - (mitigationEffectivenessPct / 100)));
+                return { residualPct };
+            }
+
+            function rubricScoreFromObject(rubric) {
+                const r = rubric || {};
+                const vals = ["problem", "feasible", "impact", "prototype", "risk"]
+                    .map((k) => clamp(Number(r[k] || 0), 0, 5));
+                return Math.round((vals.reduce((a, b) => a + b, 0) / 25) * 100);
+            }
+
+            function calcSuccessPrediction(initiative) {
+                const ini = initiative || {};
+                if (ini.aiPrediction && Number.isFinite(Number(ini.aiPrediction.score))) {
+                    const s = clamp(Number(ini.aiPrediction.score), 0, 100);
+                    return { score: s, level: s >= 75 ? "مرتفع" : (s >= 55 ? "متوسط" : "منخفض") };
+                }
+                const v = ini.validation || {};
+                const vDone = ["problem", "beneficiary", "evidence"].filter((k) => String(v[k] || "").trim()).length;
+                const vPct = Math.round((vDone / 3) * 100);
+                const rubric = Number.isFinite(Number(ini.score)) ? clamp(Number(ini.score), 0, 100) : rubricScoreFromObject(ini.rubric);
+                const riskPct = 100 - calcRiskProfile(ini.riskProfile).residualPct;
+                const econ = calcEconomicImpact(ini.impact).roiPct;
+                const exec = clamp(Number(ini.progress ?? ini.prototype?.progress ?? 0), 0, 100);
+                const score = Math.round((rubric * 0.32) + (vPct * 0.22) + (riskPct * 0.2) + ((econ + 100) / 2 * 0.18) + (exec * 0.08));
+                return { score, level: score >= 75 ? "مرتفع" : (score >= 55 ? "متوسط" : "منخفض") };
+            }
+
+            function normalizeInitiative(raw) {
+                const i = { ...(raw || {}) };
+                i.id = String(i.id || `I-${Math.floor(1000 + Math.random() * 9000)}`);
+                i.title = String(i.title || "مبادرة بدون عنوان");
+                i.stage = String(i.stage || "الفكرة");
+                i.status = String(i.status || "مسودة");
+                i.tags = Array.isArray(i.tags) ? i.tags.filter(Boolean).map(String) : [];
+                i.org = String(i.org || i.organization || "جهة غير محددة");
+                i.priority = String(i.priority || "متوسطة");
+                i.progress = clamp(Number(i.progress ?? i.prototype?.progress ?? 0), 0, 100);
+                i.createdAt = i.createdAt || new Date().toISOString();
+                i.updatedAt = i.updatedAt || i.createdAt;
+                return i;
+            }
+
+            function isApplied(i) {
+                return i.status === "معتمد" || i.status === "مطبق" || i.stage === "الاعتماد" || i.stage === "التطبيق";
+            }
+
+            function isCritical(i) {
+                return i.priority === "حرجة" || calcRiskProfile(i.riskProfile).residualPct >= 70 || i.status === "متعثر";
+            }
+
+            function readScopeFromStorage() {
+                const raw = localStorage.getItem("is_exec_report_scope");
+                if (!raw) return null;
+                try {
+                    const data = JSON.parse(raw);
+                    if (!data || typeof data !== "object") return null;
+                    return data;
+                } catch {
+                    return null;
+                }
+            }
+
+            function applyScopeLabel(scope, allCount) {
+                if (scope && Array.isArray(scope.ids) && scope.ids.length) {
+                    scopedIds = new Set(scope.ids.map(String));
+                    $("#reportScopePill").textContent = `Scope: ${fmt(scope.ids.length)} / ${fmt(allCount)}`;
+                    const date = scope.generatedAt ? new Date(scope.generatedAt).toLocaleString("ar-SA") : "—";
+                    $("#reportStamp").textContent = `توليد التقرير: ${date}`;
+                } else {
+                    scopedIds = null;
+                    $("#reportScopePill").textContent = `Scope: Full (${fmt(allCount)})`;
+                    $("#reportStamp").textContent = `توليد التقرير: ${new Date().toLocaleString("ar-SA")}`;
+                }
+            }
+
+            function getAll() {
+                const rows = (IS.state.initiatives || []).map(normalizeInitiative);
+                return scopedIds ? rows.filter((i) => scopedIds.has(i.id)) : rows;
+            }
+
+            function fillFilters(all) {
+                const keepStage = $("#rStage").value;
+                const keepOrg = $("#rOrg").value;
+                const stages = Array.from(new Set((IS.state.stages || []).concat(all.map((i) => i.stage)).filter(Boolean)));
+                const orgs = Array.from(new Set(all.map((i) => i.org).filter(Boolean)));
+
+                $("#rStage").innerHTML = `<option value="">كل المراحل</option>` + stages.map((s) => `<option>${esc(s)}</option>`).join("");
+                $("#rOrg").innerHTML = `<option value="">كل الجهات</option>` + orgs.map((o) => `<option>${esc(o)}</option>`).join("");
+
+                $("#rStage").value = keepStage;
+                $("#rOrg").value = keepOrg;
+            }
+
+            function filtered(all) {
+                const q = normalize($("#rQ").value);
+                const stage = $("#rStage").value;
+                const org = $("#rOrg").value;
+                const priority = $("#rPriority").value;
+                return all.filter((i) => {
+                    const hay = normalize(`${i.id} ${i.title} ${i.stage} ${i.status} ${i.org} ${(i.tags || []).join(" ")}`);
+                    const okQ = !q || hay.includes(q);
+                    const okStage = !stage || i.stage === stage;
+                    const okOrg = !org || i.org === org;
+                    const okPriority = !priority || i.priority === priority;
+                    return okQ && okStage && okOrg && okPriority;
+                });
+            }
+
+            function renderKpis(list) {
+                const total = list.length;
+                const applied = list.filter(isApplied).length;
+                const economic = list.reduce((sum, i) => sum + calcEconomicImpact(i.impact).netAnnual, 0);
+                const ai = total ? Math.round(list.reduce((sum, i) => sum + calcSuccessPrediction(i).score, 0) / total) : 0;
+                const risk = list.filter((i) => calcRiskProfile(i.riskProfile).residualPct >= 70).length;
+                const orgs = new Set(list.map((i) => i.org)).size;
+
+                $("#kTotal").textContent = fmt(total);
+                $("#kApplied").textContent = fmt(applied);
+                $("#kEconomic").textContent = fmt(economic);
+                $("#kAi").textContent = `${fmt(ai)}%`;
+                $("#kRisk").textContent = fmt(risk);
+                $("#kOrgs").textContent = fmt(orgs);
+
+                $("#reportNarrative").textContent = `يوضح التقرير ${fmt(total)} مبادرة، منها ${fmt(applied)} معتمدة/مطبقة، مع أثر اقتصادي سنوي ${fmt(economic)} SAR ومتوسط AI ${fmt(ai)}%.`;
+            }
+
+            function renderHeatmap(list) {
+                const stages = (IS.state.stages || []).slice(0, 9);
+                $("#heatmapGrid").innerHTML = stages.map((stage) => {
+                    const bucket = list.filter((i) => i.stage === stage);
+                    const count = bucket.length;
+                    const risk = count ? Math.round(bucket.reduce((sum, i) => sum + calcRiskProfile(i.riskProfile).residualPct, 0) / count) : 0;
+                    const ai = count ? Math.round(bucket.reduce((sum, i) => sum + calcSuccessPrediction(i).score, 0) / count) : 0;
+                    const cls = risk >= 70 ? "h-high" : (risk >= 40 ? "h-mid" : "h-low");
+                    return `
+                        <div class="heatmap-cell ${cls}">
+                            <strong>${esc(stage)}</strong>
+                            <small>Count: ${fmt(count)}</small>
+                            <small>Risk: ${fmt(risk)}%</small>
+                            <small>AI: ${fmt(ai)}%</small>
+                        </div>
+                    `;
+                }).join("");
+            }
+
+            function renderOrgRows(list) {
+                const grouped = new Map();
+                list.forEach((i) => {
+                    if (!grouped.has(i.org)) grouped.set(i.org, []);
+                    grouped.get(i.org).push(i);
+                });
+                const rows = Array.from(grouped.entries())
+                    .map(([org, bucket]) => ({
+                        org,
+                        count: bucket.length,
+                        applied: bucket.filter(isApplied).length,
+                        ai: Math.round(bucket.reduce((sum, x) => sum + calcSuccessPrediction(x).score, 0) / bucket.length),
+                        risk: Math.round(bucket.reduce((sum, x) => sum + calcRiskProfile(x.riskProfile).residualPct, 0) / bucket.length)
+                    }))
+                    .sort((a, b) => b.count - a.count);
+
+                $("#orgRows").innerHTML = rows.length
+                    ? rows.map((r) => `
+                        <tr>
+                            <td>${esc(r.org)}</td>
+                            <td>${fmt(r.count)}</td>
+                            <td>${fmt(r.applied)}</td>
+                            <td>${fmt(r.ai)}%</td>
+                            <td>${fmt(r.risk)}%</td>
+                        </tr>
+                    `).join("")
+                    : `<tr><td colspan="5">لا توجد بيانات.</td></tr>`;
+            }
+
+            function renderCritical(list) {
+                const rows = [...list]
+                    .filter(isCritical)
+                    .sort((a, b) => calcRiskProfile(b.riskProfile).residualPct - calcRiskProfile(a.riskProfile).residualPct)
+                    .slice(0, 7);
+                $("#criticalList").innerHTML = rows.length
+                    ? rows.map((i) => {
+                        const risk = calcRiskProfile(i.riskProfile).residualPct;
+                        const eco = calcEconomicImpact(i.impact).netAnnual;
+                        return `
+                            <li class="list-card">
+                                <strong>${esc(i.id)} — ${esc(i.title)}</strong>
+                                <div>الجهة: ${esc(i.org)} • المرحلة: ${esc(i.stage)} • الأولوية: ${esc(i.priority)}</div>
+                                <div>الخطر: ${fmt(risk)}% • الأثر الاقتصادي: ${fmt(eco)} SAR</div>
+                                <div style="margin-top:6px;"><button class="btn btn-soft" data-open-map="${esc(i.id)}">فتح بالخريطة</button></div>
+                            </li>
+                        `;
+                    }).join("")
+                    : `<li class="list-card">لا توجد مبادرات حرجة ضمن النطاق الحالي.</li>`;
+            }
+
+            function renderAiInsights(list) {
+                const sorted = [...list]
+                    .map((i) => ({ i, ai: calcSuccessPrediction(i).score, risk: calcRiskProfile(i.riskProfile).residualPct, roi: calcEconomicImpact(i.impact).roiPct }))
+                    .sort((a, b) => b.ai - a.ai);
+
+                const top = sorted.slice(0, 3);
+                const low = sorted.slice(-3).reverse();
+                const cards = [];
+
+                top.forEach((row) => {
+                    cards.push(`<li class="list-card"><strong>فرصة عالية: ${esc(row.i.id)}</strong><div>${esc(row.i.title)}</div><div>AI ${fmt(row.ai)}% • ROI ${fmt(row.roi)}% • Risk ${fmt(row.risk)}%</div></li>`);
+                });
+                low.forEach((row) => {
+                    cards.push(`<li class="list-card"><strong>حاجة لتحسين: ${esc(row.i.id)}</strong><div>${esc(row.i.title)}</div><div>AI ${fmt(row.ai)}% • يوصى بمراجعة الفرضيات والتحقق.</div></li>`);
+                });
+
+                $("#aiInsights").innerHTML = cards.length ? cards.join("") : `<li class="list-card">لا توجد بيانات تحليل AI كافية.</li>`;
+            }
+
+            function renderTimeline(list) {
+                const applied = list.filter(isApplied).slice(0, 5).map((i) => ({
+                    at: i.updatedAt || i.createdAt,
+                    title: `اعتماد/تطبيق ${i.id}`,
+                    meta: i.title
+                }));
+                const audit = (IS.state.audit || []).slice(0, 6).map((a) => ({
+                    at: a.at,
+                    title: a.title,
+                    meta: a.meta
+                }));
+                const rows = applied.concat(audit)
+                    .filter((x) => x.at)
+                    .sort((a, b) => (b.at || "").localeCompare(a.at || ""))
+                    .slice(0, 10);
+
+                $("#achievementTimeline").innerHTML = rows.length
+                    ? rows.map((r) => `<li><strong>${esc(r.title)}</strong><div>${esc(r.meta || "")}</div><small>${esc((r.at || "").slice(0, 19).replace("T", " • "))}</small></li>`).join("")
+                    : `<li>لا توجد أحداث كافية لبناء الخط الزمني.</li>`;
+            }
+
+            function drillRows(type, list) {
+                if (type === "critical") return list.filter(isCritical).map((i) => ({ i, metric: `Risk ${fmt(calcRiskProfile(i.riskProfile).residualPct)}%` }));
+                if (type === "applied") return list.filter(isApplied).map((i) => ({ i, metric: "معتمد/مطبق" }));
+                if (type === "risk") return list.filter((i) => calcRiskProfile(i.riskProfile).residualPct >= 70).map((i) => ({ i, metric: `Residual ${fmt(calcRiskProfile(i.riskProfile).residualPct)}%` }));
+                if (type === "aiLow") return list.filter((i) => calcSuccessPrediction(i).score < 55).map((i) => ({ i, metric: `AI ${fmt(calcSuccessPrediction(i).score)}%` }));
+                if (type === "economic") return [...list]
+                    .sort((a, b) => calcEconomicImpact(b.impact).netAnnual - calcEconomicImpact(a.impact).netAnnual)
+                    .slice(0, 20)
+                    .map((i) => ({ i, metric: `Net ${fmt(calcEconomicImpact(i.impact).netAnnual)} SAR` }));
+                return [];
+            }
+
+            function renderDrill(list) {
+                const rows = drillRows(drillMode, list);
+                $("#drillHint").textContent = `الوضع الحالي: ${drillMode}`;
+                $("#drillBody").innerHTML = rows.map((row) => `
+                    <tr>
+                        <td><strong>${esc(row.i.id)}</strong></td>
+                        <td>${esc(row.i.title)}</td>
+                        <td>${esc(row.i.org)}</td>
+                        <td>${esc(row.i.stage)}</td>
+                        <td>${esc(row.i.status)}</td>
+                        <td>${esc(row.metric)}</td>
+                        <td><button class="btn btn-soft" data-open-map="${esc(row.i.id)}">فتح</button></td>
+                    </tr>
+                `).join("");
+                $("#drillEmpty").style.display = rows.length ? "none" : "flex";
+            }
+
+            function renderAll() {
+                const all = getAll();
+                fillFilters(all);
+                const list = filtered(all);
+                renderKpis(list);
+                renderHeatmap(list);
+                renderOrgRows(list);
+                renderCritical(list);
+                renderAiInsights(list);
+                renderTimeline(list);
+                renderDrill(list);
+
+                $$('[data-open-map]').forEach((b) => {
+                    b.addEventListener('click', () => {
+                        localStorage.setItem('is_selected_initiative', b.getAttribute('data-open-map'));
+                        window.location.href = '../map/index.html';
+                    });
+                });
+            }
+
+            async function syncFromApi({ silent = true } = {}) {
+                try {
+                    const payload = await apiRequest('/api/v2/initiatives', { method: 'GET', timeoutMs: 3600 });
+                    const rows = Array.isArray(payload?.items) ? payload.items : (Array.isArray(payload) ? payload : []);
+                    if (rows.length) {
+                        const map = new Map((IS.state.initiatives || []).map((i) => [String(i.id), normalizeInitiative(i)]));
+                        rows.forEach((r) => {
+                            const n = normalizeInitiative({
+                                id: r.id || r.initiativeId,
+                                title: r.titleAr || r.title,
+                                stage: r.stage || r.currentStage,
+                                status: r.status,
+                                tags: r.tags || r.taxonomy,
+                                org: r.org || r.organization || r.entity,
+                                priority: r.priority,
+                                progress: r.progress ?? r.prototype?.progress,
+                                score: r.score ?? r.rubricScore,
+                                rubric: r.rubric,
+                                validation: r.validation,
+                                impact: r.impact,
+                                riskProfile: r.riskProfile,
+                                prototype: r.prototype,
+                                createdAt: r.createdAt,
+                                updatedAt: r.updatedAt
+                            });
+                            map.set(n.id, { ...(map.get(n.id) || {}), ...n });
+                        });
+                        IS.state.initiatives = Array.from(map.values());
+                        IS.audit('مزامنة التقرير التنفيذي من API', `${fmt(rows.length)} سجل`);
+                        IS.save();
+                    }
+                    if (!silent) IS.toast('تم التحديث من API ✅', 'ok', 1600);
+                    return { ok: true, count: rows.length };
+                } catch (err) {
+                    if (!silent) IS.toast('تعذر الاتصال، تم استخدام البيانات المحلية.', 'warn', 2000);
+                    return { ok: false, error: String(err?.message || err) };
+                }
+            }
+
+            async function init() {
+                const scope = readScopeFromStorage();
+                applyScopeLabel(scope, (IS.state.initiatives || []).length);
+                IS.audit('فتح التقرير التنفيذي', 'report');
+                IS.save();
+
+                await syncFromApi({ silent: true });
+                renderAll();
+
+                ['rQ', 'rStage', 'rOrg', 'rPriority'].forEach((id) => {
+                    const el = document.getElementById(id);
+                    const evt = id === 'rQ' ? 'input' : 'change';
+                    el.addEventListener(evt, renderAll);
+                });
+
+                $$('[data-drill]').forEach((b) => {
+                    b.addEventListener('click', () => {
+                        drillMode = b.getAttribute('data-drill') || 'critical';
+                        renderAll();
+                    });
+                });
+
+                $('#btnRefresh').addEventListener('click', async () => {
+                    await syncFromApi({ silent: false });
+                    renderAll();
+                });
+
+                $('#btnBackCommand').addEventListener('click', () => {
+                    window.location.href = '../command/index.html';
+                });
+
+                $('#btnExportPdf').addEventListener('click', () => {
+                    IS.audit('تصدير التقرير التنفيذي PDF', 'report/export');
+                    IS.save();
+                    window.print();
+                });
+
+                $('#btnApiSettings').addEventListener('click', openApiModal);
+                $('#btnApiSave').addEventListener('click', async () => {
+                    const base = setApiBase($('#apiBaseInput').value);
+                    $('#apiStateHint').textContent = `تم حفظ العنوان: ${base || '(فارغ)'}`;
+                    const res = await syncFromApi({ silent: true });
+                    if (res.ok) {
+                        IS.toast('تم حفظ الإعدادات والاتصال ناجح ✅', 'ok', 1800);
+                        closeApiModal();
+                        renderAll();
+                    } else {
+                        IS.toast('تم حفظ الإعدادات، والبيانات المحلية مفعلة.', 'warn', 2000);
+                    }
+                });
+
+                $('#btnApiTest').addEventListener('click', async () => {
+                    const base = setApiBase($('#apiBaseInput').value);
+                    $('#apiStateHint').textContent = 'جارٍ اختبار الاتصال...';
+                    const res = await syncFromApi({ silent: true });
+                    if (res.ok) {
+                        $('#apiStateHint').textContent = `نجاح الاتصال (${base}) • السجلات: ${fmt(res.count || 0)}`;
+                        renderAll();
+                    } else {
+                        $('#apiStateHint').textContent = 'فشل الاتصال، سيتم الاعتماد على البيانات المحلية.';
+                    }
+                });
+
+                $$('[data-close-api]').forEach((el) => el.addEventListener('click', closeApiModal));
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') closeApiModal();
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+
+</body>
+
+</html>

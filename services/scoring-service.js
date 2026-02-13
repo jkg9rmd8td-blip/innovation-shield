@@ -7,15 +7,12 @@ export function validateRubric(rubric) {
 
 export function scoreByRubric(rubric, marks) {
   const totalWeight = validateRubric(rubric);
-  let weightedSum = 0;
-
-  rubric.forEach((criterion) => {
-    const mark = Number(marks[criterion.key] || 0);
-    const weight = Number(criterion.weight || 0);
-    weightedSum += mark * weight;
-  });
-
-  return Number((weightedSum / totalWeight).toFixed(2));
+  const weighted = rubric.reduce((acc, item) => {
+    const mark = Number(marks[item.key] || 0);
+    const weight = Number(item.weight || 0);
+    return acc + (mark * weight);
+  }, 0);
+  return Number((weighted / totalWeight).toFixed(2));
 }
 
 export function averageScores(scores) {
@@ -25,19 +22,20 @@ export function averageScores(scores) {
 }
 
 export function distributeRewards(total, contributors) {
+  const totalAmount = Number(total || 0);
   const weightSum = contributors.reduce((sum, c) => sum + Number(c.weight || 0), 0) || 1;
-  let running = 0;
-  const rows = contributors.map((c, idx) => {
-    let amount = Math.round((Number(total) * Number(c.weight || 0)) / weightSum);
-    running += amount;
+  let allocated = 0;
+
+  return contributors.map((c, idx) => {
+    let amount = Math.round((totalAmount * Number(c.weight || 0)) / weightSum);
+    allocated += amount;
     if (idx === contributors.length - 1) {
-      amount += Number(total) - running;
+      amount += totalAmount - allocated;
     }
     return {
       name: c.name,
-      weight: c.weight,
+      weight: Number(c.weight || 0),
       amount,
     };
   });
-  return rows;
 }

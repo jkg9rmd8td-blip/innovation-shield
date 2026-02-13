@@ -1,54 +1,175 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8" />
+  <title>درع الابتكار | مركز القيادة</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>درع الابتكار | منصة احترافية</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="ui/luxe.css" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/app.css" />
 </head>
-<body>
-  <section class="hero">
-    <div class="hero-content">
-      <h1>درع الابتكار المؤسسي</h1>
-      <p class="hero-sub">منصة تشغيل متقدمة توحّد الحوكمة، الصلاحيات، التحكيم، وسجل التدقيق ضمن بنية معيارية قابلة للتوسع.</p>
-      <div class="hero-actions">
-        <a class="primary" href="login.html">تسجيل الدخول</a>
-        <a class="secondary" href="teams.html">المسار التنفيذي</a>
-        <a class="pill" href="admin/index.html">مركز الإدارة</a>
+
+<body class="career-body">
+
+  <!-- Background Mesh -->
+  <div class="platform-bg">
+    <div class="mesh mesh-1"></div>
+    <div class="mesh mesh-2"></div>
+    <div class="mesh mesh-3"></div>
+  </div>
+
+  <div class="platform-shell">
+
+    <!-- ================== TOPBAR ================== -->
+    <header class="platform-topbar reveal">
+      <div class="topbar-brand">
+        <div class="brand-mark">IS</div>
+        <div>
+          <h1 class="topbar-title">درع الابتكار</h1>
+          <p class="topbar-sub">حرية ابتكار + تحديات واقعية + AI مساعد + تحكيم عادل</p>
+        </div>
       </div>
-      <div class="hero-note"><span class="dot"></span><span>Architecture جاهزة للإنتاج: Core + Modules + Services + Guards</span></div>
-    </div>
-  </section>
 
-  <section class="kpis">
-    <div class="kpi"><span class="kpi-number" data-target="248">0</span><span class="kpi-label">موظف مشارك</span></div>
-    <div class="kpi"><span class="kpi-number" data-target="41">0</span><span class="kpi-label">مبادرة خاضعة للحوكمة</span></div>
-    <div class="kpi"><span class="kpi-number" data-target="7">0</span><span class="kpi-label">مبادرة معتمدة</span></div>
-  </section>
+      <nav class="nav">
+        <a href="index.html" class="active">الرئيسية</a>
+        <a href="app/map/index.html">خريطة الابتكار</a>
+        <a href="app/prototype/index.html">النماذج الأولية</a>
+        <a href="app/employee/index.html">مسار الموظف</a>
+        <a href="app/judging/index.html">التحكيم</a>
+        <a href="app/command/index.html">لوحة القيادة</a>
+        <a href="app/policies/index.html">السياسات</a>
+        <a href="app/report/index.html">التقرير التنفيذي</a>
+      </nav>
 
-  <section class="paths">
-    <article class="path-card" data-go="teams.html">
-      <h3>إدارة المبادرات</h3>
-      <p>إنشاء مبادرة وتحديث الحالة وفق صلاحيات الدور.</p>
-      <button type="button" class="primary">فتح</button>
-    </article>
+      <div class="topbar-actions">
+        <span class="live-pill">🟢 نظام نشط</span>
+        <div class="hero-actions">
+          <button class="btn btn-primary" data-go="app/map/index.html">بدء مبادرة</button>
+          <button class="btn btn-soft" data-go="app/employee/index.html">ملفي الابتكاري</button>
+        </div>
+      </div>
+    </header>
 
-    <article class="path-card" data-go="policies.html">
-      <h3>الحوكمة والتعهدات</h3>
-      <p>تعهد رسمي، موافقة سرية، وسجل موافقات متكامل.</p>
-      <button type="button" class="secondary">فتح</button>
-    </article>
+    <!-- ================== HERO ================== -->
+    <section class="workspace-banner reveal">
+      <div>
+        <span class="eyebrow">مركز القيادة</span>
+        <h2 class="hero-title">
+          منصة تمنح الموظفين حرية ابتكار الحلول وتربطهم بتحديات حقيقية داخل التجمع
+        </h2>
+        <p class="hero-sub">
+          ابتكر حلولًا تخدم الموظف أو المريض أو التشغيل أو الجودة أو التقنية أو الموارد البشرية،
+          أو اختر من التحديات الواقعية المعروضة وتنافس على أفضل حل،
+          ثم استخدم الذكاء الاصطناعي لبناء الفكرة وادخل التحكيم البشري لضمان العدالة والجودة.
+        </p>
+      </div>
 
-    <article class="path-card" data-go="admin/judging.html">
-      <h3>التحكيم الاحترافي</h3>
-      <p>Rubric + تجميع متوسطات + قفل التقييم + توزيع جوائز.</p>
-      <button type="button" class="pill">فتح</button>
-    </article>
-  </section>
+      <div class="quality-pill">
+        ⚡ جاهزية الابتكار المؤسسي
+      </div>
+    </section>
 
-  <script type="module" src="ui/home.js"></script>
+    <!-- ================== KPIs ================== -->
+    <section class="stats-grid reveal">
+      <div class="stat-card">
+        <p>المبتكرون النشطون</p>
+        <h3 data-kpi="innovators">0</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>المبادرات المسجلة</p>
+        <h3 data-kpi="initiatives">0</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>النماذج الأولية</p>
+        <h3 data-kpi="prototypes">0</h3>
+      </div>
+
+      <div class="stat-card">
+        <p>المبادرات المعتمدة</p>
+        <h3 data-kpi="approved">0</h3>
+      </div>
+    </section>
+
+    <!-- ================== QUICK ACCESS ================== -->
+    <section class="workspace-grid reveal">
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>🚀 مسارات المنصة</h3>
+        </div>
+
+        <div class="badge-list">
+          <span class="badge-pill" data-go="app/map/index.html">خريطة الابتكار</span>
+          <span class="badge-pill" data-go="app/prototype/index.html">مركز النماذج</span>
+          <span class="badge-pill" data-go="app/employee/index.html">مساحة المبتكر</span>
+          <span class="badge-pill" data-go="app/judging/index.html">نظام التحكيم</span>
+          <span class="badge-pill" data-go="app/command/index.html">لوحة القيادة</span>
+          <span class="badge-pill" data-go="app/policies/index.html">الحوكمة والسياسات</span>
+          <span class="badge-pill" data-go="app/report/index.html">التقرير التنفيذي</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3>🎯 رؤية المنصة</h3>
+        </div>
+        <ul class="insight-list" style="margin:0;">
+          <li>ابتكار حر: أي موظف يقدر يطلق مبادرة تخدم أي مسار يحتاج تحسين.</li>
+          <li>تحديات واقعية: المنصة تعرض مشاكل فعلية داخل التجمع للاختيار والتنافس.</li>
+          <li>AI Co-Pilot: دعم ذكي لصياغة المشكلة والحل وMVP والأثر.</li>
+          <li>Human Judging: تحكيم بشري بمعايير واضحة لضمان العدالة والجودة.</li>
+        </ul>
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- JS -->
+  <script src="assets/js/app.js"></script>
+  <script>
+    (() => {
+      "use strict";
+      const IS = window.IS;
+      if (!IS) return;
+
+      const go = (path) => {
+        if (!path) return;
+        window.location.href = path;
+      };
+
+      document.querySelectorAll("[data-go]").forEach((el) => {
+        el.addEventListener("click", () => go(el.getAttribute("data-go")));
+      });
+
+      const inis = IS.state.initiatives || [];
+      const teams = IS.state.teams || [];
+      const members = new Set();
+      teams.forEach((t) => (t.members || []).forEach((m) => members.add(m.id || m.name)));
+
+      const kpi = {
+        innovators: Math.max(1, members.size || 0),
+        initiatives: inis.length,
+        prototypes: inis.filter((i) => !!i.prototype || i.stage === "النموذج الأولي").length,
+        approved: inis.filter((i) => ["معتمد", "مطبق"].includes(i.status) || ["الاعتماد", "التطبيق"].includes(i.stage)).length
+      };
+
+      Object.entries(kpi).forEach(([key, value]) => {
+        const node = document.querySelector(`[data-kpi="${key}"]`);
+        if (node) node.textContent = new Intl.NumberFormat("ar-SA").format(value);
+      });
+
+      IS.audit("فتح الصفحة الرئيسية", "home");
+      IS.save();
+    })();
+  </script>
+
 </body>
+
 </html>

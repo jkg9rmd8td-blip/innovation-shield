@@ -6,9 +6,12 @@ export function getRolePermissions(role) {
 
 export function can(role, permission) {
   const perms = getRolePermissions(role);
-  return perms.includes("*") || perms.includes(permission);
+  return perms.includes(permission);
 }
 
 export function buildRoleMatrixView() {
-  return Object.entries(ROLE_MATRIX).map(([role, perms]) => ({ role, permissions: perms.slice() }));
+  return Object.entries(ROLE_MATRIX).map(([role, permissions]) => ({
+    role,
+    permissions: [...permissions],
+  }));
 }

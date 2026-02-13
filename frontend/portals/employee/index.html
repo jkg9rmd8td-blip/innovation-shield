@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Innovation Shield V2 | Employee Portal</title>
+  <link rel="stylesheet" href="../../shared/design-system/tokens.css" />
+  <link rel="stylesheet" href="../../shared/styles/reset.css" />
+  <link rel="stylesheet" href="../../shared/styles/base.css" />
+  <link rel="stylesheet" href="../../shared/styles/utilities.css" />
+  <link rel="stylesheet" href="../../shared/styles/theme-apple.css" />
+  <link rel="stylesheet" href="../../shared/design-system/layout.css" />
+  <link rel="stylesheet" href="../../shared/design-system/components.css" />
+  <link rel="stylesheet" href="../../shared/shell/shell.css" />
+  <link rel="stylesheet" href="./portal-plus.css" />
+</head>
+<body>
+  <header class="topbar" data-topbar></header>
+
+  <section class="app-shell" data-portal-root>
+    <aside data-sidebar></aside>
+
+    <main class="content portal-plus-content">
+      <section class="card apple-glass ep-card ep-hero">
+        <div class="ep-hero-grid">
+          <div class="ep-hero-copy">
+            <p class="ep-eyebrow">Innovation Shield | Employee Command Center</p>
+            <h1 class="ep-hero-title">لوحة ابتكار تنفيذية متقدمة لإدارة المبادرات والنماذج الأولية</h1>
+            <p class="ep-hero-sub">
+              نسخة منصة مكتبية مطورة: تحكم كامل بالمبادرات، تتبع ذكي للنماذج الأولية، وتحليل جاهزية التنفيذ
+              مع تجربة أسرع وأكثر احترافية.
+            </p>
+            <div class="ep-hero-actions">
+              <button class="btn primary" type="button" id="refreshAllBtn">تحديث شامل</button>
+              <button class="btn ghost" type="button" id="createDemoInitiativeBtn">إنشاء مبادرة تجريبية</button>
+              <a class="btn ghost" href="../../../app/pro/print-career.html">السيرة الابتكارية Pro</a>
+            </div>
+          </div>
+
+          <div class="ep-hero-kpis">
+            <article class="ep-kpi-item">
+              <p>إجمالي المبادرات</p>
+              <strong id="heroInitiativeCount">0</strong>
+            </article>
+            <article class="ep-kpi-item">
+              <p>مبادرات معتمدة</p>
+              <strong id="heroApprovedCount">0</strong>
+            </article>
+            <article class="ep-kpi-item">
+              <p>النماذج الأولية</p>
+              <strong id="heroPrototypeCount">0</strong>
+            </article>
+            <article class="ep-kpi-item">
+              <p>جاهزية التنفيذ</p>
+              <strong id="heroReadinessValue">0%</strong>
+            </article>
+          </div>
+        </div>
+
+        <div class="ep-home-signals" id="homeSignalCards"></div>
+        <div class="grid-cards" data-kpi-grid></div>
+      </section>
+
+      <section id="portfolio" class="card apple-glass ep-card stack">
+        <div class="section-head">
+          <div>
+            <h2>1) الصفحة الرئيسية التنفيذية (Portfolio)</h2>
+            <p class="section-sub">مبادراتك الحالية، الحالة، وآخر تحديثات التشغيل.</p>
+          </div>
+        </div>
+
+        <div class="ep-dual">
+          <article class="ep-stack">
+            <h3>سجل المبادرات</h3>
+            <div class="ep-table-wrap">
+              <table class="ep-table">
+                <thead>
+                  <tr>
+                    <th>المعرف</th>
+                    <th>العنوان</th>
+                    <th>المرحلة</th>
+                    <th>الحالة</th>
+                    <th>آخر تحديث</th>
+                  </tr>
+                </thead>
+                <tbody id="employeeInitiativesBody"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="ep-stack">
+            <h3>إشارات تشغيلية</h3>
+            <div class="result-box" id="analyticsResult">سيتم عرض ملخص التحليلات هنا.</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="prototype-center" class="card apple-glass ep-card stack">
+        <div class="section-head">
+          <div>
+            <h2>2) مركز تطوير النماذج الأولية</h2>
+            <p class="section-sub">Portfolio احترافي لقراءة الجاهزية، المخاطر، المقارنة، وقرار اللجنة بشكل أسرع.</p>
+          </div>
+          <div class="pill-row" id="prototypeStatusPills"></div>
+        </div>
+
+        <div class="prototype-toolbar">
+          <input id="prototypeSearchInput" type="search" placeholder="ابحث بالاسم أو المعرف أو الحالة" />
+          <select id="prototypeStatusFilter">
+            <option value="all">كل الحالات</option>
+            <option value="ready">جاهز للتحكيم/التجربة</option>
+            <option value="active">قيد التطوير</option>
+            <option value="other">حالات أخرى</option>
+          </select>
+          <select id="prototypeSortSelect">
+            <option value="progress_desc">الأعلى تقدمًا</option>
+            <option value="progress_asc">الأقل تقدمًا</option>
+            <option value="readiness_desc">الأعلى جاهزية</option>
+            <option value="updated_desc">الأحدث</option>
+            <option value="name_asc">الاسم (أ-ي)</option>
+          </select>
+          <button class="btn ghost" type="button" id="prototypeCompareBtn">مقارنة النماذج</button>
+          <button class="btn ghost" type="button" id="prototypePitchModeBtn">Pitch Mode: OFF</button>
+          <button class="btn ghost" type="button" id="prototypeRefreshDetailsBtn">تحديث التفاصيل</button>
+        </div>
+
+        <div class="prototype-cards" id="employeePrototypeCards"></div>
+
+        <div class="proto-detail-grid">
+          <article class="workspace-panel proto-detail-card">
+            <h4>بطاقة النموذج المحدد</h4>
+            <div class="proto-selected-meta" id="protoSelectedMeta">اختر نموذجًا من البطاقات لعرض التفاصيل.</div>
+          </article>
+
+          <article class="workspace-panel proto-detail-card">
+            <h4>Timeline النموذج</h4>
+            <ul id="protoTimelineList" class="timeline-list"></ul>
+          </article>
+
+          <article class="workspace-panel proto-detail-card">
+            <h4>Prototype Comparison</h4>
+            <div id="protoComparisonResult" class="proto-empty">حدد نموذجين أو أكثر من البطاقات ثم اضغط مقارنة.</div>
+          </article>
+        </div>
+
+        <div class="result-box" id="protoPitchResult">Pitch mode output will appear here.</div>
+      </section>
+
+      <section id="engine" class="card apple-glass ep-card stack">
+        <div class="section-head">
+          <div>
+            <h2>3) Innovation Management Engine</h2>
+            <p class="section-sub">تقييم تقني/اقتصادي + قرار اللجنة + الانتقال للإطلاق.</p>
+          </div>
+          <div class="pill-row" id="engineWorkflowPills"></div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="engineInitiativeId">Initiative ID</label>
+            <input class="input" id="engineInitiativeId" placeholder="uuid" />
+          </div>
+          <div class="form-group">
+            <label for="engineDecision">Committee Decision</label>
+            <select class="select" id="engineDecision">
+              <option value="approved">approved</option>
+              <option value="rejected">rejected</option>
+              <option value="needs_revision">needs_revision</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="engineTech">Technical Readiness %</label>
+            <input class="input" id="engineTech" type="number" min="0" max="100" value="78" />
+          </div>
+          <div class="form-group">
+            <label for="engineEco">Annual Savings (SAR)</label>
+            <input class="input" id="engineEco" type="number" min="0" value="180000" />
+          </div>
+        </div>
+
+        <div class="cluster">
+          <button class="btn" type="button" id="engineEvalBtn">Evaluate Technical & Economic</button>
+          <button class="btn" type="button" id="engineCommitteeBtn">Submit Committee Decision</button>
+          <button class="btn" type="button" id="enginePilotBtn">Move to Pilot</button>
+          <button class="btn" type="button" id="engineApproveBtn">Approve</button>
+          <button class="btn" type="button" id="engineDeployBtn">Deploy</button>
+        </div>
+
+        <div class="result-box" id="engineResult">Engine output will appear here.</div>
+      </section>
+
+      <section id="builder" class="card apple-glass ep-card stack">
+        <div class="section-head">
+          <div>
+            <h2>4) Prototype Builder</h2>
+            <p class="section-sub">Guided Flow من 4 خطوات: تعريف المشكلة ← صياغة الحل ← بناء النموذج ← توليد المستندات.</p>
+          </div>
+        </div>
+
+        <div class="guided-flow-head">
+          <div class="guided-steps" id="builderStepPills">
+            <button class="guided-step is-active" type="button" data-builder-step-btn="0">1) تعريف المشكلة</button>
+            <button class="guided-step" type="button" data-builder-step-btn="1">2) صياغة الحل</button>
+            <button class="guided-step" type="button" data-builder-step-btn="2">3) بناء النموذج</button>
+            <button class="guided-step" type="button" data-builder-step-btn="3">4) توليد المستندات</button>
+          </div>
+          <div class="guided-nav">
+            <button class="btn ghost" type="button" id="builderPrevStepBtn">السابق</button>
+            <button class="btn" type="button" id="builderNextStepBtn">التالي</button>
+          </div>
+        </div>
+
+        <div class="builder-step-panel is-active" data-builder-step-panel="0">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="builderProblem">Problem Definition</label>
+              <textarea class="input" id="builderProblem" rows="3">ارتفاع زمن انتظار المستفيد وصعوبة توجيه الحالة للوحدة المناسبة.</textarea>
+            </div>
+            <div class="form-group">
+              <label for="builderPainPoints">Pain Points Mapping</label>
+              <input class="input" id="builderPainPoints" value="ازدحام الاستقبال، تكرار الإدخال اليدوي، تأخر التوجيه" />
+            </div>
+            <div class="form-group">
+              <label for="builderBeneficiaries">Primary Beneficiaries</label>
+              <input class="input" id="builderBeneficiaries" value="Patients, Front Desk, Care Coordinators" />
+            </div>
+          </div>
+          <div class="cluster">
+            <button class="btn" type="button" id="builderAiProblemBtn">AI: تحليل المشكلة</button>
+          </div>
+        </div>
+
+        <div class="builder-step-panel" data-builder-step-panel="1">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="builderTitle">Idea Title</label>
+              <input class="input" id="builderTitle" value="Smart Patient Journey" />
+            </div>
+            <div class="form-group">
+              <label for="builderSummary">Idea Summary</label>
+              <input class="input" id="builderSummary" value="Automate triage and improve service routing" />
+            </div>
+            <div class="form-group">
+              <label for="builderActor">Primary Actor</label>
+              <input class="input" id="builderActor" value="Patient" />
+            </div>
+          </div>
+          <div class="cluster">
+            <button class="btn" type="button" id="builderUseCasesBtn">AI: Generate Use Cases</button>
+            <button class="btn" type="button" id="builderUserStoriesBtn">AI: Generate User Stories</button>
+            <button class="btn" type="button" id="builderRiskBtn">AI: Analyze Risks</button>
+            <button class="btn" type="button" id="builderMvpBtn">AI: Suggest MVP Features</button>
+          </div>
+        </div>
+
+        <div class="builder-step-panel" data-builder-step-panel="2">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="builderTemplate">Mockup Template</label>
+              <select class="select" id="builderTemplate"></select>
+            </div>
+            <div class="form-group">
+              <label for="builderExecutionPlan">Execution Plan</label>
+              <textarea class="input" id="builderExecutionPlan" rows="3">Pilot 8 weeks: triage rules, team onboarding, KPI baseline, weekly governance checkpoint.</textarea>
+            </div>
+            <div class="form-group">
+              <label for="builderFinancialImpact">Estimated Financial Impact (SAR)</label>
+              <input class="input" id="builderFinancialImpact" type="number" value="220000" />
+            </div>
+          </div>
+
+          <div class="cluster">
+            <button class="btn" type="button" id="builderWritingBtn">Writing Assistant</button>
+            <button class="btn" type="button" id="builderMockupBtn">Generate Mockup</button>
+            <button class="btn ghost" type="button" id="builderWireframeBtn">Wireframe Builder</button>
+            <button class="btn ghost" type="button" id="builderJourneyBtn">Journey Map</button>
+            <button class="btn ghost" type="button" id="builderFlowchartBtn">Flowchart</button>
+            <button class="btn ghost" type="button" id="builderCanvasBtn">Business Model Canvas</button>
+          </div>
+
+          <div class="studio-grid">
+            <div class="studio-editor">
+              <h4>Wireframe Builder</h4>
+              <textarea class="input" id="builderWireframeEditor" rows="4"></textarea>
+            </div>
+            <div class="studio-editor">
+              <h4>Journey Map Editor</h4>
+              <textarea class="input" id="builderJourneyEditor" rows="4"></textarea>
+            </div>
+            <div class="studio-editor">
+              <h4>Flowchart Editor</h4>
+              <textarea class="input" id="builderFlowchartEditor" rows="4"></textarea>
+            </div>
+            <div class="studio-editor">
+              <h4>Business Model Canvas</h4>
+              <textarea class="input" id="builderCanvasEditor" rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="builder-step-panel" data-builder-step-panel="3">
+          <div class="cluster">
+            <button class="btn" type="button" id="builderPitchBtn">Generate Pitch Deck</button>
+            <button class="btn ghost" type="button" id="builderDocPackBtn">Generate Full Pack</button>
+          </div>
+
+          <div class="readiness-wrap">
+            <div class="readiness-ring"><strong id="builderReadinessScore">0%</strong><span>AI Readiness</span></div>
+            <ul id="builderReadinessFactors" class="readiness-factors"></ul>
+          </div>
+        </div>
+
+        <div class="template-hint" id="builderTemplateHint">اختر قالبًا لعرض توصية الاستخدام.</div>
+
+        <div class="builder-insights">
+          <article class="workspace-panel">
+            <h4>AI Co-Pilot</h4>
+            <div class="result-box mini" id="builderCopilotResult">Copilot suggestions will appear here.</div>
+          </article>
+          <article class="workspace-panel">
+            <h4>Builder Output</h4>
+            <div class="result-box mini" id="builderResult">Builder output will appear here.</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="workspace" class="card apple-glass ep-card stack">
+        <h2>5) Innovation Workspace</h2>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="workspaceInitiativeId">Initiative ID</label>
+            <input class="input" id="workspaceInitiativeId" placeholder="uuid" />
+          </div>
+          <div class="form-group">
+            <label for="workspaceChangeTitle">Change Log Entry</label>
+            <input class="input" id="workspaceChangeTitle" value="Updated pilot scope" />
+          </div>
+          <div class="form-group">
+            <label for="workspaceEvaluatorNote">Evaluator Note</label>
+            <input class="input" id="workspaceEvaluatorNote" value="Need stronger baseline metrics" />
+          </div>
+          <div class="form-group">
+            <label for="workspaceRecommendation">AI Recommendation</label>
+            <input class="input" id="workspaceRecommendation" value="Add integration readiness checklist" />
+          </div>
+        </div>
+
+        <div class="cluster">
+          <button class="btn" type="button" id="workspaceLoadBtn">Load Workspace</button>
+          <button class="btn" type="button" id="workspaceChangeBtn">Add Change</button>
+          <button class="btn" type="button" id="workspaceNoteBtn">Add Evaluator Note</button>
+          <button class="btn" type="button" id="workspaceRecBtn">Add AI Recommendation</button>
+        </div>
+
+        <div class="workspace-panels">
+          <article class="workspace-panel"><h4>Change Log</h4><ul id="workspaceChangesList"></ul></article>
+          <article class="workspace-panel"><h4>Evaluator Notes</h4><ul id="workspaceNotesList"></ul></article>
+          <article class="workspace-panel"><h4>AI Recommendations</h4><ul id="workspaceRecsList"></ul></article>
+          <article class="workspace-panel">
+            <h4>Prototype Files (Cards)</h4>
+            <div id="workspaceFilesCards" class="file-card-grid"></div>
+            <ul id="workspaceFilesList" class="sr-hidden"></ul>
+          </article>
+        </div>
+
+        <div class="collab-panel">
+          <div class="section-head">
+            <div>
+              <h3>Collaboration Mode</h3>
+              <p class="section-sub">تعليقات الفريق، Mentions، وسجل تغييرات تعاوني لكل نموذج.</p>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="collabCommentInput">Comment</label>
+              <input class="input" id="collabCommentInput" placeholder="أضف تعليقًا على النموذج الحالي" />
+            </div>
+            <div class="form-group">
+              <label for="collabMentionInput">Mention</label>
+              <input class="input" id="collabMentionInput" placeholder="@username" />
+            </div>
+          </div>
+          <div class="cluster">
+            <button class="btn" type="button" id="collabAddCommentBtn">Add Comment</button>
+            <button class="btn ghost" type="button" id="collabSuggestBtn">AI Suggestion</button>
+          </div>
+          <div class="workspace-panels">
+            <article class="workspace-panel"><h4>Team Comments</h4><ul id="collabCommentsList"></ul></article>
+            <article class="workspace-panel"><h4>Activity Stream</h4><ul id="collabActivityList"></ul></article>
+          </div>
+        </div>
+      </section>
+
+      <section id="maturity" class="card apple-glass ep-card stack">
+        <h2>6) Idea Maturity Score</h2>
+        <div class="form-grid">
+          <div class="form-group"><label>Problem Clarity</label><input class="input" id="scoreProblem" type="number" min="0" max="100" value="78" /></div>
+          <div class="form-group"><label>Feasibility</label><input class="input" id="scoreFeasibility" type="number" min="0" max="100" value="74" /></div>
+          <div class="form-group"><label>Impact</label><input class="input" id="scoreImpact" type="number" min="0" max="100" value="82" /></div>
+          <div class="form-group"><label>Risk</label><input class="input" id="scoreRisk" type="number" min="0" max="100" value="66" /></div>
+          <div class="form-group"><label>Readiness</label><input class="input" id="scoreReadiness" type="number" min="0" max="100" value="71" /></div>
+          <div class="form-group"><label>Initiative ID (optional)</label><input class="input" id="scoreInitiativeId" placeholder="uuid" /></div>
+        </div>
+        <div class="cluster">
+          <button class="btn" type="button" id="scoreCalcBtn">Calculate & Store</button>
+          <button class="btn ghost" type="button" id="scoreListBtn">List Scores</button>
+        </div>
+        <div class="result-box" id="scoreResult">Scoring output will appear here.</div>
+      </section>
+
+      <section id="impact" class="card apple-glass ep-card stack">
+        <h2>7) Impact Simulator</h2>
+        <div class="form-grid">
+          <div class="form-group"><label>Baseline Time (days)</label><input class="input" id="impactTime" type="number" value="12" /></div>
+          <div class="form-group"><label>Baseline Cost (SAR)</label><input class="input" id="impactCost" type="number" value="180000" /></div>
+          <div class="form-group"><label>Baseline Quality (0-100)</label><input class="input" id="impactQuality" type="number" value="71" /></div>
+          <div class="form-group"><label>Baseline Satisfaction (0-100)</label><input class="input" id="impactSatisfaction" type="number" value="68" /></div>
+          <div class="form-group"><label>Time Reduction %</label><input class="input" id="impactTimeRed" type="number" value="28" /></div>
+          <div class="form-group"><label>Cost Reduction %</label><input class="input" id="impactCostRed" type="number" value="21" /></div>
+          <div class="form-group"><label>Quality Increase %</label><input class="input" id="impactQualityInc" type="number" value="16" /></div>
+          <div class="form-group"><label>Satisfaction Increase %</label><input class="input" id="impactSatInc" type="number" value="14" /></div>
+        </div>
+        <div class="cluster">
+          <button class="btn" type="button" id="impactRunBtn">Run Simulation</button>
+          <button class="btn ghost" type="button" id="impactListBtn">List Simulations</button>
+        </div>
+        <div class="result-box" id="impactResult">Simulation output will appear here.</div>
+      </section>
+
+      <section id="benchmarking" class="card apple-glass ep-card stack">
+        <h2>8) Global Benchmarking</h2>
+        <div class="form-grid">
+          <div class="form-group"><label>Idea Title</label><input class="input" id="benchTitle" value="Smart Patient Journey" /></div>
+          <div class="form-group"><label>Summary</label><input class="input" id="benchSummary" value="Automated triage and routing to reduce waiting time" /></div>
+          <div class="form-group"><label>Keywords (comma-separated)</label><input class="input" id="benchKeywords" value="triage,automation,patient-flow,routing" /></div>
+          <div class="form-group"><label>Initiative ID (optional)</label><input class="input" id="benchInitiativeId" placeholder="uuid" /></div>
+        </div>
+        <div class="cluster">
+          <button class="btn" type="button" id="benchRunBtn">Run Benchmark</button>
+          <button class="btn ghost" type="button" id="benchCatalogBtn">View Catalog</button>
+          <button class="btn ghost" type="button" id="benchRunsBtn">View Runs</button>
+        </div>
+        <div class="result-box" id="benchResult">Benchmark output will appear here.</div>
+      </section>
+
+      <section id="marketplace" class="card apple-glass ep-card stack">
+        <h2>9) Internal Marketplace</h2>
+        <div class="form-grid">
+          <div class="form-group"><label>Offer Title</label><input class="input" id="marketTitle" value="Smart Triage Kit" /></div>
+          <div class="form-group"><label>Status</label><select class="select" id="marketStatus"><option value="draft">draft</option><option value="published">published</option></select></div>
+          <div class="form-group"><label>Initiative ID (optional)</label><input class="input" id="marketInitiativeId" placeholder="uuid" /></div>
+        </div>
+        <div class="cluster">
+          <button class="btn" type="button" id="marketCreateBtn">Create Offer</button>
+          <button class="btn ghost" type="button" id="marketListBtn">List Offers</button>
+        </div>
+        <div class="result-box" id="marketResult">Marketplace output will appear here.</div>
+      </section>
+
+      <section class="card apple-glass ep-card stack">
+        <h2>Value Proposition & Roadmap</h2>
+        <p class="ep-note">
+          Value Proposition: empower innovators with structured tooling, accelerate committee decisions,
+          improve transparency, and increase real deployment outcomes. Competitive Advantage: integrated engine +
+          prototype builder + scoring + simulation + global benchmarking + workspace + analytics + marketplace.
+          Roadmap: Phase1 foundation, Phase2 enablement, Phase3 advanced intelligence, Phase4 expansion and national/academic integration.
+        </p>
+      </section>
+    </main>
+  </section>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

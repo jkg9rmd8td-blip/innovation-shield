@@ -1,0 +1,18 @@
+export default {
+  app_name: "درع الابتكار",
+  app_subtitle: "منصة ابتكار مؤسسية V2",
+  employee_portal: "بوابة الموظف",
+  judging_portal: "بوابة التحكيم",
+  admin_portal: "بوابة الإدارة",
+  language_switch: "EN",
+  role_label: "الدور",
+  kpi_initiatives: "المبادرات",
+  kpi_prototypes: "النماذج",
+  kpi_services: "طلبات الخدمات",
+  kpi_audit: "سجلات التدقيق",
+  initiatives_title: "دورة حياة المبادرات",
+  prototypes_title: "إدارة النماذج الأولية",
+  governance_title: "الحوكمة والامتثال",
+  no_data: "لا توجد بيانات حتى الآن",
+  sign_out: "تسجيل الخروج",
+};

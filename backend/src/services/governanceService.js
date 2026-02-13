@@ -27,6 +27,7 @@ export async function getGovernanceLogs() {
   ]);
 
   return {
+    approvals: pledges.rows,
     pledges: pledges.rows,
     confidentialityApprovals: confidentiality.rows,
   };

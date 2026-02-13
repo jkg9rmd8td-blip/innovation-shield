@@ -1,0 +1,29 @@
+.portal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.portal-title {
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  margin: 0;
+}
+
+.portal-subtitle {
+  margin: 0;
+  color: var(--muted);
+}
+
+.quick-actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-3);
+}

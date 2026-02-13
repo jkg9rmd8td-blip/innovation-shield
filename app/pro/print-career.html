@@ -1,65 +1,201 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-
 <head>
-    <meta charset="utf-8">
-    <title>السيرة الابتكارية | درع الابتكار</title>
-    <style>
-        body {
-            font-family: system-ui, Tajawal;
-            margin: 24px
-        }
-
-        h1 {
-            margin-bottom: 6px
-        }
-
-        .card {
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 999px;
-            border: 1px solid #ccc;
-            margin: 4px
-        }
-
-        @media print {
-            button {
-                display: none
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>منصة السيرة الابتكارية | Innovation Shield</title>
+  <link rel="stylesheet" href="../../assets/css/app.css" />
 </head>
+<body class="career-body">
+  <div class="platform-bg" aria-hidden="true">
+    <span class="mesh mesh-1"></span>
+    <span class="mesh mesh-2"></span>
+    <span class="mesh mesh-3"></span>
+  </div>
 
-<body>
-    <button onclick="print()">طباعة / PDF</button>
-    <h1>السيرة الابتكارية للموظف</h1>
-    <div id="box"></div>
+  <main class="platform-shell">
+    <header class="platform-topbar reveal">
+      <div class="topbar-brand">
+        <span class="brand-mark" aria-hidden="true">IS</span>
+        <div>
+          <h1 class="topbar-title">منصة السيرة الابتكارية</h1>
+          <p class="topbar-sub">Innovation Shield Pro Console</p>
+        </div>
+      </div>
 
-    <script>
-        const data = JSON.parse(localStorage.getItem("is_employee_print_v1") || "null");
-        if (!data) { document.body.innerHTML = "لا توجد بيانات"; }
-        else {
-            box.innerHTML = `
-    <div class="card"><b>الاسم:</b> ${data.me.displayName}</div>
-    <div class="card"><b>الجهة:</b> ${data.org.nameAr}</div>
-    <div class="card"><b>المستوى:</b> ${data.level}</div>
-    <div class="card"><b>النقاط:</b> ${data.points}</div>
-    <div class="card"><b>الإحصائيات:</b>
-      مبادرات ${data.stats.total} • معتمدة ${data.stats.wins} • أثر ${data.stats.impact}
+      <div class="topbar-actions">
+        <span class="live-pill"><span class="live-dot"></span> لوحة مباشرة</span>
+        <button type="button" class="btn btn-ghost" id="pcExportBtn">تصدير البيانات</button>
+        <button type="button" class="btn btn-ghost" id="pcDensityBtn">وضع مدمج</button>
+        <button type="button" class="btn btn-primary" id="pcPrintBtn">طباعة احترافية</button>
+        <button type="button" class="btn btn-soft" id="pcRefreshBtn">تحديث البيانات</button>
+        <button type="button" class="btn btn-ghost" id="pcBackBtn">رجوع</button>
+      </div>
+    </header>
+
+    <div class="platform-body">
+      <aside class="platform-sidebar reveal">
+        <section class="profile-card">
+          <p class="sidebar-label">هوية الموظف</p>
+          <div class="profile-head">
+            <div class="avatar" id="pcAvatar">م</div>
+            <div>
+              <h2 id="pcName">موظف مبتكر</h2>
+              <p class="role" id="pcRole">قائد مبادرات</p>
+            </div>
+          </div>
+
+          <dl class="meta-list">
+            <div>
+              <dt>الجهة</dt>
+              <dd id="pcOrg">مجمع الملك فيصل الطبي</dd>
+            </div>
+            <div>
+              <dt>الإدارة</dt>
+              <dd id="pcDept">الإبداع المؤسسي</dd>
+            </div>
+            <div>
+              <dt>المستوى</dt>
+              <dd><span class="level-chip" id="pcLevel">Pioneer</span></dd>
+            </div>
+          </dl>
+        </section>
+
+        <section class="side-panel">
+          <h3>مؤشر الأداء العام</h3>
+          <div class="readiness-box">
+            <div class="readiness-meta">
+              <span>مؤشر الزخم</span>
+              <strong id="pcMomentumValue">0%</strong>
+            </div>
+            <div class="progress-track">
+              <span id="pcMomentumBar"></span>
+            </div>
+            <p class="points-line">إجمالي النقاط: <strong id="pcPoints">0</strong></p>
+          </div>
+        </section>
+
+        <section class="side-panel">
+          <h3>مؤشرات فورية</h3>
+          <ul class="metric-list">
+            <li><span>نسبة الاعتماد</span><strong id="pcApprovalRate">0%</strong></li>
+            <li><span>نسبة الوصول للأثر</span><strong id="pcImpactRate">0%</strong></li>
+            <li><span>نسبة التغطية بالنماذج</span><strong id="pcPrototypeRate">0%</strong></li>
+            <li><span>مستوى المخاطر</span><strong id="pcRiskLevel">منخفض</strong></li>
+          </ul>
+        </section>
+
+        <section class="side-panel">
+          <h3>الحوكمة والامتثال</h3>
+          <p class="nda-status" id="pcNdaStatus">حالة التعهد: غير متاح</p>
+          <p class="generated">آخر توليد: <span id="pcGeneratedAt">—</span></p>
+          <p class="generated">مصدر البيانات: <span id="pcDataSource">—</span></p>
+        </section>
+      </aside>
+
+      <section class="platform-main reveal">
+        <section class="workspace-banner">
+          <div>
+            <p class="eyebrow">لوحة تنفيذ متقدمة</p>
+            <h2 class="hero-title">السيرة الابتكارية الاحترافية</h2>
+            <p class="hero-sub">
+              عرض مكتبي شامل لمؤشرات المبادرات، جاهزية النماذج الأولية، وسجل التحركات الرئيسية مع تحسينات تحليلية.
+            </p>
+          </div>
+          <div class="quality-pill">جودة التنفيذ <strong id="pcQualityValue">0%</strong></div>
+        </section>
+
+        <section class="stats-grid">
+          <article class="stat-card stat-a">
+            <p>إجمالي المبادرات</p>
+            <h3 id="pcStatTotal">0</h3>
+            <small id="pcTotalHint">حجم المحفظة الابتكارية</small>
+          </article>
+          <article class="stat-card stat-b">
+            <p>مبادرات معتمدة</p>
+            <h3 id="pcStatWins">0</h3>
+            <small id="pcWinsHint">جاهزة للتعميم</small>
+          </article>
+          <article class="stat-card stat-c">
+            <p>مبادرات بأثر</p>
+            <h3 id="pcStatImpact">0</h3>
+            <small id="pcImpactHint">أثر تشغيلي مثبت</small>
+          </article>
+          <article class="stat-card stat-d">
+            <p>نماذج أولية</p>
+            <h3 id="pcStatProtos">0</h3>
+            <small id="pcProtosHint">قيد البناء والتجربة</small>
+          </article>
+        </section>
+
+        <section class="insights-grid">
+          <article class="panel insight-panel">
+            <div class="panel-head">
+              <h3>توصيات ذكية للتطوير</h3>
+            </div>
+            <ul id="pcRecommendations" class="insight-list"></ul>
+          </article>
+
+          <article class="panel insight-panel">
+            <div class="panel-head">
+              <h3>توزيع حالات النماذج</h3>
+            </div>
+            <div id="pcStageBars" class="stage-bars"></div>
+          </article>
+        </section>
+
+        <section class="workspace-grid">
+          <article class="panel panel-badges">
+            <div class="panel-head">
+              <h3>الشارات والتميز</h3>
+              <span class="panel-note" id="pcBadgesCount">0 شارة</span>
+            </div>
+            <ul class="badge-list" id="pcBadges"></ul>
+          </article>
+
+          <article class="panel panel-timeline">
+            <div class="panel-head">
+              <h3>آخر سجل نشاط</h3>
+              <span class="panel-note" id="pcLastAuditAt">—</span>
+            </div>
+            <ol class="timeline" id="pcAudit"></ol>
+          </article>
+        </section>
+
+        <section class="panel panel-table">
+          <div class="panel-head">
+            <h3>حالة النماذج الأولية</h3>
+            <div class="table-tools">
+              <input type="search" id="pcSearchInput" placeholder="بحث بالمعرف أو اسم المبادرة" />
+              <select id="pcSortSelect">
+                <option value="progress_desc">الأعلى تقدمًا</option>
+                <option value="progress_asc">الأقل تقدمًا</option>
+                <option value="title_asc">اسم المبادرة (أ-ي)</option>
+                <option value="status">حسب الحالة</option>
+              </select>
+              <span class="table-count" id="pcTableCount">0 عنصر</span>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="proto-table">
+              <thead>
+                <tr>
+                  <th>المعرّف</th>
+                  <th>المبادرة</th>
+                  <th>القالب</th>
+                  <th>الدعم</th>
+                  <th>الحالة</th>
+                  <th>التقدم</th>
+                </tr>
+              </thead>
+              <tbody id="pcPrototypes"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
     </div>
-    <div class="card"><b>الشارات:</b><br>
-      ${(data.badges || []).map(b => `<span class="badge">${b.t}</span>`).join("")}
-    </div>
-  `;
-        }
-    </script>
+  </main>
+
+  <script src="../../assets/js/app.js"></script>
 </body>
-
 </html>

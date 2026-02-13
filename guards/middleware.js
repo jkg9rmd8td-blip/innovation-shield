@@ -5,6 +5,7 @@ export function composeMiddleware(middlewares = []) {
     async function dispatch(i) {
       if (i <= idx) throw new Error("next() called multiple times");
       idx = i;
+
       const fn = i === middlewares.length ? finalHandler : middlewares[i];
       if (!fn) return undefined;
       return fn(ctx, () => dispatch(i + 1));
