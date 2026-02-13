@@ -150,6 +150,99 @@
             margin-top: 4px;
         }
 
+        .journey-flow {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .flow-card {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .04);
+            padding: 8px;
+            min-height: 84px;
+            display: grid;
+            gap: 4px;
+        }
+
+        .flow-card p {
+            margin: 0;
+            color: var(--muted2);
+            font-size: 11px;
+        }
+
+        .flow-card strong {
+            font-size: 13px;
+        }
+
+        .workspace-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .workspace-kpi-card {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .03);
+            padding: 8px;
+            min-height: 74px;
+            display: grid;
+            gap: 2px;
+        }
+
+        .workspace-kpi-card p {
+            margin: 0;
+            color: var(--muted2);
+            font-size: 11px;
+        }
+
+        .workspace-kpi-card strong {
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .ai-output {
+            width: 100%;
+            border-radius: 12px;
+            border: 1px solid rgba(53, 82, 110, .28);
+            background: rgba(9, 14, 28, .55);
+            color: var(--text);
+            padding: 10px;
+            line-height: 1.8;
+            min-height: 88px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .vote-row {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .ai-chip {
+            border: 1px solid rgba(66, 246, 231, .28);
+            background: rgba(66, 246, 231, .10);
+            border-radius: 999px;
+            padding: 4px 8px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #d2fffb;
+        }
+
+        .welcome-video {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: linear-gradient(150deg, rgba(78, 163, 255, .14), rgba(66, 246, 231, .08));
+            padding: 10px;
+            line-height: 1.8;
+            font-size: 13px;
+        }
+
         @media (max-width: 1200px) {
             .map-controls-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -157,8 +250,13 @@
 
             .map-mini-analytics,
             .heatmap-grid,
-            .detail-grid-2 {
+            .detail-grid-2,
+            .workspace-kpi-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .journey-flow {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
     </style>
@@ -235,6 +333,44 @@
             </ul>
         </section>
 
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>رحلة التنفيذ المختصرة</h3>
+                <span class="panel-note">من فكرة جديدة إلى منتج نهائي في مسار واحد</span>
+            </div>
+            <div class="journey-flow">
+                <article class="flow-card">
+                    <strong>1) إنشاء فكرة</strong>
+                    <p>إضافة فكرة أو اختيار تحدٍ واقعي.</p>
+                </article>
+                <article class="flow-card">
+                    <strong>2) تحديد الفريق</strong>
+                    <p>اختيار أعضاء العمل من الفريق.</p>
+                </article>
+                <article class="flow-card">
+                    <strong>3) Workspace تلقائي</strong>
+                    <p>إنشاء مهام وتعليقات وملفات تلقائيًا.</p>
+                </article>
+                <article class="flow-card">
+                    <strong>4) توزيع المهام</strong>
+                    <p>يدويًا أو عبر الذكاء الاصطناعي.</p>
+                </article>
+                <article class="flow-card">
+                    <strong>5) عمل جماعي</strong>
+                    <p>دردشة، مرفقات، ومتابعة تقدم.</p>
+                </article>
+                <article class="flow-card">
+                    <strong>6) تسليم الحل</strong>
+                    <p>رفع النسخة النهائية للتحكيم.</p>
+                </article>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                <button class="btn btn-soft" id="btnWelcome">شرح سريع للرحلة</button>
+                <button class="btn btn-primary" id="btnQuickStart">بدء سريع</button>
+                <span class="ai-chip">AI Suggestions ON</span>
+            </div>
+        </section>
+
         <!-- CONTROLS -->
         <section class="panel reveal">
             <div class="panel-head">
@@ -286,6 +422,41 @@
                 <span class="table-count" id="pill">—</span>
                 <button class="btn btn-ghost" id="btnReset">إعادة</button>
             </div>
+        </section>
+
+        <section class="insights-grid reveal">
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>لوحة إنجاز المساحة</h3>
+                    <span class="panel-note">تقدم • إشعارات • تحفيز</span>
+                </div>
+                <div class="workspace-kpi-grid">
+                    <article class="workspace-kpi-card">
+                        <p>إجمالي المبادرات</p>
+                        <strong id="wsTotal">0</strong>
+                    </article>
+                    <article class="workspace-kpi-card">
+                        <p>جاهزة للتحكيم</p>
+                        <strong id="wsReady">0</strong>
+                    </article>
+                    <article class="workspace-kpi-card">
+                        <p>إشعارات جديدة</p>
+                        <strong id="wsNotifications">0</strong>
+                    </article>
+                    <article class="workspace-kpi-card">
+                        <p>نقاط التحفيز</p>
+                        <strong id="wsPoints">0</strong>
+                    </article>
+                </div>
+                <ul class="insight-list" id="workspaceAlerts" style="margin-top:10px;"></ul>
+            </section>
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>الأكثر تفاعلًا</h3>
+                    <span class="panel-note">تصويت + تعليقات + إنجاز مهام</span>
+                </div>
+                <ul class="critical-list" id="topEngagementList"></ul>
+            </section>
         </section>
 
         <section class="insights-grid reveal">
@@ -365,6 +536,11 @@
                         <div class="lbl">الجهة</div>
                         <input id="nOrg" placeholder="مثال: إدارة الجودة">
                     </div>
+
+                    <div class="field">
+                        <div class="lbl">الفريق</div>
+                        <select id="nTeam" class="select"></select>
+                    </div>
                 </div>
 
                 <div class="field" style="margin-top:10px;">
@@ -408,6 +584,36 @@
                             <div class="lbl">توصية العينة قبل التحكيم</div>
                             <input id="nCoReco" placeholder="مثال: جاهز للتحكيم بعد توضيح رحلة المريض">
                         </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="margin-top:10px;">
+                    <div class="panel-head">
+                        <h3>AI Co‑Pilot</h3>
+                        <span class="panel-note">صياغة الفكرة + اقتراح تحسينات تلقائيًا</span>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn btn-soft" id="nAiDraft">AI صياغة الفكرة</button>
+                        <button class="btn btn-soft" id="nAiImprove">AI تحسين الفكرة</button>
+                    </div>
+                    <textarea id="nAiOutput" class="ai-output" rows="4"
+                        placeholder="سيظهر هنا اقتراح الذكاء الاصطناعي..."></textarea>
+                </div>
+
+                <div class="panel" style="margin-top:10px;">
+                    <div class="panel-head">
+                        <h3>إعداد مساحة العمل</h3>
+                        <span class="panel-note">إنشاء تلقائي عند حفظ المبادرة</span>
+                    </div>
+                    <div class="mgrid">
+                        <label class="field" style="display:flex; gap:8px; align-items:center;">
+                            <input id="nAutoWorkspace" type="checkbox" checked>
+                            <div class="lbl" style="margin:0;">إنشاء Workspace تلقائي</div>
+                        </label>
+                        <label class="field" style="display:flex; gap:8px; align-items:center;">
+                            <input id="nAutoAiTasks" type="checkbox" checked>
+                            <div class="lbl" style="margin:0;">توزيع مهام أولي بالذكاء الاصطناعي</div>
+                        </label>
                     </div>
                 </div>
 
@@ -648,6 +854,8 @@
 
                     <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
                         <button class="btn btn-soft" id="tAdd">إضافة مهمة</button>
+                        <button class="btn btn-soft" id="tAiDistribute">توزيع AI</button>
+                        <button class="btn btn-soft" id="tAiSummary">تلخيص AI</button>
                         <span class="table-count" id="tCount">—</span>
                     </div>
 
@@ -705,6 +913,20 @@
                     </div>
                 </div>
 
+                <div class="panel" style="margin-top:10px;">
+                    <div class="panel-head">
+                        <h3>AI Assistant</h3>
+                        <span class="panel-note">اقتراحات + حلول + تجهيز التسليم النهائي</span>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn btn-soft" id="dAiSuggest">اقتراح تحسينات AI</button>
+                        <button class="btn btn-soft" id="dAiSolve">اقتراح حلول AI</button>
+                        <button class="btn btn-primary" id="dSubmitFinal">تقديم المنتج النهائي</button>
+                    </div>
+                    <textarea id="dAiOutput" class="ai-output" rows="5"
+                        placeholder="سيظهر هنا ملخص أو توصيات الذكاء الاصطناعي..."></textarea>
+                </div>
+
                 <div class="mfoot">
                     <div class="mtext">التعديل هنا ينعكس في لوحة القيادة والتحكيم.</div>
                     <button class="btn btn-primary" id="dSave">حفظ</button>
@@ -727,6 +949,31 @@
                     <div class="mtext" id="apiStateHint">يمكن تغيير العنوان دون إعادة تحميل الصفحة.</div>
                     <button class="btn btn-soft" id="btnApiTest">اختبار الاتصال</button>
                     <button class="btn btn-primary" id="btnApiSave">حفظ</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal hidden" id="modalWelcome">
+            <div class="modal-backdrop" data-close-welcome></div>
+            <div class="modal-card">
+                <div class="mhead">
+                    <div class="mtitle">مرحبًا بك في رحلة الابتكار</div>
+                    <button class="btn btn-ghost" data-close-welcome>إغلاق</button>
+                </div>
+                <div class="welcome-video">
+                    <strong>فيديو ترحيبي (60 ثانية - نص تفاعلي)</strong>
+                    <p style="margin:6px 0 0;">
+                        1) ابدأ بفكرة أو تحدٍ واقعي.<br>
+                        2) حدّد فريق العمل.<br>
+                        3) أنشئ مساحة عمل تلقائيًا.<br>
+                        4) وزّع المهام يدويًا أو عبر AI.<br>
+                        5) تعاون عبر التعليقات والمرفقات.<br>
+                        6) قدّم المنتج النهائي للتحكيم.
+                    </p>
+                </div>
+                <div class="mfoot">
+                    <div class="mtext">يمكنك فتح هذا الشرح لاحقًا من زر "شرح سريع للرحلة".</div>
+                    <button class="btn btn-primary" id="welcomeStartBtn">ابدأ الآن</button>
                 </div>
             </div>
         </div>
@@ -781,6 +1028,7 @@
                 "ذكاء": "ذكاء"
             };
             const PRIORITY_RANK = { "حرجة": 4, "عالية": 3, "متوسطة": 2, "منخفضة": 1 };
+            const MAP_WELCOME_KEY = "IS_MAP_WELCOME_V3";
 
             const board = $("#board");
             let current = null;
@@ -834,6 +1082,8 @@
             const closeNew = () => $("#modalNew").classList.add("hidden");
             const openDetails = () => $("#modalDetails").classList.remove("hidden");
             const closeDetails = () => $("#modalDetails").classList.add("hidden");
+            const openWelcome = () => $("#modalWelcome").classList.remove("hidden");
+            const closeWelcome = () => $("#modalWelcome").classList.add("hidden");
             const openApiModal = () => {
                 $("#apiBaseInput").value = getApiBase();
                 $("#apiStateHint").textContent = "يمكن تغيير العنوان دون إعادة تحميل الصفحة.";
@@ -847,6 +1097,8 @@
             $$("#modalDetails .modal-backdrop").forEach((b) => b.addEventListener("click", closeDetails));
             $$('[data-close-api]').forEach((b) => b.addEventListener("click", closeApiModal));
             $$("#modalApi .modal-backdrop").forEach((b) => b.addEventListener("click", closeApiModal));
+            $$('[data-close-welcome]').forEach((b) => b.addEventListener("click", closeWelcome));
+            $$("#modalWelcome .modal-backdrop").forEach((b) => b.addEventListener("click", closeWelcome));
 
             function getApiBase() {
                 return (localStorage.getItem(API_BASE_KEY) || DEFAULT_API_BASE).replace(/\/+$/, "");
@@ -954,6 +1206,196 @@
                 return "in_review";
             }
 
+            function addDaysISO(days = 1) {
+                const d = new Date();
+                d.setDate(d.getDate() + Number(days || 0));
+                return d.toISOString().slice(0, 10);
+            }
+
+            function ensureOpsState() {
+                IS.state.notifications = Array.isArray(IS.state.notifications) ? IS.state.notifications : [];
+                IS.state.gamification = IS.state.gamification || { points: 0, logs: [] };
+                IS.state.gamification.logs = Array.isArray(IS.state.gamification.logs) ? IS.state.gamification.logs : [];
+            }
+
+            function pushNotification(message, initiativeId = "", type = "info") {
+                ensureOpsState();
+                IS.state.notifications.unshift({
+                    id: newId("NF"),
+                    at: nowISO(),
+                    message: String(message || ""),
+                    initiativeId: String(initiativeId || ""),
+                    type: String(type || "info")
+                });
+                IS.state.notifications = IS.state.notifications.slice(0, 80);
+            }
+
+            function addPoints(points, reason = "", initiativeId = "") {
+                ensureOpsState();
+                const value = Math.max(0, Number(points || 0));
+                IS.state.gamification.points = Math.max(0, Number(IS.state.gamification.points || 0) + value);
+                IS.state.gamification.logs.unshift({
+                    at: nowISO(),
+                    points: value,
+                    reason: String(reason || "نشاط"),
+                    initiativeId: String(initiativeId || "")
+                });
+                IS.state.gamification.logs = IS.state.gamification.logs.slice(0, 120);
+            }
+
+            function getTeamById(teamId) {
+                const teams = Array.isArray(IS.state.teams) ? IS.state.teams : [];
+                if (!teams.length) return null;
+                return teams.find((t) => t.id === teamId) || teams[0] || null;
+            }
+
+            function getTeamMembers(teamId) {
+                const team = getTeamById(teamId);
+                const members = Array.isArray(team?.members) ? team.members : [];
+                return members.map((m) => ({
+                    id: String(m.id || ""),
+                    name: String(m.name || "عضو"),
+                    role: String(m.role || "عضو"),
+                    weight: Number(m.weight || 0)
+                }));
+            }
+
+            function engagementScore(i) {
+                const up = Math.max(0, Number(i?.engagement?.upvotes || 0));
+                const down = Math.max(0, Number(i?.engagement?.downvotes || 0));
+                const comments = Array.isArray(i?.comments) ? i.comments.length : 0;
+                const files = Array.isArray(i?.files) ? i.files.length : 0;
+                const doneTasks = Array.isArray(i?.tasks) ? i.tasks.filter((t) => t.col === "done").length : 0;
+                const progress = clamp(i?.progress || 0, 0, 100);
+                return Math.max(0, (up * 3) - down + (comments * 3) + (files * 2) + (doneTasks * 4) + Math.round(progress / 8));
+            }
+
+            function aiDraftFromInputs(input) {
+                const x = input || {};
+                const title = String(x.title || "مبادرة تطوير");
+                const domain = String(x.tag || "تشغيلي");
+                const beneficiary = String(x.beneficiary || "المستفيدين الداخليين");
+                const problem = x.problem || `توجد فجوة تشغيلية في ${domain} تؤثر على جودة الخدمة.`;
+                const desc = x.desc || `حل ${domain} مبني على بيانات فعلية لرفع الجودة وتقليل الزمن التشغيلي.`;
+                const pain = x.painPoints || `تأخير الإجراءات، تفاوت الجودة، وضعف التتبع في ${domain}.`;
+                const reco = x.recommendation || "جاهز للبداية كنموذج أولي مع قياس أثر شهري.";
+                const mvp = [
+                    "لوحة متابعة آنية للمؤشرات",
+                    "تنبيهات تلقائية للحالات المتعثرة",
+                    "نموذج إدخال موحد للبيانات",
+                    "تقرير أثر أسبوعي للقيادة"
+                ];
+                return {
+                    title,
+                    problem,
+                    desc,
+                    beneficiary,
+                    evidence: x.evidence || `تحليل أولي + مقابلات مع ${beneficiary}.`,
+                    pain,
+                    reco,
+                    mvp
+                };
+            }
+
+            function aiImprovementTips(i) {
+                const tips = [];
+                if (!String(i?.validation?.problem || "").trim()) tips.push("وضّح المشكلة الحالية بصياغة قابلة للقياس.");
+                if (!String(i?.validation?.evidence || "").trim()) tips.push("أضف دليلًا من مقابلات/استبيان أو بيانات تشغيلية.");
+                if (!i?.prototype) tips.push("أنشئ نموذجًا أوليًا بسيطًا قبل التحكيم.");
+                if (calcRiskProfile(i?.riskProfile || {}).residualPct >= 60) tips.push("خفّض المخاطر بخطة Mitigation واضحة.");
+                if (!isCoCreationReady(i)) tips.push("استكمل Patient Co‑Creation (عينة + توصية واضحة).");
+                if (!tips.length) tips.push("المبادرة مكتملة نسبيًا. ركّز على خطة التنفيذ بعد الاعتماد.");
+                return tips;
+            }
+
+            function aiSolutionIdeas(i) {
+                const domain = (i?.tags && i.tags[0]) ? i.tags[0] : "تشغيلي";
+                return [
+                    `اعتمد MVP مرحلي (${domain}) لمدة 4 أسابيع قبل التوسع.`,
+                    "قسّم التنفيذ إلى Quick Wins + تحسينات متوسطة المدى.",
+                    "اربط مؤشرات الأداء (الوقت/التكلفة/الرضا) بلوحة متابعة أسبوعية.",
+                    "وثّق الدروس المستفادة لرفع جودة قرارات التحكيم لاحقًا."
+                ];
+            }
+
+            function autoCreateWorkspace(item, { aiTasks = true } = {}) {
+                if (!item) return;
+                item.tasks = Array.isArray(item.tasks) ? item.tasks : [];
+                item.comments = Array.isArray(item.comments) ? item.comments : [];
+                const members = getTeamMembers(item.ownerTeam);
+                const owners = members.length ? members : [{ name: "قائد المبادرة", role: "قيادة" }];
+                const workflow = [
+                    { title: "تعريف المشكلة ونطاقها", col: "todo", offset: 1 },
+                    { title: "صياغة الحل وفرضيات القيمة", col: "todo", offset: 2 },
+                    { title: "إنشاء النموذج الأولي (MVP)", col: "todo", offset: 4 },
+                    { title: "تجهيز ملف العرض للتحكيم", col: "todo", offset: 6 }
+                ];
+                const has = new Set(item.tasks.map((t) => normalize(t.title || "")));
+                workflow.forEach((w, idx) => {
+                    if (has.has(normalize(w.title))) return;
+                    const owner = owners[idx % owners.length];
+                    item.tasks.push({
+                        id: newId("TK"),
+                        title: w.title,
+                        owner: owner.name,
+                        col: w.col,
+                        due: addDaysISO(w.offset)
+                    });
+                });
+
+                if (aiTasks) {
+                    const aiWorkflow = [
+                        "تحليل المخاطر وخطة التخفيف",
+                        "تلخيص المقترح التنفيذي للقيادة"
+                    ];
+                    aiWorkflow.forEach((title, idx) => {
+                        if (has.has(normalize(title))) return;
+                        const owner = owners[(idx + 1) % owners.length];
+                        item.tasks.push({
+                            id: newId("TK"),
+                            title,
+                            owner: owner.name,
+                            col: "todo",
+                            due: addDaysISO(5 + idx)
+                        });
+                    });
+                }
+
+                item.comments.unshift({
+                    id: newId("CM"),
+                    text: "تم إنشاء مساحة العمل تلقائيًا مع خطة مهام أولية.",
+                    author: "System Bot",
+                    at: nowISO()
+                });
+                pushNotification(`تم إنشاء Workspace تلقائي للمبادرة ${item.id}.`, item.id, "workspace");
+                addPoints(12, "تهيئة مساحة العمل تلقائيًا", item.id);
+            }
+
+            function distributeTasksByAI(initiative) {
+                if (!initiative) return 0;
+                initiative.tasks = Array.isArray(initiative.tasks) ? initiative.tasks : [];
+                const members = getTeamMembers(initiative.ownerTeam);
+                if (!members.length) return 0;
+                const targets = initiative.tasks.filter((t) => !String(t.owner || "").trim() || String(t.owner || "").trim() === "عضو");
+                targets.forEach((task, idx) => {
+                    const owner = members[idx % members.length];
+                    task.owner = owner.name;
+                    if (!task.due) task.due = addDaysISO(idx + 2);
+                });
+                if (targets.length) {
+                    initiative.comments = Array.isArray(initiative.comments) ? initiative.comments : [];
+                    initiative.comments.unshift({
+                        id: newId("CM"),
+                        text: `AI وزّع ${targets.length} مهام على فريق المبادرة.`,
+                        author: "AI Co‑Pilot",
+                        at: nowISO()
+                    });
+                    pushNotification(`تم توزيع المهام عبر AI للمبادرة ${initiative.id}.`, initiative.id, "ai");
+                    addPoints(8, "توزيع مهام عبر AI", initiative.id);
+                }
+                return targets.length;
+            }
+
             function calcRiskProfile(profile) {
                 const p = profile || {};
                 const vals = [
@@ -1036,6 +1478,10 @@
                 i.tags = Array.isArray(i.tags) ? i.tags : [];
                 i.validation = i.validation || { problem: "", beneficiary: "", evidence: "" };
                 i.coCreation = i.coCreation || { sampleSize: 0, score: null, painPoints: "", recommendation: "", updatedAt: null };
+                i.engagement = i.engagement || { upvotes: 0, downvotes: 0, userVote: 0, updatedAt: null };
+                i.engagement.upvotes = Math.max(0, Number(i.engagement.upvotes || 0));
+                i.engagement.downvotes = Math.max(0, Number(i.engagement.downvotes || 0));
+                i.engagement.userVote = clamp(i.engagement.userVote || 0, -1, 1);
                 i.impact = i.impact || { costSaving: 0, timeSavingPct: 0, implementationCost: 0, operatingCost: 0, horizonYears: 3, confidencePct: 75 };
                 i.riskProfile = i.riskProfile || { operational: 2, financial: 2, technical: 2, quality: 2, experience: 2, mitigationEffectivenessPct: 0, mitigationPlan: "", owner: "", reviewCycle: "شهري" };
                 i.postMonitoring = i.postMonitoring || {
@@ -1049,6 +1495,7 @@
                 i.comments = Array.isArray(i.comments) ? i.comments : [];
                 i.files = Array.isArray(i.files) ? i.files : [];
                 i.changeLog = Array.isArray(i.changeLog) ? i.changeLog : [];
+                i.ownerTeam = String(i.ownerTeam || getTeamById()?.id || "T-1001");
                 i.organization = String(i.organization || i.org || i.department || "التجمع الصحي بالطائف");
                 i.score = Number.isFinite(Number(i.score)) ? clamp(i.score, 0, 100) : i.score ?? null;
                 i.stage = i.stage || "الفكرة";
@@ -1059,6 +1506,7 @@
             }
 
             function normalizeState() {
+                ensureOpsState();
                 IS.state.initiatives = IS.state.initiatives || [];
                 IS.state.initiatives.forEach(ensureShape);
             }
@@ -1084,6 +1532,29 @@
                 const taxonomy = getTaxonomy();
                 $("#tag").innerHTML = `<option value="">كل التصنيفات</option>` + taxonomy.map((t) => `<option>${esc(t)}</option>`).join("");
                 $("#nTag").innerHTML = taxonomy.map((t) => `<option>${esc(t)}</option>`).join("");
+            }
+
+            function fillTeams() {
+                const teams = Array.isArray(IS.state.teams) ? IS.state.teams : [];
+                const node = $("#nTeam");
+                if (!node) return;
+                const keep = node.value;
+                node.innerHTML = teams.length
+                    ? teams.map((t) => `<option value="${esc(t.id)}">${esc(t.name || t.id)}</option>`).join("")
+                    : `<option value="T-1001">الفريق الافتراضي</option>`;
+                if (keep && teams.some((t) => t.id === keep)) node.value = keep;
+            }
+
+            function updateNewHintByTeam() {
+                const node = $("#nHint");
+                const team = getTeamById($("#nTeam")?.value);
+                if (!node) return;
+                if (!team) {
+                    node.textContent = "سيتم إنشاء معرف تلقائي + إضافة سجل تدقيق.";
+                    return;
+                }
+                const members = (team.members || []).map((m) => m.name).filter(Boolean);
+                node.textContent = `الفريق المختار: ${team.name} (${members.join("، ") || "بدون أعضاء"}) • سيتم إنشاء Workspace تلقائي.`;
             }
 
             function fillOrgFilter() {
@@ -1234,6 +1705,89 @@
                 $$('[data-e]', $("#criticalList")).forEach((b) => b.addEventListener("click", () => goEmployee(b.getAttribute("data-e"))));
             }
 
+            function voteInitiative(id, direction = 1) {
+                const i = (IS.state.initiatives || []).find((x) => x.id === id);
+                if (!i) return;
+                ensureShape(i);
+                const dir = direction >= 0 ? 1 : -1;
+                const prev = Number(i.engagement?.userVote || 0);
+                if (dir === 1) {
+                    if (prev === 1) {
+                        i.engagement.upvotes = Math.max(0, Number(i.engagement.upvotes || 0) - 1);
+                        i.engagement.userVote = 0;
+                    } else {
+                        i.engagement.upvotes = Math.max(0, Number(i.engagement.upvotes || 0) + 1);
+                        if (prev === -1) i.engagement.downvotes = Math.max(0, Number(i.engagement.downvotes || 0) - 1);
+                        i.engagement.userVote = 1;
+                    }
+                } else {
+                    if (prev === -1) {
+                        i.engagement.downvotes = Math.max(0, Number(i.engagement.downvotes || 0) - 1);
+                        i.engagement.userVote = 0;
+                    } else {
+                        i.engagement.downvotes = Math.max(0, Number(i.engagement.downvotes || 0) + 1);
+                        if (prev === 1) i.engagement.upvotes = Math.max(0, Number(i.engagement.upvotes || 0) - 1);
+                        i.engagement.userVote = -1;
+                    }
+                }
+                i.engagement.updatedAt = nowISO();
+                i.updatedAt = nowISO();
+                addChange(i, "تصويت", dir === 1 ? "دعم الفكرة" : "تحفظ على الفكرة");
+                IS.audit("تصويت على مبادرة", `${i.id} • ${dir === 1 ? "UP" : "DOWN"}`);
+                IS.save();
+                renderAll();
+            }
+
+            function renderWorkspaceHub(list) {
+                const all = IS.state.initiatives || [];
+                const ready = all.filter((i) => {
+                    const hasCore = String(i.validation?.problem || "").trim() && String(i.validation?.beneficiary || "").trim();
+                    const hasWork = (i.tasks || []).length >= 3 && ((i.prototype && i.prototype.progress >= 30) || i.progress >= 35);
+                    return hasCore && hasWork;
+                }).length;
+                ensureOpsState();
+                const notifications = IS.state.notifications || [];
+                const points = Number(IS.state.gamification?.points || 0);
+
+                $("#wsTotal").textContent = fmt(all.length);
+                $("#wsReady").textContent = fmt(ready);
+                $("#wsNotifications").textContent = fmt(notifications.length);
+                $("#wsPoints").textContent = fmt(points);
+
+                const latestAlerts = notifications.slice(0, 4);
+                $("#workspaceAlerts").innerHTML = latestAlerts.length
+                    ? latestAlerts.map((n) => `<li>${esc(n.message || "تنبيه جديد")} ${n.initiativeId ? `<span class="status-badge is-low">${esc(n.initiativeId)}</span>` : ""}</li>`).join("")
+                    : `<li>لا توجد إشعارات جديدة. ابدأ مبادرة جديدة الآن.</li>`;
+
+                const top = [...list]
+                    .sort((a, b) => engagementScore(b) - engagementScore(a))
+                    .slice(0, 6);
+                $("#topEngagementList").innerHTML = top.length ? top.map((i) => {
+                    const score = engagementScore(i);
+                    const up = Math.max(0, Number(i.engagement?.upvotes || 0));
+                    const down = Math.max(0, Number(i.engagement?.downvotes || 0));
+                    return `
+                        <li>
+                            <strong>${esc(i.id)} — ${esc(i.title)}</strong>
+                            <div class="meta">
+                                <span class="status-badge is-good">تفاعل ${fmt(score)}</span>
+                                <span class="status-badge is-low">تعليقات ${fmt((i.comments || []).length)}</span>
+                                <span class="status-badge is-low">مهام منجزة ${fmt((i.tasks || []).filter((t) => t.col === "done").length)}</span>
+                                <button class="btn btn-soft sm" data-open-eng="${esc(i.id)}">تفاصيل</button>
+                            </div>
+                            <div class="vote-row">
+                                <button class="btn btn-soft sm" data-vote-up="${esc(i.id)}">👍 ${fmt(up)}</button>
+                                <button class="btn btn-ghost sm" data-vote-down="${esc(i.id)}">👎 ${fmt(down)}</button>
+                            </div>
+                        </li>
+                    `;
+                }).join("") : `<li>لا توجد بيانات تفاعل كافية بعد.</li>`;
+
+                $$('[data-open-eng]', $("#topEngagementList")).forEach((b) => b.addEventListener("click", () => showDetails(b.getAttribute("data-open-eng"))));
+                $$('[data-vote-up]', $("#topEngagementList")).forEach((b) => b.addEventListener("click", () => voteInitiative(b.getAttribute("data-vote-up"), 1)));
+                $$('[data-vote-down]', $("#topEngagementList")).forEach((b) => b.addEventListener("click", () => voteInitiative(b.getAttribute("data-vote-down"), -1)));
+            }
+
             function goJudging(id) {
                 const ini = (IS.state.initiatives || []).find((x) => x.id === id);
                 if (ini && !isCoCreationReady(ini)) {
@@ -1299,6 +1853,9 @@
                     const coCoverage = calcCoCreationCoverage(i.coCreation);
                     const coSample = Math.max(0, Number(i.coCreation?.sampleSize || 0));
                     const coScore = Number(i.coCreation?.score || 0);
+                    const up = Math.max(0, Number(i.engagement?.upvotes || 0));
+                    const down = Math.max(0, Number(i.engagement?.downvotes || 0));
+                    const interact = engagementScore(i);
 
                     const card = document.createElement("article");
                     card.className = "kan-card";
@@ -1322,8 +1879,13 @@
                             <small>نضج: ${maturity}% • خطر: ${risk}%</small>
                             <small>جهة: ${esc(i.organization || "—")}</small>
                             <small>Co‑Creation: ${coSample ? `${fmt(coSample)} عينة` : "غير مكتمل"} • جاهزية ${coCoverage}%${coScore ? ` • تقييم ${fmt(coScore)}/5` : ""}</small>
+                            <small>التفاعل: ${fmt(interact)} • 👍 ${fmt(up)} • 👎 ${fmt(down)}</small>
                         </div>
                         ${i.prototype ? `<div class="mini"><div class="mini-progress"><span style="width:${protoProgress}%"></span></div><small>Prototype: ${fmt(protoProgress)}%</small></div>` : ""}
+                        <div class="vote-row">
+                            <button class="btn btn-soft sm" data-vote-up="${esc(i.id)}">👍 ${fmt(up)}</button>
+                            <button class="btn btn-ghost sm" data-vote-down="${esc(i.id)}">👎 ${fmt(down)}</button>
+                        </div>
                         <div class="kactions">
                             <button class="btn btn-soft sm" data-open="${esc(i.id)}">تفاصيل</button>
                             <button class="btn btn-ghost sm" data-j="${esc(i.id)}">للتحكيم</button>
@@ -1339,15 +1901,18 @@
                     zone.appendChild(card);
                 });
 
-                $$('[data-open]').forEach((b) => b.addEventListener("click", () => showDetails(b.getAttribute("data-open"))));
-                $$('[data-j]').forEach((b) => b.addEventListener("click", () => goJudging(b.getAttribute("data-j"))));
-                $$('[data-e]').forEach((b) => b.addEventListener("click", () => goEmployee(b.getAttribute("data-e"))));
+                $$('[data-open]', board).forEach((b) => b.addEventListener("click", () => showDetails(b.getAttribute("data-open"))));
+                $$('[data-j]', board).forEach((b) => b.addEventListener("click", () => goJudging(b.getAttribute("data-j"))));
+                $$('[data-e]', board).forEach((b) => b.addEventListener("click", () => goEmployee(b.getAttribute("data-e"))));
+                $$('[data-vote-up]', board).forEach((b) => b.addEventListener("click", () => voteInitiative(b.getAttribute("data-vote-up"), 1)));
+                $$('[data-vote-down]', board).forEach((b) => b.addEventListener("click", () => voteInitiative(b.getAttribute("data-vote-down"), -1)));
             }
 
             function renderAll() {
                 normalizeState();
                 fillOrgFilter();
                 const list = filteredInitiatives();
+                renderWorkspaceHub(list);
                 renderStageMiniAnalytics(list);
                 renderHeatmap(list);
                 renderCriticalQueue(list);
@@ -1406,6 +1971,29 @@
                 if (t.status) $("#nStatus").value = t.status;
             }
 
+            function applyAiDraftToNew(mode = "draft") {
+                const source = {
+                    title: ($("#nTitle").value || "").trim(),
+                    tag: $("#nTag").value || "",
+                    problem: ($("#nProblem").value || "").trim(),
+                    beneficiary: ($("#nBeneficiary").value || "").trim(),
+                    desc: ($("#nDesc").value || "").trim(),
+                    evidence: ($("#nEvidence").value || "").trim(),
+                    painPoints: ($("#nCoPain").value || "").trim(),
+                    recommendation: ($("#nCoReco").value || "").trim()
+                };
+                const draft = aiDraftFromInputs(source);
+                if (!$("#nTitle").value.trim()) $("#nTitle").value = draft.title;
+                if (!$("#nDesc").value.trim() || mode === "improve") $("#nDesc").value = draft.desc;
+                if (!$("#nProblem").value.trim() || mode === "improve") $("#nProblem").value = draft.problem;
+                if (!$("#nBeneficiary").value.trim() || mode === "improve") $("#nBeneficiary").value = draft.beneficiary;
+                if (!$("#nEvidence").value.trim() || mode === "improve") $("#nEvidence").value = draft.evidence;
+                if (!$("#nCoPain").value.trim() || mode === "improve") $("#nCoPain").value = draft.pain;
+                if (!$("#nCoReco").value.trim() || mode === "improve") $("#nCoReco").value = draft.reco;
+                $("#nAiOutput").value = `AI Co‑Pilot:\n- مشكلة: ${draft.problem}\n- وصف الحل: ${draft.desc}\n- MVP: ${draft.mvp.join(" | ")}\n- توصية: ${draft.reco}`;
+                IS.toast("تم تطبيق صياغة AI على النموذج ✅", "ok", 1600);
+            }
+
             async function createInitiative() {
                 const title = ($("#nTitle").value || "").trim();
                 if (!title) {
@@ -1426,6 +2014,9 @@
                 const coReco = ($("#nCoReco").value || "").trim();
                 const nOrg = ($("#nOrg").value || "").trim() || "التجمع الصحي بالطائف";
                 const template = $("#nTemplate").value;
+                const teamId = ($("#nTeam").value || "").trim() || getTeamById()?.id || "T-1001";
+                const autoWorkspace = !!($("#nAutoWorkspace") && $("#nAutoWorkspace").checked);
+                const autoAiTasks = !!($("#nAutoAiTasks") && $("#nAutoAiTasks").checked);
 
                 const iso = nowISO();
                 const item = {
@@ -1439,7 +2030,7 @@
                     minutes: "",
                     desc,
                     tags: [tag || getTaxonomy()[0]],
-                    ownerTeam: "T-1001",
+                    ownerTeam: teamId,
                     organization: nOrg,
                     validation: { problem, beneficiary, evidence },
                     coCreation: {
@@ -1475,8 +2066,12 @@
                 };
 
                 ensureShape(item);
+                if (autoWorkspace) autoCreateWorkspace(item, { aiTasks: autoAiTasks });
+                if (autoAiTasks) distributeTasksByAI(item);
                 item.priority = inferPriority(item);
-                addChange(item, "إنشاء مبادرة", `Template: ${template || "—"}`);
+                addChange(item, "إنشاء مبادرة", `Template: ${template || "—"} • Team: ${teamId}`);
+                pushNotification(`تم إنشاء مبادرة جديدة ${item.id} (${item.title}).`, item.id, "idea");
+                addPoints(10, "إطلاق مبادرة جديدة", item.id);
 
                 IS.state.initiatives.unshift(item);
                 IS.audit("إضافة مبادرة", `${item.id} • ${title}`);
@@ -1500,8 +2095,10 @@
                     IS.toast("تم إنشاء المبادرة محليًا، وتعذر الربط مع API حالياً.", "warn", 2000);
                 }
 
-                ["#nTitle", "#nDesc", "#nProblem", "#nBeneficiary", "#nEvidence", "#nOrg", "#nCoSample", "#nCoScore", "#nCoPain", "#nCoReco"].forEach((id) => { $(id).value = ""; });
+                ["#nTitle", "#nDesc", "#nProblem", "#nBeneficiary", "#nEvidence", "#nOrg", "#nCoSample", "#nCoScore", "#nCoPain", "#nCoReco", "#nAiOutput"].forEach((id) => { $(id).value = ""; });
                 $("#nTemplate").value = "";
+                $("#nAutoWorkspace").checked = true;
+                $("#nAutoAiTasks").checked = true;
                 closeNew();
                 renderAll();
                 IS.toast("تم إنشاء المبادرة ✅", "ok", 1700);
@@ -1548,6 +2145,7 @@
                 setNullable("#dMon6Time", mon.m6?.timeSavingPct ?? null);
                 setNullable("#dMon6Quality", mon.m6?.qualityImprovementPct ?? null);
                 setNullable("#dMon6Sat", mon.m6?.satisfactionPct ?? null);
+                $("#dAiOutput").value = summarizeCurrentWorkspace();
 
                 renderTasks();
                 renderComments();
@@ -1633,10 +2231,113 @@
                 current.updatedAt = nowISO();
                 addChange(current, "إضافة تعليق", `${author}`);
                 IS.audit("تعليق على مبادرة", `${current.id} • ${author}`);
+                pushNotification(`تعليق جديد على ${current.id} بواسطة ${author}.`, current.id, "comment");
+                addPoints(2, "تعاون عبر تعليق", current.id);
                 IS.save();
                 $("#dCommentText").value = "";
                 $("#dCommentAuthor").value = "";
                 renderComments();
+                renderAll();
+            }
+
+            function summarizeCurrentWorkspace() {
+                if (!current) return "";
+                const tasks = current.tasks || [];
+                const done = tasks.filter((t) => t.col === "done").length;
+                const doing = tasks.filter((t) => t.col === "doing").length;
+                const todo = tasks.filter((t) => t.col === "todo").length;
+                const comments = (current.comments || []).length;
+                const files = (current.files || []).length;
+                const summary = [
+                    `ملخص المساحة للمبادرة ${current.id}:`,
+                    `- المهام: ${tasks.length} (Done ${done} / Doing ${doing} / Todo ${todo})`,
+                    `- التعليقات: ${comments}`,
+                    `- المرفقات: ${files}`,
+                    `- التقدم الحالي: ${clamp(current.progress || 0, 0, 100)}%`
+                ].join("\n");
+                return summary;
+            }
+
+            function runAiTaskDistributionCurrent() {
+                if (!current) return;
+                const count = distributeTasksByAI(current);
+                current.updatedAt = nowISO();
+                addChange(current, "توزيع مهام AI", `عدد المهام الموزعة: ${count}`);
+                IS.audit("توزيع AI", `${current.id} • ${count} مهام`);
+                IS.save();
+                renderTasks();
+                renderComments();
+                renderAll();
+                $("#dAiOutput").value = count
+                    ? `AI Distribution:\nتم توزيع ${count} مهام على أعضاء الفريق تلقائيًا.`
+                    : "AI Distribution:\nلا توجد مهام قابلة لإعادة التوزيع حاليًا.";
+                IS.toast("تم توزيع المهام عبر AI ✅", "ok", 1600);
+            }
+
+            function runAiTaskSummaryCurrent() {
+                if (!current) return;
+                const summary = summarizeCurrentWorkspace();
+                $("#dAiOutput").value = summary;
+                pushNotification(`تم إنشاء ملخص AI للمبادرة ${current.id}.`, current.id, "ai");
+                addPoints(3, "تلخيص مساحة العمل", current.id);
+                IS.save();
+                IS.toast("تم توليد ملخص AI ✅", "ok", 1500);
+            }
+
+            function runAiSuggestCurrent() {
+                if (!current) return;
+                const tips = aiImprovementTips(current);
+                $("#dAiOutput").value = `AI Improvement Tips:\n- ${tips.join("\n- ")}`;
+                pushNotification(`AI اقترح تحسينات للمبادرة ${current.id}.`, current.id, "ai");
+                addPoints(4, "استخدام اقتراحات AI", current.id);
+                IS.save();
+                IS.toast("تم توليد اقتراحات تحسين ✅", "ok", 1500);
+            }
+
+            function runAiSolveCurrent() {
+                if (!current) return;
+                const solutions = aiSolutionIdeas(current);
+                $("#dAiOutput").value = `AI Solution Ideas:\n- ${solutions.join("\n- ")}`;
+                pushNotification(`AI اقترح حلولًا تنفيذية للمبادرة ${current.id}.`, current.id, "ai");
+                addPoints(4, "استخدام حلول AI", current.id);
+                IS.save();
+                IS.toast("تم توليد حلول AI ✅", "ok", 1500);
+            }
+
+            function submitFinalProductCurrent() {
+                if (!current) return;
+                const hasProblem = String(current.validation?.problem || "").trim().length > 0;
+                const hasTasks = (current.tasks || []).length >= 3;
+                const hasWork = (!!current.prototype && Number(current.prototype.progress || 0) >= 35) || Number(current.progress || 0) >= 60;
+                if (!hasProblem || !hasTasks || !hasWork) {
+                    $("#dAiOutput").value = "لا يمكن تقديم المنتج النهائي بعد.\nأكمل: تعريف المشكلة + 3 مهام على الأقل + تقدم كافٍ في التنفيذ.";
+                    IS.toast("أكمل متطلبات التسليم قبل التقديم.", "warn", 1900);
+                    return;
+                }
+
+                const fromStage = current.stage;
+                current.stage = "الاعتماد";
+                current.status = "قيد التحكيم";
+                current.progress = Math.max(80, Number(current.progress || 0));
+                current.updatedAt = nowISO();
+                addChange(current, "تقديم المنتج النهائي", `${fromStage} → الاعتماد`);
+                current.comments = Array.isArray(current.comments) ? current.comments : [];
+                current.comments.unshift({
+                    id: newId("CM"),
+                    text: "تم تقديم المنتج النهائي للتحكيم.",
+                    author: "System Bot",
+                    at: nowISO()
+                });
+                pushNotification(`تم تقديم المنتج النهائي للمبادرة ${current.id} للتحكيم.`, current.id, "final");
+                addPoints(20, "تقديم المنتج النهائي", current.id);
+                IS.audit("تقديم نهائي", `${current.id} • الاعتماد`);
+                IS.save();
+
+                $("#dAiOutput").value = "تم تقديم المنتج النهائي بنجاح ✅\nالمبادرة انتقلت إلى مرحلة الاعتماد/التحكيم.";
+                renderTasks();
+                renderComments();
+                renderAll();
+                IS.toast("تم تقديم المنتج النهائي ✅", "ok", 1700);
             }
 
             function renderFiles() {
@@ -1663,9 +2364,12 @@
                 current.updatedAt = nowISO();
                 addChange(current, "إضافة مرفق", fileName);
                 IS.audit("إضافة مرفق", `${current.id} • ${fileName}`);
+                pushNotification(`تم رفع مرفق جديد على المبادرة ${current.id}.`, current.id, "file");
+                addPoints(2, "رفع مرفق", current.id);
                 IS.save();
                 $("#dFileName").value = "";
                 renderFiles();
+                renderAll();
             }
 
             function renderChangeLog() {
@@ -1941,8 +2645,11 @@
             async function init() {
                 fillStages();
                 fillTaxonomy();
+                fillTeams();
                 await syncInitiativesFromApi({ silent: true });
                 normalizeState();
+                fillTeams();
+                updateNewHintByTeam();
 
                 IS.audit("فتح خريطة الابتكار", "map");
                 IS.save();
@@ -1953,8 +2660,36 @@
                 renderAll();
                 setLiveMode(false);
 
-                $("#btnNew").addEventListener("click", openNew);
+                const openedBefore = localStorage.getItem(MAP_WELCOME_KEY) === "1";
+                if (!openedBefore) openWelcome();
+
+                $("#btnNew").addEventListener("click", () => {
+                    fillTeams();
+                    updateNewHintByTeam();
+                    openNew();
+                });
+                $("#btnQuickStart").addEventListener("click", () => {
+                    fillTeams();
+                    updateNewHintByTeam();
+                    openNew();
+                });
+                $("#btnWelcome").addEventListener("click", openWelcome);
+                $("#welcomeStartBtn").addEventListener("click", () => {
+                    localStorage.setItem(MAP_WELCOME_KEY, "1");
+                    closeWelcome();
+                    fillTeams();
+                    updateNewHintByTeam();
+                    openNew();
+                });
+                $$('[data-close-welcome]').forEach((el) => el.addEventListener("click", () => {
+                    localStorage.setItem(MAP_WELCOME_KEY, "1");
+                    closeWelcome();
+                }));
+
                 $("#nTemplate").addEventListener("change", applyTemplatePreset);
+                $("#nTeam").addEventListener("change", updateNewHintByTeam);
+                $("#nAiDraft").addEventListener("click", () => applyAiDraftToNew("draft"));
+                $("#nAiImprove").addEventListener("click", () => applyAiDraftToNew("improve"));
                 $("#nCreate").addEventListener("click", createInitiative);
 
                 $("#btnSeed").addEventListener("click", seedMore);
@@ -1970,9 +2705,14 @@
                 $("#btnReset").addEventListener("click", resetFilters);
 
                 $("#tAdd").addEventListener("click", addTask);
+                $("#tAiDistribute").addEventListener("click", runAiTaskDistributionCurrent);
+                $("#tAiSummary").addEventListener("click", runAiTaskSummaryCurrent);
                 $("#dSave").addEventListener("click", saveDetails);
                 $("#dCommentAdd").addEventListener("click", addComment);
                 $("#dFileAdd").addEventListener("click", addFile);
+                $("#dAiSuggest").addEventListener("click", runAiSuggestCurrent);
+                $("#dAiSolve").addEventListener("click", runAiSolveCurrent);
+                $("#dSubmitFinal").addEventListener("click", submitFinalProductCurrent);
 
                 $("#btnApiSave").addEventListener("click", async () => {
                     const nextBase = setApiBase($("#apiBaseInput").value);
