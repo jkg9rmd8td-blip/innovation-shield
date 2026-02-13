@@ -243,6 +243,115 @@
             font-size: 13px;
         }
 
+        .about-quick {
+            display: grid;
+            gap: 10px;
+        }
+
+        .about-quick p {
+            margin: 0;
+        }
+
+        .about-points {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 6px;
+        }
+
+        .onboarding-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .kpi-visual-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .kpi-chart-card {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .03);
+            padding: 10px;
+            display: grid;
+            gap: 8px;
+        }
+
+        .kpi-chart-card p {
+            margin: 0;
+            color: var(--muted2);
+            font-size: 12px;
+        }
+
+        .kpi-bars {
+            display: grid;
+            gap: 8px;
+        }
+
+        .kpi-row {
+            display: grid;
+            grid-template-columns: minmax(90px, .9fr) 1fr auto;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .kpi-row strong {
+            font-size: 11px;
+            color: var(--muted2);
+        }
+
+        .kpi-track {
+            width: 100%;
+            height: 8px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, .15);
+            background: rgba(255, 255, 255, .06);
+            overflow: hidden;
+        }
+
+        .kpi-track span {
+            display: block;
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(77, 168, 255, .9), rgba(66, 246, 231, .85));
+        }
+
+        .kpi-row small {
+            color: var(--text);
+            font-weight: 800;
+        }
+
+        .honor-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: grid;
+            gap: 8px;
+        }
+
+        .honor-item {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .03);
+            padding: 8px;
+            display: grid;
+            gap: 4px;
+        }
+
+        .honor-item .meta {
+            margin-top: 4px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+
         @media (max-width: 1200px) {
             .map-controls-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -257,6 +366,10 @@
 
             .journey-flow {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .kpi-visual-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -300,7 +413,7 @@
                 <button class="btn btn-soft" id="btnSeed">عينات</button>
                 <button class="btn btn-soft" id="btnLiveToggle">تشغيل Live</button>
                 <button class="btn btn-ghost" id="btnApiSettings">API</button>
-                <button class="btn btn-primary" id="btnNew">إضافة مبادرة</button>
+                <button class="btn btn-primary" id="btnNew">بدء مبادرة</button>
             </div>
         </header>
 
@@ -331,6 +444,29 @@
                 <li>استخدم AI لصياغة المشكلة والحل وMVP والأثر قبل التقديم.</li>
                 <li>انتقل للتحكيم البشري لضمان العدالة والدقة وجودة القرار.</li>
             </ul>
+        </section>
+
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>تعريف سريع بالمنصة والفريق</h3>
+                <span class="panel-note">من نحن • ماذا نقدم • كيف تبدأ</span>
+            </div>
+            <div class="about-quick">
+                <p class="hero-sub">
+                    درع الابتكار منصة تمكّن الموظف من تحويل أي فكرة إلى مبادرة قابلة للتطبيق عبر AI مساعد + تحكيم بشري + تتبع أثر.
+                    يمكنك التعرف على الرؤية والفريق وقصص النجاح من صفحة "عن المنصة".
+                </p>
+                <ul class="about-points">
+                    <li>ابدأ بمشكلة واقعية أو فكرة حرة.</li>
+                    <li>أضف الفريق وسيتم إنشاء مساحة عمل تلقائيًا.</li>
+                    <li>استخدم AI للصياغة والتحسين قبل التقديم النهائي.</li>
+                </ul>
+                <div class="onboarding-actions">
+                    <a href="../about/index.html" class="btn btn-soft">زيارة صفحة عن المنصة</a>
+                    <button class="btn btn-primary" id="btnStartFromIntro">بدء مبادرة الآن</button>
+                    <button class="btn btn-ghost" id="btnFirstGuide">خطوات أول استخدام</button>
+                </div>
+            </div>
         </section>
 
         <section class="panel reveal">
@@ -456,6 +592,32 @@
                     <span class="panel-note">تصويت + تعليقات + إنجاز مهام</span>
                 </div>
                 <ul class="critical-list" id="topEngagementList"></ul>
+            </section>
+        </section>
+
+        <section class="insights-grid reveal">
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>مؤشرات الأداء المرئية</h3>
+                    <span class="panel-note">رسوم مبسطة لقراءة أسرع للأثر</span>
+                </div>
+                <div class="kpi-visual-grid">
+                    <article class="kpi-chart-card">
+                        <p>توزيع الحالات</p>
+                        <div class="kpi-bars" id="kpiStatusBars"></div>
+                    </article>
+                    <article class="kpi-chart-card">
+                        <p>صحة مسار الابتكار (متوسطات)</p>
+                        <div class="kpi-bars" id="kpiHealthBars"></div>
+                    </article>
+                </div>
+            </section>
+            <section class="panel">
+                <div class="panel-head">
+                    <h3>لوحة الشرف والشارات</h3>
+                    <span class="panel-note">المستخدمون الأكثر نشاطًا بالتعليقات والمهام</span>
+                </div>
+                <ul class="honor-list" id="honorBoardList"></ul>
             </section>
         </section>
 
@@ -1662,6 +1824,103 @@
                 `).join("");
             }
 
+            function renderKpiVisuals(list) {
+                const total = Math.max(1, list.length);
+                const statusRows = [
+                    { key: "مسودة", label: "مسودة", color: "linear-gradient(90deg, rgba(154,170,191,.95), rgba(119,136,156,.9))" },
+                    { key: "قيد التحكيم", label: "قيد التحكيم", color: "linear-gradient(90deg, rgba(255,196,92,.95), rgba(255,149,85,.9))" },
+                    { key: "قيد التطوير", label: "قيد التطوير", color: "linear-gradient(90deg, rgba(89,166,255,.95), rgba(86,214,255,.9))" },
+                    { key: "معتمد", label: "معتمد", color: "linear-gradient(90deg, rgba(76,227,143,.95), rgba(66,246,231,.9))" },
+                    { key: "مطبق", label: "مطبق", color: "linear-gradient(90deg, rgba(57,229,140,.95), rgba(98,255,189,.9))" },
+                    { key: "مرفوض", label: "مرفوض", color: "linear-gradient(90deg, rgba(255,103,129,.95), rgba(255,77,109,.9))" }
+                ];
+
+                $("#kpiStatusBars").innerHTML = statusRows.map((row) => {
+                    const count = list.filter((i) => i.status === row.key).length;
+                    const pct = Math.round((count / total) * 100);
+                    return `
+                        <div class="kpi-row">
+                            <strong>${esc(row.label)}</strong>
+                            <div class="kpi-track"><span style="width:${pct}%; background:${row.color};"></span></div>
+                            <small>${fmt(count)} • ${pct}%</small>
+                        </div>
+                    `;
+                }).join("");
+
+                const avgProgress = list.length ? Math.round(list.reduce((sum, i) => sum + clamp(i.progress || 0, 0, 100), 0) / list.length) : 0;
+                const avgMaturity = list.length ? Math.round(list.reduce((sum, i) => sum + calcMaturity(i), 0) / list.length) : 0;
+                const avgCoCreation = list.length ? Math.round(list.reduce((sum, i) => sum + calcCoCreationCoverage(i.coCreation), 0) / list.length) : 0;
+                const avgRisk = list.length ? Math.round(list.reduce((sum, i) => sum + calcRiskProfile(i.riskProfile).residualPct, 0) / list.length) : 0;
+                const avgSafety = clamp(100 - avgRisk, 0, 100);
+
+                const healthRows = [
+                    { label: "تقدم التنفيذ", value: avgProgress, color: "linear-gradient(90deg, rgba(77,168,255,.95), rgba(66,246,231,.85))" },
+                    { label: "نضج المبادرات", value: avgMaturity, color: "linear-gradient(90deg, rgba(169,112,255,.95), rgba(77,168,255,.9))" },
+                    { label: "جاهزية Co‑Creation", value: avgCoCreation, color: "linear-gradient(90deg, rgba(66,246,231,.95), rgba(111,255,196,.9))" },
+                    { label: "سلامة المخاطر", value: avgSafety, color: "linear-gradient(90deg, rgba(125,238,180,.95), rgba(66,246,231,.85))" }
+                ];
+
+                $("#kpiHealthBars").innerHTML = healthRows.map((row) => `
+                    <div class="kpi-row">
+                        <strong>${esc(row.label)}</strong>
+                        <div class="kpi-track"><span style="width:${clamp(row.value, 0, 100)}%; background:${row.color};"></span></div>
+                        <small>${fmt(clamp(row.value, 0, 100))}%</small>
+                    </div>
+                `).join("");
+            }
+
+            function honorBadge(points, rank) {
+                if (rank === 0 && points >= 12) return { label: "🏆 قائد الابتكار", cls: "is-good" };
+                if (points >= 24) return { label: "🥇 مساهم ذهبي", cls: "is-good" };
+                if (points >= 14) return { label: "🥈 مساهم نشط", cls: "is-mid" };
+                if (points >= 8) return { label: "🥉 متعاون فعّال", cls: "is-low" };
+                return { label: "⭐ عضو مشارك", cls: "is-low" };
+            }
+
+            function renderHonorBoard(list) {
+                const users = new Map();
+                const touch = (name, delta, kind) => {
+                    const clean = String(name || "").trim();
+                    if (!clean) return;
+                    const row = users.get(clean) || { name: clean, score: 0, comments: 0, done: 0, files: 0 };
+                    row.score += Math.max(0, Number(delta || 0));
+                    if (kind === "comment") row.comments += 1;
+                    if (kind === "done") row.done += 1;
+                    if (kind === "file") row.files += 1;
+                    users.set(clean, row);
+                };
+
+                list.forEach((i) => {
+                    (i.comments || []).forEach((c) => touch(c.author || "موظف", 3, "comment"));
+                    (i.tasks || []).forEach((t) => {
+                        if (t.col === "done") touch(t.owner || "موظف", 5, "done");
+                        else if (t.col === "doing") touch(t.owner || "موظف", 3, "task");
+                        else touch(t.owner || "موظف", 1, "task");
+                    });
+                    (i.files || []).forEach((f) => touch(f.addedBy || "موظف", 2, "file"));
+                });
+
+                const top = Array.from(users.values())
+                    .sort((a, b) => (b.score - a.score) || (b.done - a.done) || (b.comments - a.comments))
+                    .slice(0, 6);
+
+                $("#honorBoardList").innerHTML = top.length ? top.map((u, idx) => {
+                    const badge = honorBadge(u.score, idx);
+                    return `
+                        <li class="honor-item">
+                            <strong>${esc(u.name)}</strong>
+                            <div class="meta">
+                                <span class="status-badge ${badge.cls}">${badge.label}</span>
+                                <span class="status-badge is-low">نقاط ${fmt(u.score)}</span>
+                                <span class="status-badge is-low">تعليقات ${fmt(u.comments)}</span>
+                                <span class="status-badge is-low">مهام مكتملة ${fmt(u.done)}</span>
+                                <span class="status-badge is-low">ملفات ${fmt(u.files)}</span>
+                            </div>
+                        </li>
+                    `;
+                }).join("") : `<li class="honor-item"><strong>لا توجد مساهمات كافية بعد.</strong><p style="margin:0; color:var(--muted2);">ابدأ التعليق أو إسناد المهام لتظهر لوحة الشرف تلقائيًا.</p></li>`;
+            }
+
             function renderHeatmap(list) {
                 const stages = IS.state.stages || [];
                 const maxCount = Math.max(1, ...stages.map((s) => list.filter((i) => i.stage === s).length));
@@ -1913,6 +2172,8 @@
                 fillOrgFilter();
                 const list = filteredInitiatives();
                 renderWorkspaceHub(list);
+                renderKpiVisuals(list);
+                renderHonorBoard(list);
                 renderStageMiniAnalytics(list);
                 renderHeatmap(list);
                 renderCriticalQueue(list);
@@ -2673,6 +2934,12 @@
                     updateNewHintByTeam();
                     openNew();
                 });
+                $("#btnStartFromIntro").addEventListener("click", () => {
+                    fillTeams();
+                    updateNewHintByTeam();
+                    openNew();
+                });
+                $("#btnFirstGuide").addEventListener("click", openWelcome);
                 $("#btnWelcome").addEventListener("click", openWelcome);
                 $("#welcomeStartBtn").addEventListener("click", () => {
                     localStorage.setItem(MAP_WELCOME_KEY, "1");
