@@ -267,6 +267,65 @@
             align-items: center;
         }
 
+        #btnNew {
+            box-shadow: 0 10px 24px rgba(12, 96, 182, .35);
+            border: 1px solid rgba(97, 176, 255, .42);
+            font-weight: 900;
+            letter-spacing: .2px;
+        }
+
+        .quick-paths {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .quick-cta {
+            border: 1px solid rgba(255, 255, 255, .15);
+            border-radius: 14px;
+            background: rgba(255, 255, 255, .04);
+            color: var(--text);
+            min-height: 64px;
+            padding: 10px 12px;
+            text-align: start;
+            display: grid;
+            gap: 2px;
+            align-content: center;
+            cursor: pointer;
+            transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+        }
+
+        .quick-cta strong {
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .quick-cta small {
+            color: var(--muted2);
+            font-size: 11px;
+        }
+
+        .quick-cta:hover {
+            transform: translateY(-2px);
+            border-color: rgba(126, 187, 255, .45);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, .32);
+        }
+
+        .quick-cta.is-primary {
+            background: linear-gradient(140deg, rgba(77, 168, 255, .24), rgba(66, 246, 231, .14));
+            border-color: rgba(97, 176, 255, .5);
+        }
+
+        .quick-cta.is-challenge {
+            background: linear-gradient(140deg, rgba(255, 115, 135, .2), rgba(255, 210, 109, .15));
+            border-color: rgba(255, 129, 143, .4);
+        }
+
+        .quick-cta.is-judge {
+            background: linear-gradient(140deg, rgba(169, 112, 255, .2), rgba(77, 168, 255, .14));
+            border-color: rgba(181, 127, 255, .4);
+        }
+
         .kpi-visual-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -327,6 +386,71 @@
             font-weight: 800;
         }
 
+        .impact-ring-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .impact-ring {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .03);
+            padding: 8px;
+            display: grid;
+            gap: 6px;
+            justify-items: center;
+            text-align: center;
+        }
+
+        .impact-ring p {
+            margin: 0;
+            font-size: 11px;
+            color: var(--muted2);
+        }
+
+        .ring {
+            --pct: 0;
+            --clr: rgba(77, 168, 255, .95);
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            background: conic-gradient(var(--clr) calc(var(--pct)*1%), rgba(255, 255, 255, .14) 0);
+            position: relative;
+            display: grid;
+            place-items: center;
+        }
+
+        .ring::before {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border-radius: 50%;
+            background: rgba(10, 14, 24, .96);
+            border: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .ring b {
+            position: relative;
+            z-index: 1;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .kpi-sparkline {
+            border: 1px solid rgba(255, 255, 255, .12);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, .03);
+            width: 100%;
+            height: 126px;
+        }
+
+        .kpi-sparkline-meta {
+            margin-top: 6px;
+            color: var(--muted2);
+            font-size: 11px;
+        }
+
         .honor-list {
             margin: 0;
             padding: 0;
@@ -369,6 +493,17 @@
             }
 
             .kpi-visual-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-paths,
+            .impact-ring-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 760px) {
+            .quick-paths {
                 grid-template-columns: 1fr;
             }
         }
@@ -462,8 +597,6 @@
                     <li>استخدم AI للصياغة والتحسين قبل التقديم النهائي.</li>
                 </ul>
                 <div class="onboarding-actions">
-                    <a href="../about/index.html" class="btn btn-soft">زيارة صفحة عن المنصة</a>
-                    <button class="btn btn-primary" id="btnStartFromIntro">بدء مبادرة الآن</button>
                     <button class="btn btn-ghost" id="btnFirstGuide">خطوات أول استخدام</button>
                 </div>
             </div>
@@ -502,8 +635,28 @@
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
                 <button class="btn btn-soft" id="btnWelcome">شرح سريع للرحلة</button>
-                <button class="btn btn-primary" id="btnQuickStart">بدء سريع</button>
                 <span class="ai-chip">AI Suggestions ON</span>
+            </div>
+        </section>
+
+        <section class="panel reveal">
+            <div class="panel-head">
+                <h3>المسارات الرئيسية السريعة</h3>
+                <span class="panel-note">وصول مباشر لأهم الإجراءات</span>
+            </div>
+            <div class="quick-paths">
+                <button class="quick-cta is-challenge" id="btnPathChallenges">
+                    <strong>التحديات المفتوحة</strong>
+                    <small>الانتقال إلى قائمة المبادرات الحرجة</small>
+                </button>
+                <button class="quick-cta is-judge" id="btnPathJudging">
+                    <strong>مسار التحكيم</strong>
+                    <small>الانتقال لصفحة التحكيم مع آخر مبادرة</small>
+                </button>
+                <button class="quick-cta" id="btnPathBoard">
+                    <strong>لوحة الخريطة</strong>
+                    <small>الذهاب مباشرة إلى Kanban</small>
+                </button>
             </div>
         </section>
 
@@ -609,6 +762,25 @@
                     <article class="kpi-chart-card">
                         <p>صحة مسار الابتكار (متوسطات)</p>
                         <div class="kpi-bars" id="kpiHealthBars"></div>
+                    </article>
+                    <article class="kpi-chart-card">
+                        <p>الأثر الكلي (دوائر نسبية)</p>
+                        <div class="impact-ring-grid" id="kpiImpactRings"></div>
+                    </article>
+                    <article class="kpi-chart-card">
+                        <p>اتجاه المبادرات عبر المراحل</p>
+                        <svg class="kpi-sparkline" id="kpiSparkline" viewBox="0 0 320 126" aria-label="اتجاه المراحل">
+                            <defs>
+                                <linearGradient id="kpiSparkGrad" x1="0%" x2="100%" y1="0%" y2="0%">
+                                    <stop offset="0%" stop-color="rgba(77,168,255,.95)" />
+                                    <stop offset="100%" stop-color="rgba(66,246,231,.95)" />
+                                </linearGradient>
+                            </defs>
+                            <path id="kpiSparkPath" d="" fill="none" stroke="url(#kpiSparkGrad)" stroke-width="3"
+                                stroke-linecap="round"></path>
+                            <g id="kpiSparkDots"></g>
+                        </svg>
+                        <div class="kpi-sparkline-meta" id="kpiSparklineMeta">—</div>
                     </article>
                 </div>
             </section>
@@ -1867,6 +2039,62 @@
                         <small>${fmt(clamp(row.value, 0, 100))}%</small>
                     </div>
                 `).join("");
+
+                const readyCount = list.filter((i) => {
+                    const hasCore = String(i.validation?.problem || "").trim() && String(i.validation?.beneficiary || "").trim();
+                    const hasWork = (i.tasks || []).length >= 3 && ((i.prototype && i.prototype.progress >= 30) || i.progress >= 35);
+                    return hasCore && hasWork;
+                }).length;
+                const approvedCount = list.filter((i) => ["معتمد", "مطبق"].includes(i.status)).length;
+                const highPriorityCount = list.filter((i) => ["حرجة", "عالية"].includes(i.priority)).length;
+                const avgEngagement = list.length
+                    ? Math.round(list.reduce((sum, i) => sum + engagementScore(i), 0) / list.length)
+                    : 0;
+
+                const ringRows = [
+                    { label: "جاهزية للتحكيم", value: Math.round((readyCount / total) * 100), color: "rgba(77,168,255,.96)" },
+                    { label: "نسبة الاعتماد/التطبيق", value: Math.round((approvedCount / total) * 100), color: "rgba(57,229,140,.96)" },
+                    { label: "مؤشر أمان المخاطر", value: avgSafety, color: "rgba(66,246,231,.96)" },
+                    { label: "مستوى التفاعل", value: clamp(avgEngagement, 0, 100), color: "rgba(169,112,255,.96)" }
+                ];
+
+                $("#kpiImpactRings").innerHTML = ringRows.map((r) => `
+                    <article class="impact-ring">
+                        <div class="ring" style="--pct:${clamp(r.value, 0, 100)}; --clr:${r.color};"><b>${fmt(clamp(r.value, 0, 100))}%</b></div>
+                        <p>${esc(r.label)}</p>
+                    </article>
+                `).join("");
+
+                const sparkSvg = $("#kpiSparkline");
+                const sparkPath = $("#kpiSparkPath");
+                const sparkDots = $("#kpiSparkDots");
+                const sparkMeta = $("#kpiSparklineMeta");
+                if (sparkSvg && sparkPath && sparkDots && sparkMeta) {
+                    const stages = IS.state.stages || [];
+                    const values = stages.map((s) => list.filter((i) => i.stage === s).length);
+                    const width = 320;
+                    const height = 126;
+                    const pad = 16;
+                    const maxVal = Math.max(1, ...values);
+                    const step = values.length > 1 ? (width - (pad * 2)) / (values.length - 1) : 0;
+                    const points = values.map((v, idx) => {
+                        const x = pad + (idx * step);
+                        const ratio = maxVal ? (v / maxVal) : 0;
+                        const y = height - pad - (ratio * (height - (pad * 2)));
+                        return { x, y, v };
+                    });
+                    const d = points.map((p, idx) => `${idx ? "L" : "M"}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(" ");
+                    sparkPath.setAttribute("d", d || "");
+                    sparkDots.innerHTML = points.map((p, idx) => `
+                        <circle cx="${p.x.toFixed(2)}" cy="${p.y.toFixed(2)}" r="3.2" fill="rgba(66,246,231,.95)">
+                            <title>${esc(stages[idx] || "")}: ${fmt(p.v)}</title>
+                        </circle>
+                    `).join("");
+                    const maxIdx = points.reduce((best, p, idx, arr) => p.v > arr[best].v ? idx : best, 0);
+                    const maxStage = stages[maxIdx] || "—";
+                    const maxCount = points[maxIdx]?.v || 0;
+                    sparkMeta.textContent = `أعلى تركز حالي في مرحلة: ${maxStage} (${fmt(maxCount)} مبادرة) • مبادرات عالية/حرجة: ${fmt(highPriorityCount)}.`;
+                }
             }
 
             function honorBadge(points, rank) {
@@ -2903,6 +3131,26 @@
                 IS.toast("تمت إعادة الفلاتر ✅", "ok", 1400);
             }
 
+            function openNewFlow() {
+                fillTeams();
+                updateNewHintByTeam();
+                openNew();
+            }
+
+            function scrollToSection(selector) {
+                const node = $(selector);
+                if (!node) return;
+                node.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+
+            function openJudgingShortcut() {
+                const first = filteredInitiatives()[0] || (IS.state.initiatives || [])[0];
+                if (first?.id) IS.setSelectedInitiative(first.id);
+                IS.audit("اختصار التحكيم", first?.id || "none");
+                IS.save();
+                location.href = "../judging/index.html";
+            }
+
             async function init() {
                 fillStages();
                 fillTaxonomy();
@@ -2924,29 +3172,16 @@
                 const openedBefore = localStorage.getItem(MAP_WELCOME_KEY) === "1";
                 if (!openedBefore) openWelcome();
 
-                $("#btnNew").addEventListener("click", () => {
-                    fillTeams();
-                    updateNewHintByTeam();
-                    openNew();
-                });
-                $("#btnQuickStart").addEventListener("click", () => {
-                    fillTeams();
-                    updateNewHintByTeam();
-                    openNew();
-                });
-                $("#btnStartFromIntro").addEventListener("click", () => {
-                    fillTeams();
-                    updateNewHintByTeam();
-                    openNew();
-                });
+                $("#btnNew").addEventListener("click", openNewFlow);
+                $("#btnPathChallenges").addEventListener("click", () => scrollToSection("#criticalList"));
+                $("#btnPathBoard").addEventListener("click", () => scrollToSection("#board"));
+                $("#btnPathJudging").addEventListener("click", openJudgingShortcut);
                 $("#btnFirstGuide").addEventListener("click", openWelcome);
                 $("#btnWelcome").addEventListener("click", openWelcome);
                 $("#welcomeStartBtn").addEventListener("click", () => {
                     localStorage.setItem(MAP_WELCOME_KEY, "1");
                     closeWelcome();
-                    fillTeams();
-                    updateNewHintByTeam();
-                    openNew();
+                    openNewFlow();
                 });
                 $$('[data-close-welcome]').forEach((el) => el.addEventListener("click", () => {
                     localStorage.setItem(MAP_WELCOME_KEY, "1");
