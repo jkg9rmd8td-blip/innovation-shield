@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Innovation Shield | Student Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./variables.css" />
+  <link rel="stylesheet" href="./cards.css" />
+</head>
+<body>
+  <main class="sp-shell">
+    <header class="sp-header">
+      <div class="sp-header-copy">
+        <p class="sp-eyebrow">Innovation Shield</p>
+        <h1>بوابة الطالب الصحية</h1>
+        <p>إجراءات أوضح، بطاقات بيانات مرتبة، وتغذية راجعة مباشرة عند طلب الزيارة.</p>
+      </div>
+
+      <section class="sp-vitals-spotlight" aria-label="المؤشرات الحيوية الأساسية">
+        <article class="spotlight-item">
+          <p>معدل النبض</p>
+          <strong id="spotPulseValue">82 <span>bpm</span></strong>
+        </article>
+        <article class="spotlight-item">
+          <p>نسبة الأكسجين</p>
+          <strong id="spotOxygenValue">98<span>%</span></strong>
+        </article>
+      </section>
+
+      <div class="sp-main-actions">
+        <button type="button" class="btn btn-primary" id="visitRequestBtn">طلب الزيارة</button>
+        <button type="button" class="btn btn-secondary" id="messageBtn">إرسال رسالة</button>
+        <button type="button" class="btn btn-secondary" id="recordBtn">الملف الصحي</button>
+        <button type="button" class="btn btn-secondary" id="assistantBtn">المساعد الذكي</button>
+      </div>
+    </header>
+
+    <section class="sp-current-status status-idle" id="currentStatusCard" aria-live="polite">
+      <div class="status-head">
+        <h2>الحالة الحالية</h2>
+        <span class="status-chip" id="currentStatusChip">جاهز</span>
+      </div>
+      <p id="currentStatusText">لا يوجد طلب زيارة نشط حالياً.</p>
+      <small id="currentStatusMeta">اضغط "طلب الزيارة" لبدء الإجراء.</small>
+    </section>
+
+    <section class="sp-grid">
+      <article class="data-card">
+        <div class="card-head">
+          <h3>المؤشرات الحيوية</h3>
+          <span class="card-badge">Live</span>
+        </div>
+        <ul class="metric-list" id="vitalsList">
+          <li><span>معدل النبض</span><strong>82 bpm</strong></li>
+          <li><span>ضغط الدم</span><strong>120/78</strong></li>
+          <li><span>الأكسجين</span><strong>98%</strong></li>
+        </ul>
+        <small>آخر تحديث: <time id="vitalsUpdatedAt">الآن</time></small>
+      </article>
+
+      <article class="data-card">
+        <div class="card-head">
+          <h3>حالة الاتصال بالحساسات</h3>
+          <span class="card-badge card-badge-ok">متصل</span>
+        </div>
+        <ul class="metric-list">
+          <li><span>حساس النبض</span><strong>متصل</strong></li>
+          <li><span>حساس الأكسجين</span><strong>متصل</strong></li>
+          <li><span>حساس الحرارة</span><strong>متصل</strong></li>
+        </ul>
+        <small>جميع الحساسات تعمل بشكل طبيعي.</small>
+      </article>
+
+      <article class="data-card">
+        <div class="card-head">
+          <h3>التنبيهات الحديثة</h3>
+          <span class="card-badge">3</span>
+        </div>
+        <ul class="feed-list">
+          <li>تذكير بموعد مراجعة بعد يومين.</li>
+          <li>ملاحظة طبية مضافة من الفريق العلاجي.</li>
+          <li>تحديث توصية النشاط البدني.</li>
+        </ul>
+      </article>
+
+      <article class="data-card">
+        <div class="card-head">
+          <h3>الإجراءات التالية</h3>
+          <span class="card-badge">Now</span>
+        </div>
+        <div class="card-empty">
+          <p>ماذا أفعل الآن؟</p>
+          <ul>
+            <li>لو ظهرت أعراض غير معتادة: اضغط "طلب الزيارة".</li>
+            <li>للاستفسار السريع: استخدم "إرسال رسالة".</li>
+            <li>لمراجعة آخر البيانات: افتح "الملف الصحي".</li>
+          </ul>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="./student-portal.js"></script>
+</body>
+</html>
