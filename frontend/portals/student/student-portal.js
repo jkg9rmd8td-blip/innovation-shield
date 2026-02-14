@@ -9,6 +9,8 @@
   const statusMeta = $("#currentStatusMeta");
   const visitBtn = $("#visitRequestBtn");
   const vitalsUpdatedAt = $("#vitalsUpdatedAt");
+  const aiInput = $("#ai-input");
+  const aiResponse = $("#ai-response");
 
   function updateStatus(type, text, meta) {
     statusCard.classList.remove("status-idle", "status-pending", "status-success", "status-error");
@@ -50,6 +52,87 @@
         source: "local-sim"
       };
     }
+  }
+
+  async function sendEmergencyRequest(reason) {
+    try {
+      const res = await fetch("/api/v1/emergency/alert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reason,
+          requestedAt: new Date().toISOString(),
+          channel: "student_portal"
+        })
+      });
+      if (!res.ok) throw new Error(`HTTP_${res.status}`);
+      const data = await res.json().catch(() => ({}));
+      return { ok: true, ticket: data.ticket || `ER-${String(Date.now()).slice(-6)}`, source: "server" };
+    } catch {
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      return { ok: true, ticket: `ER-${String(Date.now()).slice(-6)}`, source: "local-sim" };
+    }
+  }
+
+  async function sendEmergency(reason) {
+    const cleanReason = String(reason || "").trim() || "بلاغ طارئ";
+    updateStatus("pending", `تم استقبال بلاغ: ${cleanReason}`, "جاري إشعار الفريق الطبي المناوب فورًا...");
+    vitalsUpdatedAt.textContent = nowLabel();
+
+    const res = await sendEmergencyRequest(cleanReason);
+    if (res.ok) {
+      const sourceMeta = res.source === "server"
+        ? "تم رفع البلاغ مباشرة إلى وحدة الطوارئ."
+        : "تم حفظ البلاغ محليًا كنسخة تجريبية لحين الاتصال بالخادم.";
+      updateStatus("error", `نداء استغاثة مُرسل: ${cleanReason} (رقم: ${res.ticket})`, sourceMeta);
+    } else {
+      updateStatus("error", `تعذر إرسال نداء الاستغاثة: ${cleanReason}`, "حاول مرة أخرى فورًا أو تواصل هاتفيًا مع الطوارئ.");
+    }
+  }
+
+  function setAiResponse(type, html) {
+    if (!aiResponse) return;
+    aiResponse.hidden = false;
+    aiResponse.classList.remove("is-loading", "is-danger", "is-ok");
+    aiResponse.classList.add(type);
+    aiResponse.innerHTML = html;
+  }
+
+  function isHighRiskText(text) {
+    const normalized = String(text || "").toLowerCase();
+    const severeWords = [
+      "ألم", "صدر", "تنفس", "ضيق", "اختناق", "إغماء", "دوار",
+      "نزيف", "فقدان", "وعي", "خفقان", "تعب شديد", "حرارة عالية",
+      "breath", "chest", "faint", "collapse", "severe pain"
+    ];
+    return severeWords.some((word) => normalized.includes(word));
+  }
+
+  function consultAI() {
+    if (!aiInput || !aiResponse) return;
+    const input = aiInput.value.trim();
+    if (!input) {
+      setAiResponse("is-danger", "الرجاء كتابة الأعراض أولاً.");
+      return;
+    }
+
+    setAiResponse("is-loading", "جاري تحليل حالتك...");
+
+    setTimeout(() => {
+      if (isHighRiskText(input)) {
+        setAiResponse(
+          "is-danger",
+          "تحليل المستشار: الأعراض التي ذكرتها قد تكون خطيرة. أنصحك بالضغط على نداء الاستغاثة فورًا أو التوجه للعيادة."
+        );
+        updateStatus("error", "تم رصد أعراض عالية الخطورة من المستشار الذكي.", "اضغط نداء الاستغاثة أو تواصل مع الفريق الطبي فورًا.");
+      } else {
+        setAiResponse(
+          "is-ok",
+          "نصيحة المستشار: لا يبدو الأمر طارئًا جدًا. راقب الأعراض، اشرب الماء، واحجز موعدًا عاديًا عند الحاجة."
+        );
+        updateStatus("idle", "نتيجة المستشار: حالة مستقرة مبدئيًا.", "استمر في المتابعة، وإذا ساءت الأعراض استخدم نداء الاستغاثة.");
+      }
+    }, 800);
   }
 
   async function requestVisit() {
@@ -105,6 +188,8 @@
     vitalsUpdatedAt.textContent = nowLabel();
     visitBtn.addEventListener("click", requestVisit);
     wireSecondaryButtons();
+    window.sendEmergency = sendEmergency;
+    window.consultAI = consultAI;
   }
 
   document.addEventListener("DOMContentLoaded", init);

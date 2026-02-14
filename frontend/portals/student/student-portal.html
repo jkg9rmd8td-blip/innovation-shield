@@ -47,6 +47,39 @@
       <small id="currentStatusMeta">اضغط "طلب الزيارة" لبدء الإجراء.</small>
     </section>
 
+    <section class="sc-shell" aria-label="الاستغاثة الفورية والمستشار الذكي">
+      <div class="sc-panel critical-zone">
+        <h3 class="critical-title">نداء استغاثة فوري</h3>
+        <div class="emergency-grid">
+          <button class="emergency-card" type="button" onclick="sendEmergency('ضيق تنفس')">
+            <img src="https://img.icons8.com/fluency/96/lungs.png" alt="ضيق تنفس" loading="lazy" />
+            <span>ضيق تنفس</span>
+          </button>
+          <button class="emergency-card" type="button" onclick="sendEmergency('ألم في الصدر')">
+            <img src="https://img.icons8.com/fluency/96/heart-beat.png" alt="ألم صدر" loading="lazy" />
+            <span>ألم صدر</span>
+          </button>
+          <button class="emergency-card" type="button" onclick="sendEmergency('إغماء أو دوار')">
+            <img src="https://img.icons8.com/fluency/96/fainting.png" alt="دوار أو إغماء" loading="lazy" />
+            <span>دوار/إغماء</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="sc-panel ai-advisor-box">
+        <div class="ai-advisor-head">
+          <img src="https://img.icons8.com/fluency/48/robot-assistant.png" width="30" height="30" alt="مستشار ذكي" loading="lazy" />
+          <h4>مستشار الطالب الذكي</h4>
+        </div>
+        <p class="ai-advisor-help">أخبرني بما تشعر به وسأوجهك للتصرف الصحيح:</p>
+        <div class="ai-advisor-controls">
+          <input type="text" id="ai-input" class="sc-input" placeholder="مثلاً: أشعر بصداع شديد منذ الصباح..." />
+          <button class="sc-btn" type="button" onclick="consultAI()">استشارة</button>
+        </div>
+        <div id="ai-response" class="ai-box" hidden></div>
+      </div>
+    </section>
+
     <section class="sp-grid">
       <article class="data-card">
         <div class="card-head">
