@@ -11,6 +11,11 @@
   const vitalsUpdatedAt = $("#vitalsUpdatedAt");
   const aiInput = $("#ai-input");
   const aiResponse = $("#ai-response");
+  const sensorPulseValue = $("#sensorPulseValue");
+  const sensorOxygenValue = $("#sensorOxygenValue");
+  const sensorPressureValue = $("#sensorPressureValue");
+  const sensorTempValue = $("#sensorTempValue");
+  const assistantBtn = $("#assistantBtn");
 
   function updateStatus(type, text, meta) {
     statusCard.classList.remove("status-idle", "status-pending", "status-success", "status-error");
@@ -27,6 +32,30 @@
 
   function nowLabel() {
     return new Date().toLocaleTimeString("ar-SA", { hour: "2-digit", minute: "2-digit" });
+  }
+
+  function updateVitalsTimestamp() {
+    if (vitalsUpdatedAt) vitalsUpdatedAt.textContent = nowLabel();
+  }
+
+  function renderSensorValues() {
+    if (!sensorPulseValue || !sensorOxygenValue || !sensorPressureValue || !sensorTempValue) return;
+    const pulse = 76 + Math.floor(Math.random() * 14);       // 76..89
+    const oxygen = 97 + Math.floor(Math.random() * 3);       // 97..99
+    const sys = 116 + Math.floor(Math.random() * 9);         // 116..124
+    const dia = 74 + Math.floor(Math.random() * 6);          // 74..79
+    const temp = (36.5 + (Math.random() * 0.6)).toFixed(1);  // 36.5..37.1
+
+    sensorPulseValue.textContent = String(pulse);
+    sensorOxygenValue.textContent = String(oxygen);
+    sensorPressureValue.textContent = `${sys}/${dia}`;
+    sensorTempValue.textContent = String(temp);
+    updateVitalsTimestamp();
+  }
+
+  function startSensorStream() {
+    renderSensorValues();
+    setInterval(renderSensorValues, 9000);
   }
 
   async function sendVisitRequest(payload) {
@@ -77,7 +106,7 @@
   async function sendEmergency(reason) {
     const cleanReason = String(reason || "").trim() || "بلاغ طارئ";
     updateStatus("pending", `تم استقبال بلاغ: ${cleanReason}`, "جاري إشعار الفريق الطبي المناوب فورًا...");
-    vitalsUpdatedAt.textContent = nowLabel();
+    updateVitalsTimestamp();
 
     const res = await sendEmergencyRequest(cleanReason);
     if (res.ok) {
@@ -167,7 +196,7 @@
       );
     } finally {
       visitBtn.disabled = false;
-      vitalsUpdatedAt.textContent = nowLabel();
+      updateVitalsTimestamp();
     }
   }
 
@@ -178,14 +207,20 @@
     $("#recordBtn").addEventListener("click", () => {
       updateStatus("idle", "تم فتح الملف الصحي.", "راجع آخر الملاحظات والتوصيات.");
     });
-    $("#assistantBtn").addEventListener("click", () => {
-      updateStatus("idle", "تم تشغيل المساعد الذكي.", "اكتب سؤالك للحصول على إرشاد فوري.");
-    });
+    if (assistantBtn) {
+      assistantBtn.addEventListener("click", () => {
+        updateStatus("idle", "تم فتح المستشار الذكي.", "اكتب الأعراض واضغط استشارة للحصول على توجيه أولي.");
+        const advisorBox = document.querySelector(".ai-advisor-box");
+        if (advisorBox) advisorBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (aiInput) aiInput.focus();
+      });
+    }
   }
 
   function init() {
     if (!visitBtn || !statusCard) return;
-    vitalsUpdatedAt.textContent = nowLabel();
+    updateVitalsTimestamp();
+    startSensorStream();
     visitBtn.addEventListener("click", requestVisit);
     wireSecondaryButtons();
     window.sendEmergency = sendEmergency;

@@ -16,25 +16,14 @@
       <div class="sp-header-copy">
         <p class="sp-eyebrow">Innovation Shield</p>
         <h1>بوابة الطالب الصحية</h1>
-        <p>إجراءات أوضح، بطاقات بيانات مرتبة، وتغذية راجعة مباشرة عند طلب الزيارة.</p>
+        <p>واجهة مختصرة وواضحة: المؤشرات الحيوية أولاً، ثم المستشار الذكي، ثم الطوارئ.</p>
       </div>
 
-      <section class="sp-vitals-spotlight" aria-label="المؤشرات الحيوية الأساسية">
-        <article class="spotlight-item">
-          <p>معدل النبض</p>
-          <strong id="spotPulseValue">82 <span>bpm</span></strong>
-        </article>
-        <article class="spotlight-item">
-          <p>نسبة الأكسجين</p>
-          <strong id="spotOxygenValue">98<span>%</span></strong>
-        </article>
-      </section>
-
       <div class="sp-main-actions">
-        <button type="button" class="btn btn-primary" id="visitRequestBtn">طلب الزيارة</button>
-        <button type="button" class="btn btn-secondary" id="messageBtn">إرسال رسالة</button>
-        <button type="button" class="btn btn-secondary" id="recordBtn">الملف الصحي</button>
-        <button type="button" class="btn btn-secondary" id="assistantBtn">المساعد الذكي</button>
+        <button type="button" class="btn btn-primary" id="visitRequestBtn">طلب الزيارة الآن</button>
+        <button type="button" class="btn btn-secondary btn-mini" id="assistantBtn">المستشار</button>
+        <button type="button" class="btn btn-secondary btn-mini" id="messageBtn">رسالة</button>
+        <button type="button" class="btn btn-secondary btn-mini" id="recordBtn">الملف</button>
       </div>
     </header>
 
@@ -44,94 +33,95 @@
         <span class="status-chip" id="currentStatusChip">جاهز</span>
       </div>
       <p id="currentStatusText">لا يوجد طلب زيارة نشط حالياً.</p>
-      <small id="currentStatusMeta">اضغط "طلب الزيارة" لبدء الإجراء.</small>
+      <small id="currentStatusMeta">آخر تحديث: <time id="vitalsUpdatedAt">الآن</time></small>
     </section>
 
-    <section class="sc-shell" aria-label="الاستغاثة الفورية والمستشار الذكي">
-      <div class="sc-panel critical-zone">
-        <h3 class="critical-title">نداء استغاثة فوري</h3>
-        <div class="emergency-grid">
-          <button class="emergency-card" type="button" onclick="sendEmergency('ضيق تنفس')">
-            <img src="https://img.icons8.com/fluency/96/lungs.png" alt="ضيق تنفس" loading="lazy" />
-            <span>ضيق تنفس</span>
-          </button>
-          <button class="emergency-card" type="button" onclick="sendEmergency('ألم في الصدر')">
-            <img src="https://img.icons8.com/fluency/96/heart-beat.png" alt="ألم صدر" loading="lazy" />
-            <span>ألم صدر</span>
-          </button>
-          <button class="emergency-card" type="button" onclick="sendEmergency('إغماء أو دوار')">
-            <img src="https://img.icons8.com/fluency/96/fainting.png" alt="دوار أو إغماء" loading="lazy" />
-            <span>دوار/إغماء</span>
-          </button>
+    <section class="health-layout" aria-label="لوحة الحساسات والمستشار">
+      <article class="sc-panel sensor-cockpit">
+        <div class="sensor-head">
+          <h3>الحساسات الحيوية (مفعلة)</h3>
+          <span class="sensor-global-state">Live</span>
         </div>
-      </div>
 
-      <div class="sc-panel ai-advisor-box">
+        <div class="sensor-grid">
+          <article class="sensor-card sensor-pulse active">
+            <div class="sensor-top">
+              <span>حساس النبض</span>
+              <b class="sensor-state on">مفعل</b>
+            </div>
+            <strong id="sensorPulseValue">82</strong>
+            <small>bpm</small>
+          </article>
+
+          <article class="sensor-card sensor-oxygen active">
+            <div class="sensor-top">
+              <span>حساس الأكسجين</span>
+              <b class="sensor-state on">مفعل</b>
+            </div>
+            <strong id="sensorOxygenValue">98</strong>
+            <small>%</small>
+          </article>
+
+          <article class="sensor-card sensor-pressure active">
+            <div class="sensor-top">
+              <span>حساس الضغط</span>
+              <b class="sensor-state on">مفعل</b>
+            </div>
+            <strong id="sensorPressureValue">120/78</strong>
+            <small>mmHg</small>
+          </article>
+
+          <article class="sensor-card sensor-temp active">
+            <div class="sensor-top">
+              <span>حساس الحرارة</span>
+              <b class="sensor-state on">مفعل</b>
+            </div>
+            <strong id="sensorTempValue">36.8</strong>
+            <small>°C</small>
+          </article>
+        </div>
+      </article>
+
+      <article class="sc-panel ai-advisor-box">
         <div class="ai-advisor-head">
           <img src="https://img.icons8.com/fluency/48/robot-assistant.png" width="30" height="30" alt="مستشار ذكي" loading="lazy" />
           <h4>مستشار الطالب الذكي</h4>
         </div>
-        <p class="ai-advisor-help">أخبرني بما تشعر به وسأوجهك للتصرف الصحيح:</p>
+        <p class="ai-advisor-help">اكتب الأعراض وسأعطيك الإجراء الأنسب فورًا:</p>
         <div class="ai-advisor-controls">
-          <input type="text" id="ai-input" class="sc-input" placeholder="مثلاً: أشعر بصداع شديد منذ الصباح..." />
+          <input type="text" id="ai-input" class="sc-input" placeholder="مثلاً: أشعر بدوخة مستمرة مع صداع..." />
           <button class="sc-btn" type="button" onclick="consultAI()">استشارة</button>
         </div>
         <div id="ai-response" class="ai-box" hidden></div>
+      </article>
+    </section>
+
+    <section class="sc-panel critical-zone" aria-label="نداء استغاثة">
+      <h3 class="critical-title">نداء استغاثة فوري</h3>
+      <div class="emergency-grid">
+        <button class="emergency-card" type="button" onclick="sendEmergency('ضيق تنفس')">
+          <img src="https://img.icons8.com/fluency/96/lungs.png" alt="ضيق تنفس" loading="lazy" />
+          <span>ضيق تنفس</span>
+        </button>
+        <button class="emergency-card" type="button" onclick="sendEmergency('ألم في الصدر')">
+          <img src="https://img.icons8.com/fluency/96/heart-beat.png" alt="ألم صدر" loading="lazy" />
+          <span>ألم صدر</span>
+        </button>
+        <button class="emergency-card" type="button" onclick="sendEmergency('إغماء أو دوار')">
+          <img src="https://img.icons8.com/fluency/96/fainting.png" alt="دوار أو إغماء" loading="lazy" />
+          <span>دوار/إغماء</span>
+        </button>
       </div>
     </section>
 
-    <section class="sp-grid">
-      <article class="data-card">
-        <div class="card-head">
-          <h3>المؤشرات الحيوية</h3>
-          <span class="card-badge">Live</span>
-        </div>
-        <ul class="metric-list" id="vitalsList">
-          <li><span>معدل النبض</span><strong>82 bpm</strong></li>
-          <li><span>ضغط الدم</span><strong>120/78</strong></li>
-          <li><span>الأكسجين</span><strong>98%</strong></li>
-        </ul>
-        <small>آخر تحديث: <time id="vitalsUpdatedAt">الآن</time></small>
-      </article>
-
-      <article class="data-card">
-        <div class="card-head">
-          <h3>حالة الاتصال بالحساسات</h3>
-          <span class="card-badge card-badge-ok">متصل</span>
-        </div>
-        <ul class="metric-list">
-          <li><span>حساس النبض</span><strong>متصل</strong></li>
-          <li><span>حساس الأكسجين</span><strong>متصل</strong></li>
-          <li><span>حساس الحرارة</span><strong>متصل</strong></li>
-        </ul>
-        <small>جميع الحساسات تعمل بشكل طبيعي.</small>
-      </article>
-
-      <article class="data-card">
-        <div class="card-head">
-          <h3>التنبيهات الحديثة</h3>
-          <span class="card-badge">3</span>
-        </div>
+    <section class="sp-merged-summary">
+      <article class="sc-panel">
+        <h3>ملخص سريع لليوم</h3>
         <ul class="feed-list">
-          <li>تذكير بموعد مراجعة بعد يومين.</li>
-          <li>ملاحظة طبية مضافة من الفريق العلاجي.</li>
-          <li>تحديث توصية النشاط البدني.</li>
+          <li>جميع الحساسات تعمل وتبث البيانات بشكل لحظي.</li>
+          <li>عند أي عرض خطير: استخدم نداء الاستغاثة مباشرة.</li>
+          <li>المستشار الذكي يقدم إرشاد أولي ولا يغني عن التقييم الطبي.</li>
         </ul>
-      </article>
-
-      <article class="data-card">
-        <div class="card-head">
-          <h3>الإجراءات التالية</h3>
-          <span class="card-badge">Now</span>
-        </div>
-        <div class="card-empty">
-          <p>ماذا أفعل الآن؟</p>
-          <ul>
-            <li>لو ظهرت أعراض غير معتادة: اضغط "طلب الزيارة".</li>
-            <li>للاستفسار السريع: استخدم "إرسال رسالة".</li>
-            <li>لمراجعة آخر البيانات: افتح "الملف الصحي".</li>
-          </ul>
-        </div>
       </article>
     </section>
   </main>
