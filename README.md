@@ -48,6 +48,12 @@ git commit -m "feat: rebuild innovation shield v3 from scratch"
 git push origin main
 ```
 
+## النشر على GitHub Pages
+- تمت إضافة Workflow تلقائي للنشر في: `.github/workflows/deploy-pages.yml`.
+- بعد كل `push` على `main` سيتم بناء المشروع ونشره على GitHub Pages.
+- رابط الموقع المتوقع:
+`https://jkg9rmd8td-blip.github.io/innovation-shield/`
+
 ## ملاحظة
 تم حفظ النسخة السابقة في فرع:
 `backup/legacy-pre-rebuild-20260217`
