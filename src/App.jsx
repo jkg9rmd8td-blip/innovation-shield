@@ -466,6 +466,15 @@ function App() {
     [selectedIdea],
   )
 
+  const activeViewMeta = useMemo(() => {
+    return VIEWS.find((view) => view.id === activeView) || VIEWS[0]
+  }, [activeView])
+
+  const selectedProgress = useMemo(() => {
+    if (!selectedIdea) return 0
+    return stageProgressPercent(selectedIdea.stage)
+  }, [selectedIdea])
+
   const requiredGate = useMemo(
     () => (selectedIdea ? getStageRequirement(selectedIdea.domain, selectedIdea.stage) : null),
     [selectedIdea],
@@ -2678,7 +2687,29 @@ function App() {
             ))}
           </nav>
 
-          <main>
+          <section className="view-context">
+            <article>
+              <p className="kicker">الوحدة الحالية</p>
+              <strong>{activeViewMeta.label}</strong>
+            </article>
+            {selectedIdea ? (
+              <article>
+                <p className="kicker">الفكرة النشطة</p>
+                <strong>{selectedIdea.title}</strong>
+                <span>
+                  {selectedIdea.stage} | تقدم المسار {selectedProgress}%
+                </span>
+              </article>
+            ) : (
+              <article>
+                <p className="kicker">الفكرة النشطة</p>
+                <strong>لا توجد فكرة محددة</strong>
+                <span>اختر فكرة من دورة الحياة لعرض التفاصيل التنفيذية.</span>
+              </article>
+            )}
+          </section>
+
+          <main className={`main-shell view-${activeView}`}>
             {activeView === 'overview' ? renderOverview() : null}
             {activeView === 'lifecycle' ? renderLifecycle() : null}
             {activeView === 'workflow' ? renderWorkflow() : null}
