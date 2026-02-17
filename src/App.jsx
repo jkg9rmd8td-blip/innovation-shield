@@ -16,6 +16,64 @@ import {
 } from './engine'
 
 const STORAGE_KEY = 'innovation_shield_v4_state'
+const ONBOARDING_SEEN_KEY = 'innovation_shield_v4_onboarding_seen'
+
+const QUICK_START_STEPS = [
+  {
+    id: 'step-1',
+    title: '1) قدم فكرتك',
+    detail: 'اكتب المشكلة والحل والمستفيد خلال أقل من 5 دقائق.',
+  },
+  {
+    id: 'step-2',
+    title: '2) اختبر بسرعة',
+    detail: 'ابنِ نموذجًا أوليًا واضبط خطة الاختبار مع مؤشرات قياس واضحة.',
+  },
+  {
+    id: 'step-3',
+    title: '3) اعتمد وطبّق',
+    detail: 'مر عبر Workflow الموافقات والحوكمة للوصول إلى التطبيق المؤسسي.',
+  },
+]
+
+const ONBOARDING_STEPS = [
+  {
+    id: 'welcome',
+    title: 'مرحبًا بك في درع الابتكار',
+    detail: 'المنصة تمكّن موظفي التجمع الصحي من تحويل الفكرة إلى نموذج أولي خلال 6 أسابيع.',
+  },
+  {
+    id: 'flow',
+    title: 'المسار المختصر',
+    detail: 'ابدأ من "دورة حياة الابتكار": قدم الفكرة → اختبرها → اطلب الاعتماد.',
+  },
+  {
+    id: 'actions',
+    title: 'ابدأ الآن',
+    detail: 'استخدم زر "ابدأ ابتكار جديد" الثابت للانتقال المباشر إلى نموذج إدخال الفكرة.',
+  },
+]
+
+const SUCCESS_CASES = [
+  {
+    id: 'case-1',
+    title: 'تقليل زمن التحويل الداخلي',
+    result: 'خفض زمن التحويل 22% خلال 8 أسابيع',
+    owner: 'إدارة التشغيل',
+  },
+  {
+    id: 'case-2',
+    title: 'تسريع الرد على استفسارات الموظفين',
+    result: 'خفض زمن الاستجابة 30%',
+    owner: 'الموارد البشرية',
+  },
+  {
+    id: 'case-3',
+    title: 'تحسين رحلة المريض في العيادات',
+    result: 'انخفاض وقت الانتظار 20%',
+    owner: 'إدارة تجربة المريض',
+  },
+]
 
 const VIEWS = [
   { id: 'overview', label: 'الرؤية التنفيذية' },
@@ -490,6 +548,12 @@ function stageTone(stage) {
   return 'neutral'
 }
 
+function scoreTone(score) {
+  if (score >= 80) return 'good'
+  if (score >= 40) return 'mid'
+  return 'bad'
+}
+
 function canMoveToStage(idea, nextStage) {
   const currentIndex = LIFECYCLE_STAGES.indexOf(idea.stage)
   const nextIndex = LIFECYCLE_STAGES.indexOf(nextStage)
@@ -564,8 +628,13 @@ function App() {
   const [approvalNote, setApprovalNote] = useState('')
   const [evidenceType, setEvidenceType] = useState('ملف اختبار')
   const [evidenceNote, setEvidenceNote] = useState('')
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [onboardingIndex, setOnboardingIndex] = useState(0)
   const [flashMessage, setFlashMessage] = useState('')
   const [impactResult, setImpactResult] = useState(null)
+
+  const session = state.session || DEFAULT_SESSION
+  const permissions = ROLE_PERMISSIONS[session.role] || ROLE_PERMISSIONS[ROLE_OPTIONS[0]]
 
   useEffect(() => {
     document.documentElement.lang = 'ar'
@@ -586,9 +655,6 @@ function App() {
     () => state.ideas.find((item) => item.id === selectedId) || state.ideas[0] || null,
     [state.ideas, selectedId],
   )
-
-  const session = state.session || DEFAULT_SESSION
-  const permissions = ROLE_PERMISSIONS[session.role] || ROLE_PERMISSIONS[ROLE_OPTIONS[0]]
 
   const lifecycleGroups = useMemo(() => {
     return LIFECYCLE_STAGES.reduce((acc, stage) => {
@@ -726,6 +792,12 @@ function App() {
       },
     }))
 
+    const seen = localStorage.getItem(ONBOARDING_SEEN_KEY)
+    if (!seen) {
+      setShowOnboarding(true)
+      setOnboardingIndex(0)
+    }
+
     setFlashMessage(`تم تسجيل الدخول كـ ${loginForm.role}.`)
   }
 
@@ -753,6 +825,8 @@ function App() {
         lastUpdated: now,
       },
     }))
+    setShowOnboarding(false)
+    setOnboardingIndex(0)
   }
 
   const createIdeaFromForm = () => {
@@ -1261,46 +1335,108 @@ function App() {
     return 'neutral'
   }
 
+  const startNewInnovation = () => {
+    if (!session.isAuthenticated) {
+      setFlashMessage('سجّل الدخول أولاً ثم ابدأ فكرة جديدة.')
+      return
+    }
+
+    if (!permissions.canCreate) {
+      setFlashMessage('دورك الحالي لا يملك صلاحية إنشاء فكرة جديدة.')
+      return
+    }
+
+    setActiveView('lifecycle')
+    setFlashMessage('المسار جاهز: ابدأ بإدخال المشكلة والحل والمستفيد.')
+  }
+
+  const navigateFromFooter = (target) => {
+    if (target === 'about') {
+      setActiveView('overview')
+      return
+    }
+
+    if (target === 'policies') {
+      setActiveView('governance')
+      return
+    }
+
+    if (target === 'support') {
+      setActiveView('knowledge')
+      return
+    }
+
+    setActiveView('overview')
+    setFlashMessage('قناة التواصل الداخلي: مكتب الابتكار المؤسسي - التجمع الصحي بالطائف.')
+  }
+
+  const closeOnboarding = () => {
+    localStorage.setItem(ONBOARDING_SEEN_KEY, '1')
+    setShowOnboarding(false)
+    setOnboardingIndex(0)
+  }
+
+  const nextOnboardingStep = () => {
+    if (onboardingIndex >= ONBOARDING_STEPS.length - 1) {
+      closeOnboarding()
+      return
+    }
+    setOnboardingIndex((prev) => prev + 1)
+  }
+
   const renderOverview = () => {
-    const pillars = [
+    const coreTools = [
       {
-        title: 'إدارة دورة حياة الابتكار',
-        detail: 'تدفق مؤسسي واضح من التقاط الفكرة وحتى التوسع داخل التجمع.',
+        id: 'tool-1',
+        title: 'Prototype Builder',
+        detail: 'حوّل الفكرة إلى نموذج أولي خلال أسابيع مع خطة اختبار واضحة.',
+        action: () => setActiveView('prototype'),
       },
       {
-        title: 'تمكين المبتكرين',
-        detail: 'Workspace تشاركي + Prototype Builder لتحويل الفكرة إلى نموذج قابل للاختبار.',
+        id: 'tool-2',
+        title: 'Innovation Workspace',
+        detail: 'مساحة تعاون للمهام والملاحظات ومتابعة التنفيذ بشكل حي.',
+        action: () => setActiveView('workspace'),
       },
       {
-        title: 'تقييم القرار',
-        detail: 'قياس نضج الفكرة والمخاطر والجاهزية لدعم قرارات البوابات المرحلية.',
+        id: 'tool-3',
+        title: 'Experiment & Decision Templates',
+        detail: 'ابدأ بقوالب جاهزة مثل Experiment Card وDecision Matrix.',
+        action: () => setActiveView('knowledge'),
       },
-      {
-        title: 'محاكاة أثر قبل التنفيذ',
-        detail: 'تحليل أثر التكلفة والوقت والجودة قبل الاعتماد النهائي.',
-      },
-      {
-        title: 'مكتبة معرفية مؤسسية',
-        detail: 'قوالب وأدوات ودراسات حالة تمكّن التعلم الذاتي السريع للفرق.',
-      },
-      {
-        title: 'حوكمة وحماية الملكية الفكرية',
-        detail: 'سياسات واضحة لحقوق الفكرة وسرية البيانات والتوافق التنظيمي.',
-      },
+    ]
+
+    const trustSignals = [
+      'حوكمة مرحلية موثقة لكل قرار',
+      'تتبع كامل في Audit Log',
+      'سياسات ملكية فكرية ظاهرة داخل المنصة',
+      'اعتماد قبل التطبيق لضبط المخاطر',
     ]
 
     return (
       <div className="view-stack">
-        <section className="panel executive-panel">
-          <div className="panel-head">
-            <h3>ملخص المشروع الكامل</h3>
-            <span>{state.meta.orgName}</span>
-          </div>
+        <section className="panel home-hero-panel" id="about">
+          <p className="home-kicker">من؟ ماذا؟ لماذا الآن؟</p>
+          <h2 className="home-title">
+            منصة تمكّن موظفي التجمع الصحي من تحويل فكرة إلى نموذج أولي خلال 6 أسابيع.
+          </h2>
           <p className="lead-text">
-            درع الابتكار هو منصة رقمية مؤسسية متكاملة داخل التجمع الصحي بالطائف لتمكين المبتكرين
-            وتحويل الأفكار إلى نماذج أولية قابلة للاختبار والتطبيق، عبر دورة حياة ابتكار واضحة،
-            أدوات تمكين تشغيلية، تقييم نضج، محاكاة أثر، ومكتبة معرفية، مع حوكمة وسياسات ملكية فكرية.
+            المستفيدون هم فرق التشغيل والجودة وتجربة المريض. تبدأ الرحلة من إدخال فكرة قصيرة، ثم
+            اختبارها ميدانيًا، ثم اعتمادها وتطبيقها داخل التجمع بأثر قابل للقياس.
           </p>
+
+          <div className="hero-cta-row">
+            <button className="btn primary cta-main" onClick={startNewInnovation}>
+              ابدأ ابتكار جديد
+            </button>
+            <button className="btn" onClick={() => setActiveView('knowledge')}>
+              افتح القوالب الجاهزة
+            </button>
+            <button className="btn ghost" onClick={() => setActiveView('workflow')}>
+              راجع مسار الاعتماد
+            </button>
+          </div>
+
           <div className="journey-line">
             {LIFECYCLE_STAGES.map((stage, index) => (
               <div key={stage} className="journey-node">
@@ -1308,6 +1444,26 @@ function App() {
                 {index < LIFECYCLE_STAGES.length - 1 ? <small>←</small> : null}
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="panel" id="support">
+          <div className="panel-head">
+            <h3>كيف تعمل المنصة؟</h3>
+            <span>قدم → اختبر → اطبق</span>
+          </div>
+          <div className="steps-grid">
+            {QUICK_START_STEPS.map((step) => (
+              <article key={step.id} className="step-card">
+                <strong>{step.title}</strong>
+                <p>{step.detail}</p>
+              </article>
+            ))}
+          </div>
+          <div className="progress-track">
+            <span className="progress-node done">قدم الفكرة</span>
+            <span className="progress-node active">اختبر النموذج</span>
+            <span className="progress-node">طبق على نطاق أوسع</span>
           </div>
         </section>
 
@@ -1364,19 +1520,124 @@ function App() {
 
         <section className="panel">
           <div className="panel-head">
-            <h3>ركائز المنظومة</h3>
-            <span>Strategic Pillars</span>
+            <h3>أدوات المنصة الأساسية</h3>
+            <span>ابدأ مباشرة</span>
           </div>
           <div className="pillars-grid">
-            {pillars.map((pillar) => (
-              <article key={pillar.title} className="pillar-card">
-                <strong>{pillar.title}</strong>
-                <p>{pillar.detail}</p>
+            {coreTools.map((tool) => (
+              <article key={tool.id} className="pillar-card">
+                <strong>{tool.title}</strong>
+                <p>{tool.detail}</p>
+                <button className="btn" onClick={tool.action}>
+                  فتح الآن
+                </button>
               </article>
             ))}
           </div>
         </section>
+
+        <section className="panel">
+          <div className="panel-head">
+            <h3>قصص نجاح ودراسات حالة</h3>
+            <span>نماذج تطبيقية داخلية</span>
+          </div>
+          <div className="cases-grid">
+            {SUCCESS_CASES.map((item) => (
+              <article key={item.id} className="case-card">
+                <strong>{item.title}</strong>
+                <p>{item.result}</p>
+                <small>{item.owner}</small>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel trust-panel" id="policies">
+          <div className="panel-head">
+            <h3>عناصر الثقة والشراكات</h3>
+            <span>Governance & Trust</span>
+          </div>
+          <div className="trust-grid">
+            <article className="trust-box">
+              <strong>شركاء داخليون</strong>
+              <p>إدارة التشغيل | إدارة الجودة | مكتب التحول | إدارة تقنية المعلومات</p>
+            </article>
+            <article className="trust-box">
+              <strong>سياسات حماية الملكية الفكرية</strong>
+              <p>سياسات الحماية والسرية والاعتماد موثقة ومرئية داخل تبويب الحوكمة.</p>
+            </article>
+            <article className="trust-box">
+              <strong>ضمانات الامتثال</strong>
+              <p>Workflow مرحلي + Audit Log + موافقات رسمية قبل التوسع.</p>
+            </article>
+          </div>
+          <ul className="policy-list">
+            {trustSignals.map((signal) => (
+              <li key={signal}>{signal}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="panel contact-panel" id="contact">
+          <div className="panel-head">
+            <h3>انضم الآن</h3>
+            <span>تواصل مع مكتب الابتكار</span>
+          </div>
+          <p className="lead-text">
+            لديك فكرة تحتاج دعمًا أو تقييمًا سريعًا؟ ابدأ مباشرة عبر زر "ابدأ ابتكار جديد" أو تواصل
+            مع مكتب الابتكار المؤسسي داخل التجمع لجدولة جلسة تمكين.
+          </p>
+          <div className="hero-cta-row">
+            <button className="btn primary cta-main" onClick={startNewInnovation}>
+              ابدأ ابتكار جديد
+            </button>
+            <button className="btn" onClick={() => setActiveView('knowledge')}>
+              افتح القوالب
+            </button>
+          </div>
+        </section>
       </div>
+    )
+  }
+
+  const renderOnboardingModal = () => {
+    if (!showOnboarding) return null
+
+    const step = ONBOARDING_STEPS[onboardingIndex]
+    const isLast = onboardingIndex === ONBOARDING_STEPS.length - 1
+
+    return (
+      <section className="onboarding-overlay" role="dialog" aria-modal="true" aria-label="جولة تعريفية">
+        <article className="onboarding-modal">
+          <p className="home-kicker">
+            جولة تعريفية {onboardingIndex + 1} / {ONBOARDING_STEPS.length}
+          </p>
+          <h3>{step.title}</h3>
+          <p>{step.detail}</p>
+          <div className="onboarding-dots" aria-hidden="true">
+            {ONBOARDING_STEPS.map((item, index) => (
+              <span key={item.id} className={index === onboardingIndex ? 'active' : ''} />
+            ))}
+          </div>
+          <div className="onboarding-actions">
+            <button className="btn ghost" onClick={closeOnboarding}>
+              تخطي
+            </button>
+            <button
+              className="btn primary"
+              onClick={() => {
+                nextOnboardingStep()
+                if (isLast) {
+                  setActiveView('lifecycle')
+                  setFlashMessage('ابدأ الآن بإدخال أول فكرة ابتكارية.')
+                }
+              }}
+            >
+              {isLast ? 'ابدأ الآن' : 'التالي'}
+            </button>
+          </div>
+        </article>
+      </section>
     )
   }
 
@@ -1480,57 +1741,64 @@ function App() {
                 </div>
 
                 <div className="card-list">
-                  {(lifecycleGroups[stage] || []).map((idea) => (
-                    <article key={idea.id} className="idea-card">
-                      <div className="idea-head">
-                        <strong>{idea.title}</strong>
-                        <span className={`badge ${stageTone(idea.stage)}`}>{idea.status}</span>
-                      </div>
+                  {(lifecycleGroups[stage] || []).map((idea) => {
+                    const readiness = calcReadiness(idea)
+                    const maturity = calcMaturity(idea)
+                    const risk = calcRisk(idea)
 
-                      <p>{idea.owner}</p>
+                    return (
+                      <article key={idea.id} className="idea-card">
+                        <div className="idea-head">
+                          <strong>{idea.title}</strong>
+                          <span className={`badge ${stageTone(idea.stage)}`}>{idea.status}</span>
+                        </div>
 
-                      <div className="metric-row">
-                        <span>Maturity {calcMaturity(idea)}%</span>
-                        <span>Risk {calcRisk(idea)}%</span>
-                        <span>Readiness {calcReadiness(idea)}%</span>
-                      </div>
+                        <p>{idea.owner}</p>
 
-                      <div className="metric-row">
-                        <span className={`badge ${idea.governance.gateApproved ? 'good' : 'bad'}`}>
-                          {idea.governance.gateApproved ? 'حوكمة مكتملة' : 'حوكمة ناقصة'}
-                        </span>
-                      </div>
+                        <div className="metric-row">
+                          <span>Maturity {maturity}%</span>
+                          <span>Risk {risk}%</span>
+                          <span>Readiness {readiness}%</span>
+                        </div>
 
-                      <div className="card-actions two-cols">
-                        <select
-                          value={idea.stage}
-                          onChange={(event) => handleIdeaStageChange(idea.id, event.target.value)}
+                        <div className="metric-row">
+                          <span className={`badge ${scoreTone(readiness)}`}>جاهزية {readiness}%</span>
+                          <span className={`badge ${idea.governance.gateApproved ? 'good' : 'bad'}`}>
+                            {idea.governance.gateApproved ? 'حوكمة مكتملة' : 'حوكمة ناقصة'}
+                          </span>
+                        </div>
+
+                        <div className="card-actions two-cols">
+                          <select
+                            value={idea.stage}
+                            onChange={(event) => handleIdeaStageChange(idea.id, event.target.value)}
+                          >
+                            {LIFECYCLE_STAGES.map((item) => (
+                              <option key={item}>{item}</option>
+                            ))}
+                          </select>
+                          <select
+                            value={idea.status}
+                            onChange={(event) => handleIdeaStatusChange(idea.id, event.target.value)}
+                          >
+                            {STATUS_OPTIONS.map((item) => (
+                              <option key={item}>{item}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <button
+                          className="btn ghost"
+                          onClick={() => {
+                            setSelectedId(idea.id)
+                            setActiveView('workspace')
+                          }}
                         >
-                          {LIFECYCLE_STAGES.map((item) => (
-                            <option key={item}>{item}</option>
-                          ))}
-                        </select>
-                        <select
-                          value={idea.status}
-                          onChange={(event) => handleIdeaStatusChange(idea.id, event.target.value)}
-                        >
-                          {STATUS_OPTIONS.map((item) => (
-                            <option key={item}>{item}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <button
-                        className="btn ghost"
-                        onClick={() => {
-                          setSelectedId(idea.id)
-                          setActiveView('workspace')
-                        }}
-                      >
-                        فتح السجل
-                      </button>
-                    </article>
-                  ))}
+                          فتح السجل
+                        </button>
+                      </article>
+                    )
+                  })}
                 </div>
               </section>
             ))}
@@ -2478,14 +2746,26 @@ function App() {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">
+        تخطَّ إلى المحتوى الرئيسي
+      </a>
+
       <header className="hero">
         <div>
           <p className="eyebrow">Innovation Shield Platform</p>
           <h1>درع الابتكار - منصة قوية لإدارة الابتكار المؤسسي</h1>
           <p className="hero-text">
-            منصة تشغيلية داخل التجمع الصحي بالطائف لتمكين المبتكرين وتحويل الأفكار إلى نماذج
-            قابلة للاختبار والتطبيق، مع Workflow موافقات رسمي، إدارة أدلة، ولوحة تدقيق كاملة.
+            منصة تمكّن موظفي التجمع الصحي بالطائف من تحويل فكرة إلى نموذج أولي قابل للاختبار
+            خلال 6 أسابيع مع اعتماد مؤسسي واضح.
           </p>
+          <div className="hero-cta-row">
+            <button className="btn primary cta-main" onClick={startNewInnovation}>
+              ابدأ ابتكار جديد
+            </button>
+            <button className="btn ghost" onClick={() => setActiveView('overview')}>
+              كيف تعمل المنصة؟
+            </button>
+          </div>
         </div>
         <div className="hero-side">
           <article>
@@ -2503,7 +2783,11 @@ function App() {
         </div>
       </header>
 
-      {flashMessage ? <section className="flash-box">{flashMessage}</section> : null}
+      {flashMessage ? (
+        <section className="flash-box" aria-live="polite">
+          {flashMessage}
+        </section>
+      ) : null}
 
       {!session.isAuthenticated ? (
         <section className="panel auth-panel">
@@ -2511,6 +2795,9 @@ function App() {
             <h3>تسجيل الدخول للمنصة</h3>
             <span>Role-Based Access</span>
           </div>
+          <p className="lead-text">
+            ادخل بدورك المؤسسي لبدء المسار: قدم الفكرة، اختبرها، ثم ارفعها للاعتماد.
+          </p>
           <div className="inline-input wrap">
             <input
               value={loginForm.name}
@@ -2541,7 +2828,7 @@ function App() {
             </button>
           </section>
 
-          <nav className="top-nav">
+          <nav className="top-nav" aria-label="التنقل الرئيسي">
             {VIEWS.map((view) => (
               <button
                 key={view.id}
@@ -2553,24 +2840,40 @@ function App() {
             ))}
           </nav>
 
-          {activeView === 'overview' ? renderOverview() : null}
-          {activeView === 'lifecycle' ? renderLifecycle() : null}
-          {activeView === 'workflow' ? renderWorkflow() : null}
-          {activeView === 'workspace' ? renderWorkspace() : null}
-          {activeView === 'prototype' ? renderPrototype() : null}
-          {activeView === 'impact' ? renderImpact() : null}
-          {activeView === 'knowledge' ? renderKnowledge() : null}
-          {activeView === 'governance' ? renderGovernance() : null}
-          {activeView === 'audit' ? renderAudit() : null}
+          <main id="main-content">
+            {activeView === 'overview' ? renderOverview() : null}
+            {activeView === 'lifecycle' ? renderLifecycle() : null}
+            {activeView === 'workflow' ? renderWorkflow() : null}
+            {activeView === 'workspace' ? renderWorkspace() : null}
+            {activeView === 'prototype' ? renderPrototype() : null}
+            {activeView === 'impact' ? renderImpact() : null}
+            {activeView === 'knowledge' ? renderKnowledge() : null}
+            {activeView === 'governance' ? renderGovernance() : null}
+            {activeView === 'audit' ? renderAudit() : null}
+          </main>
+
+          <button className="floating-cta" onClick={startNewInnovation} aria-label="ابدأ ابتكار جديد">
+            ابدأ ابتكار جديد
+          </button>
+
+          {renderOnboardingModal()}
         </>
       )}
 
       <footer className="platform-footer">
         <div className="footer-links">
-          <a href="#about">من نحن</a>
-          <a href="#policies">السياسات</a>
-          <a href="#support">الدعم</a>
-          <a href="#contact">تواصل معنا</a>
+          <button className="btn ghost" onClick={() => navigateFromFooter('about')}>
+            من نحن
+          </button>
+          <button className="btn ghost" onClick={() => navigateFromFooter('policies')}>
+            السياسات
+          </button>
+          <button className="btn ghost" onClick={() => navigateFromFooter('support')}>
+            الدعم
+          </button>
+          <button className="btn ghost" onClick={() => navigateFromFooter('contact')}>
+            تواصل معنا
+          </button>
         </div>
         <p className="footer-note">
           {state.meta.orgName} | الهدف الاستراتيجي: {state.meta.strategicGoal} | آخر تحديث:{' '}
