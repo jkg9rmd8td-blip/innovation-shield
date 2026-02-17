@@ -75,6 +75,70 @@ const SUCCESS_CASES = [
   },
 ]
 
+const MICRO_LEARNING = [
+  {
+    id: 'ml-1',
+    title: 'Idea Intake في 3 دقائق',
+    stage: 'التقاط الفكرة',
+    duration: '2-3 دقائق',
+    focus: 'صياغة مشكلة تنفيذية قابلة للقياس.',
+  },
+  {
+    id: 'ml-2',
+    title: 'Business Case سريع',
+    stage: 'الفرز المؤسسي',
+    duration: '2-3 دقائق',
+    focus: 'ربط الحل بالعائد والتكلفة والمخاطر.',
+  },
+  {
+    id: 'ml-3',
+    title: 'Prototype Checklist',
+    stage: 'بناء النموذج الأولي',
+    duration: '2-3 دقائق',
+    focus: 'تحقق من الفرضية، القياس، وأدلة الاختبار.',
+  },
+  {
+    id: 'ml-4',
+    title: 'Canvas عملي',
+    stage: 'الاختبار الميداني',
+    duration: '2-3 دقائق',
+    focus: 'تحويل نتائج الاختبار إلى قرار اعتماد.',
+  },
+]
+
+const STRATEGIC_V4_TRACKS = [
+  {
+    id: 'track-1',
+    title: 'تكامل منصة فكرة - منشآت',
+    note: 'رفع الابتكارات الواعدة تلقائيًا بعد اجتياز الاعتماد.',
+  },
+  {
+    id: 'track-2',
+    title: 'تكامل نظام الموارد البشرية',
+    note: 'تحديد الفريق الأنسب تلقائيًا حسب نوع الابتكار.',
+  },
+  {
+    id: 'track-3',
+    title: 'لوحة أثر سنوية للتجمع الصحي',
+    note: 'متابعة الأثر الكلي شهريًا على مستوى سنة كاملة.',
+  },
+]
+
+const YEAR_MONTHS = [
+  'يناير',
+  'فبراير',
+  'مارس',
+  'أبريل',
+  'مايو',
+  'يونيو',
+  'يوليو',
+  'أغسطس',
+  'سبتمبر',
+  'أكتوبر',
+  'نوفمبر',
+  'ديسمبر',
+]
+
 const VIEWS = [
   { id: 'overview', label: 'الرؤية التنفيذية' },
   { id: 'lifecycle', label: 'دورة حياة الابتكار' },
@@ -131,20 +195,75 @@ const ROLE_PERMISSIONS = {
   },
 }
 
-const APPROVAL_GATES = [
-  { id: 'screening', title: 'Gate 1 - فرز الفكرة' },
-  { id: 'prototype', title: 'Gate 2 - صلاحية النموذج' },
-  { id: 'pilot', title: 'Gate 3 - جاهزية الاختبار' },
-  { id: 'adoption', title: 'Gate 4 - قرار الاعتماد' },
+const APPROVAL_FLOWS = {
+  operational: [
+    { id: 'screening', title: 'Gate 1 - فرز الفكرة' },
+    { id: 'prototype', title: 'Gate 2 - صلاحية النموذج' },
+    { id: 'pilot', title: 'Gate 3 - جاهزية الاختبار' },
+    { id: 'adoption', title: 'Gate 4 - قرار الاعتماد' },
+  ],
+  technical: [
+    { id: 'screening', title: 'Gate 1 - فرز الفكرة' },
+    { id: 'architecture', title: 'Gate 2 - اعتماد المعمارية التقنية' },
+    { id: 'security', title: 'Gate 3 - أمن المعلومات والتكامل' },
+    { id: 'pilot', title: 'Gate 4 - جاهزية الاختبار' },
+    { id: 'adoption', title: 'Gate 5 - قرار الاعتماد' },
+  ],
+  clinical: [
+    { id: 'screening', title: 'Gate 1 - فرز الفكرة' },
+    { id: 'ethics', title: 'Gate 2 - الموافقة الأخلاقية' },
+    { id: 'clinicalSafety', title: 'Gate 3 - سلامة سريرية' },
+    { id: 'pilot', title: 'Gate 4 - جاهزية الاختبار' },
+    { id: 'adoption', title: 'Gate 5 - قرار الاعتماد' },
+  ],
+}
+
+const STAGE_GATE_REQUIREMENTS_BY_TYPE = {
+  operational: {
+    'الفرز المؤسسي': 'screening',
+    'بناء النموذج الأولي': 'prototype',
+    'الاختبار الميداني': 'pilot',
+    الاعتماد: 'adoption',
+    'التوسع والتطبيق': 'adoption',
+  },
+  technical: {
+    'الفرز المؤسسي': 'screening',
+    'بناء النموذج الأولي': 'architecture',
+    'الاختبار الميداني': 'security',
+    الاعتماد: 'pilot',
+    'التوسع والتطبيق': 'adoption',
+  },
+  clinical: {
+    'الفرز المؤسسي': 'screening',
+    'بناء النموذج الأولي': 'ethics',
+    'الاختبار الميداني': 'clinicalSafety',
+    الاعتماد: 'pilot',
+    'التوسع والتطبيق': 'adoption',
+  },
+}
+
+const ALL_APPROVAL_GATES = Array.from(
+  new Map(
+    Object.values(APPROVAL_FLOWS)
+      .flat()
+      .map((gate) => [gate.id, gate]),
+  ).values(),
+)
+
+const STAGE_MATURITY_KPIS = [
+  { id: 'intake', title: 'Idea Intake', focus: 'وضوح المشكلة والقيمة' },
+  { id: 'prototype', title: 'Prototype', focus: 'جودة الفرضية وتجهيز النموذج' },
+  { id: 'testing', title: 'Testing', focus: 'جاهزية الاختبار وإدارة المخاطر' },
+  { id: 'adoption', title: 'Adoption', focus: 'الجاهزية للتبني المؤسسي' },
 ]
 
-const STAGE_GATE_REQUIREMENT = {
-  'الفرز المؤسسي': 'screening',
-  'بناء النموذج الأولي': 'prototype',
-  'الاختبار الميداني': 'pilot',
-  الاعتماد: 'adoption',
-  'التوسع والتطبيق': 'adoption',
-}
+const IMPACT_MODELS = [
+  { id: 'financial', label: 'وفورات مالية' },
+  { id: 'patient', label: 'تحسين تجربة المريض' },
+  { id: 'service', label: 'تقليل وقت الخدمة' },
+]
+
+const DOMAIN_OPTIONS = ['تشغيلي', 'تقني', 'سريري', 'جودة', 'تجربة مريض', 'موارد بشرية', 'مالي']
 
 const REQUIRED_GOVERNANCE_FIELDS = [
   'ipProtection',
@@ -170,6 +289,7 @@ const DEFAULT_LOGIN_FORM = {
 }
 
 const DEFAULT_SIMULATION_INPUTS = {
+  model: IMPACT_MODELS[0].id,
   baselineCost: 180,
   baselineMinutes: 24,
   transactionsPerYear: 1500,
@@ -358,12 +478,10 @@ function createDefaultApprovalGate() {
 }
 
 function createDefaultApprovals() {
-  return {
-    screening: createDefaultApprovalGate(),
-    prototype: createDefaultApprovalGate(),
-    pilot: createDefaultApprovalGate(),
-    adoption: createDefaultApprovalGate(),
-  }
+  return ALL_APPROVAL_GATES.reduce((acc, gate) => {
+    acc[gate.id] = createDefaultApprovalGate()
+    return acc
+  }, {})
 }
 
 function safeParse(input, fallback) {
@@ -384,9 +502,279 @@ function resolveTemplateId(inputId) {
   return PROTOTYPE_TEMPLATES.some((item) => item.id === inputId) ? inputId : fallback
 }
 
+function addDays(baseIso, days) {
+  const base = new Date(baseIso || new Date().toISOString())
+  if (Number.isNaN(base.getTime())) return new Date().toISOString()
+  base.setDate(base.getDate() + Number(days || 0))
+  return base.toISOString()
+}
+
+function resolveWorkflowType(domain) {
+  const text = String(domain || '').toLowerCase()
+  if (text.includes('تقني')) return 'technical'
+  if (text.includes('سريري') || text.includes('تجربة')) return 'clinical'
+  return 'operational'
+}
+
+function getApprovalFlow(domain) {
+  const type = resolveWorkflowType(domain)
+  return APPROVAL_FLOWS[type] || APPROVAL_FLOWS.operational
+}
+
+function getStageGateRequirement(domain, stage) {
+  const type = resolveWorkflowType(domain)
+  const map = STAGE_GATE_REQUIREMENTS_BY_TYPE[type] || STAGE_GATE_REQUIREMENTS_BY_TYPE.operational
+  return map[stage] || null
+}
+
+function getAutoOwnerByDomain(domain) {
+  if (resolveWorkflowType(domain) === 'technical') return 'فريق التحول الرقمي'
+  if (resolveWorkflowType(domain) === 'clinical') return 'فريق الابتكار السريري'
+  return 'فريق الابتكار التشغيلي'
+}
+
+function getProgressPercentByStage(stage) {
+  const index = LIFECYCLE_STAGES.indexOf(stage)
+  if (index < 0) return 0
+  return Math.round(((index + 1) / LIFECYCLE_STAGES.length) * 100)
+}
+
+function calcPrototypeQuality(idea) {
+  if (!idea) return 0
+  const progress = clamp(idea.prototype?.progress || 0, 0, 100)
+  const hasHypothesis = idea.prototype?.hypothesis?.trim() ? 1 : 0
+  const hasPlan = idea.prototype?.testPlan?.trim() ? 1 : 0
+  const hasMetric = idea.prototype?.validationMetric?.trim() ? 1 : 0
+  const assetsCount = Array.isArray(idea.prototype?.assets) ? idea.prototype.assets.length : 0
+  const assetScore = Math.min(20, assetsCount * 5)
+
+  return clamp(
+    Math.round(progress * 0.45 + hasHypothesis * 15 + hasPlan * 15 + hasMetric * 10 + assetScore),
+    0,
+    100,
+  )
+}
+
+function calcStageMaturityKpis(idea) {
+  const maturity = calcMaturity(idea)
+  const readiness = calcReadiness(idea)
+  const risk = calcRisk(idea)
+  const prototypeQuality = calcPrototypeQuality(idea)
+  const byId = {
+    intake: clamp(Math.round((idea?.maturity?.clarity || 0) * 0.55 + (idea?.maturity?.value || 0) * 0.45), 0, 100),
+    prototype: clamp(Math.round(prototypeQuality * 0.7 + (idea?.maturity?.feasibility || 0) * 0.3), 0, 100),
+    testing: clamp(Math.round(readiness * 0.6 + (100 - risk) * 0.4), 0, 100),
+    adoption: clamp(
+      Math.round(
+        maturity * 0.3 +
+          readiness * 0.35 +
+          (idea?.governance?.gateApproved ? 100 : 45) * 0.2 +
+          (idea?.status === 'معتمد' || idea?.status === 'مطبق' ? 100 : 55) * 0.15,
+      ),
+      0,
+      100,
+    ),
+  }
+
+  return STAGE_MATURITY_KPIS.map((item) => ({
+    ...item,
+    score: byId[item.id] || 0,
+  }))
+}
+
+function collectIdeaAlerts(idea) {
+  if (!idea) return []
+  const alerts = []
+  const maturity = calcMaturity(idea)
+  const readiness = calcReadiness(idea)
+  const risk = calcRisk(idea)
+  const overdueTasks = (idea.workspace?.tasks || []).filter((task) => {
+    if (task.done || !task.dueAt) return false
+    const due = new Date(task.dueAt).getTime()
+    return !Number.isNaN(due) && due < Date.now()
+  })
+
+  if (maturity < 60) {
+    alerts.push({
+      id: 'maturity-low',
+      tone: 'bad',
+      text: `النضج منخفض (${maturity}%). يلزم رفع وضوح الفكرة والجدوى خلال هذا الأسبوع.`,
+    })
+  }
+
+  if (risk >= 65) {
+    alerts.push({
+      id: 'risk-high',
+      tone: 'bad',
+      text: `المخاطر مرتفعة (${risk}%). فعّل خطة تخفيف قبل الانتقال للمرحلة التالية.`,
+    })
+  }
+
+  if (readiness < 55) {
+    alerts.push({
+      id: 'readiness-low',
+      tone: 'mid',
+      text: `الجاهزية التشغيلية منخفضة (${readiness}%). أوصِ الفريق بخطة تحسين جاهزية مركزة.`,
+    })
+  }
+
+  if (overdueTasks.length) {
+    alerts.push({
+      id: 'tasks-overdue',
+      tone: 'mid',
+      text: `يوجد ${overdueTasks.length} مهمة متأخرة تتطلب تذكيرًا فوريًا.`,
+    })
+  }
+
+  if (!idea.governance?.gateApproved) {
+    alerts.push({
+      id: 'governance-incomplete',
+      tone: 'mid',
+      text: 'الحوكمة غير مكتملة. لا يمكن الاعتماد النهائي قبل استيفاء متطلبات الملكية والامتثال.',
+    })
+  }
+
+  return alerts
+}
+
+function buildActionPlan(idea) {
+  if (!idea) return []
+  const plan = []
+  const maturity = calcMaturity(idea)
+  const risk = calcRisk(idea)
+  const quality = calcPrototypeQuality(idea)
+  const workflowType = resolveWorkflowType(idea.domain)
+
+  if (maturity < 60) {
+    plan.push('تنفيذ جلسة صياغة مشكلة مع أصحاب المصلحة وتحديث القيمة المتوقعة في نفس اليوم.')
+  }
+  if (quality < 65) {
+    plan.push('رفع جودة النموذج الأولي عبر استكمال الفرضية، خطة الاختبار، ومؤشر التحقق الأساسي.')
+  }
+  if (risk >= 65) {
+    plan.push('إعداد مصفوفة مخاطر مصغرة وتحديد مالك لكل خطر خلال 48 ساعة.')
+  }
+  if (!idea.governance?.ipProtection || !idea.governance?.ownershipDefined) {
+    plan.push('استكمال نموذج الملكية الفكرية وتحديد الجهة المالكة قبل رفع الاعتماد.')
+  }
+  if (workflowType === 'technical') {
+    plan.push('جدولة مراجعة معمارية وأمن معلومات قبل الانتقال للاختبار الميداني.')
+  }
+  if (workflowType === 'clinical') {
+    plan.push('تأكيد موافقة أخلاقية وسلامة سريرية قبل الاختبار على نطاق أوسع.')
+  }
+
+  if (!plan.length) {
+    plan.push('الحالة مستقرة. ركّز على تسريع الاعتماد وبدء خطة التوسع المؤسسي.')
+  }
+  return plan
+}
+
+function buildAssistantAdvice(idea) {
+  if (!idea) return []
+  const base = [
+    `المرحلة الحالية: ${idea.stage}`,
+    `المطلوب الآن: ${getStageGateRequirement(idea.domain, idea.stage) || 'لا يوجد Gate إلزامي'}`,
+  ]
+
+  if (idea.stage === 'التقاط الفكرة') {
+    base.push('اختصر المشكلة في جملة تنفيذية واحدة ثم اربطها بمؤشر قابل للقياس.')
+  }
+  if (idea.stage === 'الفرز المؤسسي') {
+    base.push('جهّز Canvas مختصر + Business Case أولي لقرار الفرز.')
+  }
+  if (idea.stage === 'بناء النموذج الأولي') {
+    base.push('ارفع أصول Figma/Miro أو ملف تدفقي وفعّل Auto-Scoring للنموذج.')
+  }
+  if (idea.stage === 'الاختبار الميداني') {
+    base.push('نفّذ اختبارًا محدودًا أسبوعيًا مع تقرير تقدم قابل للطباعة.')
+  }
+  if (idea.stage === 'الاعتماد' || idea.stage === 'التوسع والتطبيق') {
+    base.push('جهّز تقريرًا تنفيذيًا مختصرًا للقيادة مع توصية قرار واضحة.')
+  }
+  return base
+}
+
+function buildIdeaExecutiveReport(idea, modelLabel, result, stageKpis, alerts) {
+  if (!idea) return ''
+  const lines = [
+    `تقرير تنفيذي - ${idea.title}`,
+    `المعرف: ${idea.id}`,
+    `التاريخ: ${new Date().toLocaleDateString('ar-SA')}`,
+    `المرحلة: ${idea.stage} | الحالة: ${idea.status}`,
+    `النضج: ${calcMaturity(idea)}% | الجاهزية: ${calcReadiness(idea)}% | المخاطر: ${calcRisk(idea)}%`,
+    '',
+    `نموذج الأثر: ${modelLabel}`,
+    `الوفر السنوي المقدر: ${formatNumber(idea.impact?.costSaving || 0)} ريال`,
+    `خفض الزمن المتوقع: ${idea.impact?.timeSaving || 0}%`,
+    `تحسين الجودة: ${idea.impact?.qualityImprovement || 0}%`,
+    `تحسين رضا المستفيد: ${idea.impact?.satisfaction || 0}%`,
+  ]
+
+  if (result) {
+    lines.push(`ساعات موفرة سنويًا: ${formatNumber(result.annualHoursSaved || 0)} ساعة`)
+  }
+
+  lines.push('', 'مؤشرات النضج المرحلية:')
+  stageKpis.forEach((kpi) => {
+    lines.push(`- ${kpi.title}: ${kpi.score}%`)
+  })
+
+  lines.push('', 'تنبيهات ذكية:')
+  if (alerts.length) {
+    alerts.forEach((alert) => lines.push(`- ${alert.text}`))
+  } else {
+    lines.push('- لا توجد تنبيهات حرجة حاليًا.')
+  }
+
+  lines.push('', 'توصية تنفيذية: متابعة خطة العمل الأسبوعية ورفع تقرير الاعتماد المرحلي.')
+  return lines.join('\n')
+}
+
+function buildWeeklyExecutiveReport(ideas, metrics) {
+  const troubled = ideas.filter((idea) => {
+    const hasAlert = collectIdeaAlerts(idea).length > 0
+    return hasAlert || calcReadiness(idea) < 55 || calcRisk(idea) > 65
+  })
+
+  const recommendations = troubled.slice(0, 5).map((idea) => {
+    return `- ${idea.title}: ${buildActionPlan(idea)[0]}`
+  })
+
+  const lines = [
+    `تقرير أسبوعي - منصة درع الابتكار`,
+    `التاريخ: ${new Date().toLocaleDateString('ar-SA')}`,
+    '',
+    `عدد الأفكار: ${metrics.total}`,
+    `نسبة النضج المتوسطة: ${metrics.avgMaturity}%`,
+    `نسبة الجاهزية المتوسطة: ${metrics.avgReadiness}%`,
+    `الأفكار المتعثرة: ${troubled.length}`,
+    '',
+    'أهم التوصيات للقيادة:',
+    ...(recommendations.length ? recommendations : ['- لا توجد حالات حرجة.']),
+  ]
+
+  return lines.join('\n')
+}
+
+function downloadTextFile(filename, content) {
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = filename
+  document.body.appendChild(anchor)
+  anchor.click()
+  anchor.remove()
+  URL.revokeObjectURL(url)
+}
+
 function normalizeIdea(input) {
   const now = new Date().toISOString()
   const idea = cloneInitiative(input || {})
+  const workflowType = resolveWorkflowType(idea.domain)
+  const stageGateMap =
+    STAGE_GATE_REQUIREMENTS_BY_TYPE[workflowType] || STAGE_GATE_REQUIREMENTS_BY_TYPE.operational
 
   const governance = {
     ipProtection: false,
@@ -394,39 +782,34 @@ function normalizeIdea(input) {
     ethicsReview: false,
     dataPolicy: false,
     ownershipDefined: false,
+    ipReadiness: 45,
+    protectionNeeded: false,
+    protectionRequestedAt: null,
     ...(idea.governance || {}),
   }
 
+  governance.ipReadiness = clamp(governance.ipReadiness, 0, 100)
+  governance.protectionNeeded = Boolean(governance.protectionNeeded)
   const gateApproved = REQUIRED_GOVERNANCE_FIELDS.every((field) => Boolean(governance[field]))
 
-  const approvals = {
-    ...createDefaultApprovals(),
-    ...(idea.approvals || {}),
-    screening: {
+  const defaultApprovals = createDefaultApprovals()
+  const approvals = Object.keys(defaultApprovals).reduce((acc, gateId) => {
+    acc[gateId] = {
       ...createDefaultApprovalGate(),
-      ...(idea.approvals?.screening || {}),
-    },
-    prototype: {
-      ...createDefaultApprovalGate(),
-      ...(idea.approvals?.prototype || {}),
-    },
-    pilot: {
-      ...createDefaultApprovalGate(),
-      ...(idea.approvals?.pilot || {}),
-    },
-    adoption: {
-      ...createDefaultApprovalGate(),
-      ...(idea.approvals?.adoption || {}),
-    },
-  }
+      ...(idea.approvals?.[gateId] || {}),
+    }
+    return acc
+  }, {})
 
   const ideaStageIndex = LIFECYCLE_STAGES.indexOf(idea.stage)
-  const autoGateOrder = [
-    { gateId: 'screening', stage: 'الفرز المؤسسي' },
-    { gateId: 'prototype', stage: 'بناء النموذج الأولي' },
-    { gateId: 'pilot', stage: 'الاختبار الميداني' },
-    { gateId: 'adoption', stage: 'الاعتماد' },
-  ]
+  const autoGateOrder = []
+  const seenGateIds = new Set()
+  LIFECYCLE_STAGES.forEach((stage) => {
+    const gateId = stageGateMap[stage]
+    if (!gateId || seenGateIds.has(gateId)) return
+    seenGateIds.add(gateId)
+    autoGateOrder.push({ gateId, stage })
+  })
 
   autoGateOrder.forEach((item) => {
     const threshold = LIFECYCLE_STAGES.indexOf(item.stage)
@@ -446,6 +829,43 @@ function normalizeIdea(input) {
   })
 
   const evidence = Array.isArray(idea.evidence) ? idea.evidence : []
+  const tasks = Array.isArray(idea.workspace?.tasks)
+    ? idea.workspace.tasks.map((task, index) => ({
+        id: task.id || `TSK-${index + 1}`,
+        text: task.text || 'مهمة بدون وصف',
+        done: Boolean(task.done),
+        dueAt: task.dueAt || addDays(idea.updatedAt || now, 7 + index),
+      }))
+    : []
+
+  const notes = Array.isArray(idea.workspace?.notes) ? idea.workspace.notes : []
+  const prototypeAssets = Array.isArray(idea.prototype?.assets)
+    ? idea.prototype.assets.map((asset, index) => ({
+        id: asset.id || `AST-${index + 1}`,
+        name: asset.name || 'asset',
+        size: Number(asset.size || 0),
+        source: asset.source || 'upload',
+        uploadedAt: asset.uploadedAt || now,
+      }))
+    : []
+
+  const timeline = Array.isArray(idea.timeline)
+    ? idea.timeline.map((event, index) => ({
+        id: event.id || `EVT-${index + 1}`,
+        at: event.at || now,
+        title: event.title || 'حدث',
+        detail: event.detail || '',
+      }))
+    : []
+
+  if (!timeline.length) {
+    timeline.push({
+      id: 'EVT-INIT',
+      at: idea.createdAt || now,
+      title: 'إنشاء الفكرة',
+      detail: 'تم تسجيل الفكرة داخل منصة درع الابتكار.',
+    })
+  }
 
   return {
     id: idea.id || newId('INN'),
@@ -473,6 +893,7 @@ function normalizeIdea(input) {
       testPlan: idea.prototype?.testPlan || '',
       validationMetric: idea.prototype?.validationMetric || '',
       lastDeck: idea.prototype?.lastDeck || '',
+      assets: prototypeAssets,
     },
     impact: {
       costSaving: Number(idea.impact?.costSaving || 0),
@@ -483,10 +904,13 @@ function normalizeIdea(input) {
     simulationInputs: {
       ...DEFAULT_SIMULATION_INPUTS,
       ...(idea.simulationInputs || {}),
+      model: IMPACT_MODELS.some((item) => item.id === idea.simulationInputs?.model)
+        ? idea.simulationInputs.model
+        : DEFAULT_SIMULATION_INPUTS.model,
     },
     workspace: {
-      tasks: Array.isArray(idea.workspace?.tasks) ? idea.workspace.tasks : [],
-      notes: Array.isArray(idea.workspace?.notes) ? idea.workspace.notes : [],
+      tasks,
+      notes,
     },
     governance: {
       ...governance,
@@ -501,7 +925,9 @@ function normalizeIdea(input) {
       topMatches: Array.isArray(idea.benchmark?.topMatches) ? idea.benchmark.topMatches : [],
     },
     approvals,
+    workflowType,
     evidence,
+    timeline,
     createdAt: idea.createdAt || now,
     updatedAt: idea.updatedAt || idea.createdAt || now,
   }
@@ -557,7 +983,7 @@ function scoreTone(score) {
 function canMoveToStage(idea, nextStage) {
   const currentIndex = LIFECYCLE_STAGES.indexOf(idea.stage)
   const nextIndex = LIFECYCLE_STAGES.indexOf(nextStage)
-  const requiredGate = STAGE_GATE_REQUIREMENT[nextStage]
+  const requiredGate = getStageGateRequirement(idea.domain, nextStage)
 
   if (nextIndex === -1) {
     return { ok: false, message: 'مرحلة غير معروفة.' }
@@ -620,6 +1046,7 @@ function App() {
   const [state, setState] = useState(loadState)
   const [activeView, setActiveView] = useState('overview')
   const [selectedId, setSelectedId] = useState(state.ideas[0]?.id || null)
+  const [ideaSearch, setIdeaSearch] = useState('')
   const [loginForm, setLoginForm] = useState(DEFAULT_LOGIN_FORM)
   const [intakeForm, setIntakeForm] = useState(DEFAULT_INTAKE_FORM)
   const [taskInput, setTaskInput] = useState('')
@@ -651,17 +1078,69 @@ function App() {
     return () => window.clearTimeout(timer)
   }, [flashMessage])
 
+  const visibleIdeas = useMemo(() => {
+    const query = ideaSearch.trim().toLowerCase()
+    if (!query) return state.ideas
+    return state.ideas.filter((idea) => {
+      const bag = [
+        idea.id,
+        idea.title,
+        idea.owner,
+        idea.domain,
+        idea.stage,
+        idea.status,
+        idea.problem,
+        idea.solution,
+      ]
+        .join(' ')
+        .toLowerCase()
+      return bag.includes(query)
+    })
+  }, [state.ideas, ideaSearch])
+
   const selectedIdea = useMemo(
-    () => state.ideas.find((item) => item.id === selectedId) || state.ideas[0] || null,
-    [state.ideas, selectedId],
+    () => state.ideas.find((item) => item.id === selectedId) || visibleIdeas[0] || state.ideas[0] || null,
+    [state.ideas, selectedId, visibleIdeas],
   )
 
   const lifecycleGroups = useMemo(() => {
     return LIFECYCLE_STAGES.reduce((acc, stage) => {
-      acc[stage] = state.ideas.filter((item) => item.stage === stage)
+      acc[stage] = visibleIdeas.filter((item) => item.stage === stage)
       return acc
     }, {})
-  }, [state.ideas])
+  }, [visibleIdeas])
+
+  const stageKpis = useMemo(
+    () => (selectedIdea ? calcStageMaturityKpis(selectedIdea) : []),
+    [selectedIdea],
+  )
+
+  const smartAlerts = useMemo(
+    () => (selectedIdea ? collectIdeaAlerts(selectedIdea) : []),
+    [selectedIdea],
+  )
+
+  const autoActionPlan = useMemo(
+    () => (selectedIdea ? buildActionPlan(selectedIdea) : []),
+    [selectedIdea],
+  )
+
+  const assistantAdvice = useMemo(
+    () => (selectedIdea ? buildAssistantAdvice(selectedIdea) : []),
+    [selectedIdea],
+  )
+
+  const weeklyTasks = useMemo(() => {
+    if (!selectedIdea) return []
+    const now = new Date(state.meta.lastUpdated || selectedIdea.updatedAt || 0).getTime()
+    if (Number.isNaN(now)) return []
+    const oneWeek = 1000 * 60 * 60 * 24 * 7
+    return (selectedIdea.workspace?.tasks || []).filter((task) => {
+      if (task.done || !task.dueAt) return false
+      const dueAt = new Date(task.dueAt).getTime()
+      return !Number.isNaN(dueAt) && dueAt >= now && dueAt <= now + oneWeek
+    })
+  }, [selectedIdea, state.meta.lastUpdated])
 
   const metrics = useMemo(() => {
     const total = state.ideas.length
@@ -687,7 +1166,7 @@ function App() {
     const governanceReady = state.ideas.filter((item) => item.governance.gateApproved).length
 
     const allGateStates = state.ideas.flatMap((idea) =>
-      APPROVAL_GATES.map((gate) => idea.approvals?.[gate.id]?.status || 'not_requested'),
+      ALL_APPROVAL_GATES.map((gate) => idea.approvals?.[gate.id]?.status || 'not_requested'),
     )
     const pendingApprovals = allGateStates.filter((status) => status === 'pending').length
     const approvedGates = allGateStates.filter((status) => status === 'approved').length
@@ -723,6 +1202,17 @@ function App() {
     }
   }, [state.ideas])
 
+  const annualImpactProjection = useMemo(() => {
+    const monthlyBase = Math.round((metrics.annualSaving || 0) / 12)
+    return YEAR_MONTHS.map((month, index) => {
+      const factor = 0.82 + (index % 4) * 0.06
+      return {
+        month,
+        value: Math.max(0, Math.round(monthlyBase * factor)),
+      }
+    })
+  }, [metrics.annualSaving])
+
   const buildAuditEntry = (action, target, detail) => ({
     id: newId('AUD'),
     at: new Date().toISOString(),
@@ -739,6 +1229,15 @@ function App() {
         if (idea.id !== ideaId) return idea
         const draft = normalizeIdea(idea)
         const updated = updater(draft) || draft
+        if (audit) {
+          const event = {
+            id: newId('EVT'),
+            at: new Date().toISOString(),
+            title: audit.action,
+            detail: audit.detail || '',
+          }
+          updated.timeline = [event, ...(updated.timeline || [])].slice(0, 80)
+        }
         return normalizeIdea({
           ...updated,
           updatedAt: new Date().toISOString(),
@@ -846,10 +1345,11 @@ function App() {
     }
 
     const now = new Date().toISOString()
+    const suggestedOwner = getAutoOwnerByDomain(intakeForm.domain)
     const newIdea = normalizeIdea({
       id: newId('INN'),
       title: intakeForm.title.trim(),
-      owner: intakeForm.owner.trim() || session.name || 'فريق الابتكار',
+      owner: intakeForm.owner.trim() || session.name || suggestedOwner,
       department: intakeForm.department.trim() || 'التجمع الصحي بالطائف',
       domain: intakeForm.domain,
       problem: intakeForm.problem.trim(),
@@ -871,11 +1371,22 @@ function App() {
         testPlan: '',
         validationMetric: '',
         lastDeck: '',
+        assets: [],
       },
       workspace: {
         tasks: [
-          { id: newId('TSK'), text: 'تأكيد تعريف المشكلة مع أصحاب المصلحة', done: false },
-          { id: newId('TSK'), text: 'إعداد خطة فرز مؤسسي أولية', done: false },
+          {
+            id: newId('TSK'),
+            text: 'تأكيد تعريف المشكلة مع أصحاب المصلحة',
+            done: false,
+            dueAt: addDays(now, 3),
+          },
+          {
+            id: newId('TSK'),
+            text: 'إعداد خطة فرز مؤسسي أولية',
+            done: false,
+            dueAt: addDays(now, 6),
+          },
         ],
         notes: [],
       },
@@ -911,7 +1422,7 @@ function App() {
     setSelectedId(newIdea.id)
     setIntakeForm(DEFAULT_INTAKE_FORM)
     setActiveView('lifecycle')
-    setFlashMessage('تم إنشاء الفكرة وربطها بدورة حياة الابتكار المؤسسية.')
+    setFlashMessage('تم تسجيل الفكرة بنموذج خطوة واحدة وربطها بدورة حياة الابتكار المؤسسية.')
   }
 
   const handleIdeaStageChange = (ideaId, nextStage) => {
@@ -1004,6 +1515,7 @@ function App() {
         id: newId('TSK'),
         text: taskInput.trim(),
         done: false,
+        dueAt: addDays(new Date().toISOString(), 7),
       })
       return draft
     }, {
@@ -1012,6 +1524,37 @@ function App() {
       detail: 'إضافة مهمة جديدة إلى مساحة العمل',
     })
     setTaskInput('')
+  }
+
+  const handleApplyActionPlan = () => {
+    if (!selectedIdea || !permissions.canEdit) return
+    const planned = autoActionPlan.slice(0, 5)
+    if (!planned.length) return
+
+    updateIdea(
+      selectedIdea.id,
+      (draft) => {
+        const existing = new Set(draft.workspace.tasks.map((task) => task.text))
+        const batch = planned
+          .filter((line) => !existing.has(line))
+          .map((line, index) => ({
+            id: newId('TSK'),
+            text: line,
+            done: false,
+            dueAt: addDays(new Date().toISOString(), 3 + index * 2),
+          }))
+
+        draft.workspace.tasks = [...batch, ...draft.workspace.tasks]
+        return draft
+      },
+      {
+        action: 'apply_action_plan',
+        target: selectedIdea.id,
+        detail: `توليد خطة عمل تلقائية بعدد ${planned.length} بند`,
+      },
+    )
+
+    setFlashMessage('تم تحويل خطة العمل التلقائية إلى مهام أسبوعية للفريق.')
   }
 
   const handleToggleTask = (taskId) => {
@@ -1073,6 +1616,49 @@ function App() {
     })
   }
 
+  const handlePrototypeAssetUpload = (files) => {
+    if (!selectedIdea || !permissions.canEdit) return
+    const list = Array.from(files || [])
+    if (!list.length) return
+
+    updateIdea(
+      selectedIdea.id,
+      (draft) => {
+        const assets = list.map((file) => ({
+          id: newId('AST'),
+          name: file.name,
+          size: Number(file.size || 0),
+          source: file.type || 'file',
+          uploadedAt: new Date().toISOString(),
+        }))
+        draft.prototype.assets = [...assets, ...(draft.prototype.assets || [])].slice(0, 30)
+        return draft
+      },
+      {
+        action: 'upload_prototype_asset',
+        target: selectedIdea.id,
+        detail: `رفع ${list.length} ملف تصميم للنموذج الأولي`,
+      },
+    )
+    setFlashMessage(`تم رفع ${list.length} ملف Figma/Miro أو أصل تصميمي.`)
+  }
+
+  const handleRemovePrototypeAsset = (assetId) => {
+    if (!selectedIdea || !permissions.canEdit) return
+    updateIdea(
+      selectedIdea.id,
+      (draft) => {
+        draft.prototype.assets = (draft.prototype.assets || []).filter((asset) => asset.id !== assetId)
+        return draft
+      },
+      {
+        action: 'remove_prototype_asset',
+        target: selectedIdea.id,
+        detail: `حذف أصل تصميم ${assetId}`,
+      },
+    )
+  }
+
   const handlePrototypeGenerate = () => {
     if (!permissions.canEdit) {
       setFlashMessage('صلاحياتك لا تسمح بتوليد النموذج.')
@@ -1110,7 +1696,7 @@ function App() {
     if (!selectedIdea) return
 
     updateIdea(selectedIdea.id, (draft) => {
-      draft.simulationInputs[field] = Number(value)
+      draft.simulationInputs[field] = field === 'model' ? value : Number(value)
       return draft
     }, {
       action: 'update_simulation',
@@ -1128,21 +1714,35 @@ function App() {
     if (!selectedIdea) return
 
     const result = simulateImpact(selectedIdea, selectedIdea.simulationInputs)
+    const model = selectedIdea.simulationInputs?.model || IMPACT_MODELS[0].id
     setImpactResult(result)
 
     updateIdea(selectedIdea.id, (draft) => {
-      draft.impact.costSaving = result.annualSaving
-      draft.impact.timeSaving = result.expectedTimeReduction
-      draft.impact.qualityImprovement = result.qualityLift
-      draft.impact.satisfaction = result.satisfactionLift
+      if (model === 'patient') {
+        draft.impact.costSaving = Math.round(result.annualSaving * 0.35)
+        draft.impact.timeSaving = Math.round(result.expectedTimeReduction * 0.6)
+        draft.impact.qualityImprovement = clamp(result.qualityLift + 8, 0, 100)
+        draft.impact.satisfaction = clamp(result.satisfactionLift + 14, 0, 100)
+      } else if (model === 'service') {
+        draft.impact.costSaving = Math.round(result.annualSaving * 0.55)
+        draft.impact.timeSaving = clamp(result.expectedTimeReduction + 12, 0, 100)
+        draft.impact.qualityImprovement = clamp(result.qualityLift + 4, 0, 100)
+        draft.impact.satisfaction = clamp(result.satisfactionLift + 6, 0, 100)
+      } else {
+        draft.impact.costSaving = result.annualSaving
+        draft.impact.timeSaving = result.expectedTimeReduction
+        draft.impact.qualityImprovement = result.qualityLift
+        draft.impact.satisfaction = result.satisfactionLift
+      }
       return draft
     }, {
       action: 'run_impact_simulation',
       target: selectedIdea.id,
-      detail: 'تشغيل محاكاة الأثر',
+      detail: `تشغيل محاكاة الأثر - ${model}`,
     })
 
-    setFlashMessage('تم تنفيذ محاكاة الأثر وتحديث مؤشرات الفكرة.')
+    const modelLabel = IMPACT_MODELS.find((item) => item.id === model)?.label || 'عام'
+    setFlashMessage(`تم تنفيذ محاكاة الأثر (${modelLabel}) وتحديث المؤشرات.`)
   }
 
   const handleRunBenchmark = () => {
@@ -1167,6 +1767,21 @@ function App() {
     setFlashMessage('تمت المقارنة مع الحلول العالمية المرجعية.')
   }
 
+  const handleExportIdeaExecutiveReport = () => {
+    if (!selectedIdea) return
+    const modelLabel =
+      IMPACT_MODELS.find((item) => item.id === selectedIdea.simulationInputs?.model)?.label || 'وفورات مالية'
+    const report = buildIdeaExecutiveReport(selectedIdea, modelLabel, impactResult, stageKpis, smartAlerts)
+    downloadTextFile(`executive-report-${selectedIdea.id}.txt`, report)
+    setFlashMessage('تم تصدير التقرير التنفيذي للفكرة.')
+  }
+
+  const handleExportWeeklyExecutiveReport = () => {
+    const report = buildWeeklyExecutiveReport(state.ideas, metrics)
+    downloadTextFile(`weekly-report-${new Date().toISOString().slice(0, 10)}.txt`, report)
+    setFlashMessage('تم تصدير التقرير التنفيذي الأسبوعي للقيادات.')
+  }
+
   const handleGovernanceToggle = (field) => {
     if (!permissions.canGovernance) {
       setFlashMessage('تعديل الحوكمة متاح لدور الحوكمة أو مدير المنصة.')
@@ -1186,6 +1801,41 @@ function App() {
       target: selectedIdea.id,
       detail: `تحديث بند الحوكمة ${field}`,
     })
+  }
+
+  const handleIpReadinessChange = (value) => {
+    if (!selectedIdea || !permissions.canGovernance) return
+    updateIdea(
+      selectedIdea.id,
+      (draft) => {
+        draft.governance.ipReadiness = clamp(value, 0, 100)
+        draft.governance.protectionNeeded = clamp(value, 0, 100) < 70
+        return draft
+      },
+      {
+        action: 'update_ip_readiness',
+        target: selectedIdea.id,
+        detail: `تحديث جاهزية الملكية الفكرية إلى ${value}%`,
+      },
+    )
+  }
+
+  const handleRequestIpProtection = () => {
+    if (!selectedIdea || !permissions.canGovernance) return
+    updateIdea(
+      selectedIdea.id,
+      (draft) => {
+        draft.governance.protectionNeeded = true
+        draft.governance.protectionRequestedAt = new Date().toISOString()
+        return draft
+      },
+      {
+        action: 'request_ip_protection',
+        target: selectedIdea.id,
+        detail: 'رفع طلب حماية ملكية فكرية',
+      },
+    )
+    setFlashMessage('تم إرسال إشعار طلب حماية الملكية الفكرية للفريق.')
   }
 
   const handleMonitoringChange = (field, value) => {
@@ -1520,6 +2170,25 @@ function App() {
 
         <section className="panel">
           <div className="panel-head">
+            <h3>تقارير تنفيذية جاهزة</h3>
+            <span>Weekly Executive Pack</span>
+          </div>
+          <p className="lead-text">
+            تقرير أسبوعي تلقائي للقيادات يتضمن: عدد الأفكار، نسبة النضج، نسبة الجاهزية، الأفكار
+            المتعثرة، وتوصيات القرار.
+          </p>
+          <div className="inline-actions wrap">
+            <button className="btn primary" onClick={handleExportWeeklyExecutiveReport}>
+              تصدير التقرير الأسبوعي
+            </button>
+            <button className="btn" onClick={handleExportIdeaExecutiveReport} disabled={!selectedIdea}>
+              تصدير تقرير الفكرة المحددة
+            </button>
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head">
             <h3>أدوات المنصة الأساسية</h3>
             <span>ابدأ مباشرة</span>
           </div>
@@ -1531,6 +2200,36 @@ function App() {
                 <button className="btn" onClick={tool.action}>
                   فتح الآن
                 </button>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head">
+            <h3>التحسينات الاستراتيجية V4</h3>
+            <span>Roadmap</span>
+          </div>
+          <div className="knowledge-grid">
+            {STRATEGIC_V4_TRACKS.map((track) => (
+              <article key={track.id} className="knowledge-card">
+                <strong>{track.title}</strong>
+                <p>{track.note}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head">
+            <h3>لوحة الأثر السنوية للتجمع</h3>
+            <span>Yearly Impact Board</span>
+          </div>
+          <div className="impact-year-grid">
+            {annualImpactProjection.map((item) => (
+              <article key={item.month}>
+                <p>{item.month}</p>
+                <strong>{formatNumber(item.value)} ريال</strong>
               </article>
             ))}
           </div>
@@ -1647,8 +2346,9 @@ function App() {
         <article className="panel intake-panel">
           <div className="panel-head">
             <h3>التقاط فكرة جديدة</h3>
-            <span>Idea Intake</span>
+            <span>Idea Intake - خطوة واحدة</span>
           </div>
+          <p className="lead-text">نموذج مختصر من شاشة واحدة لتسريع تسجيل الفكرة خلال أقل من 5 دقائق.</p>
 
           <label className="field">
             <span>عنوان الابتكار</span>
@@ -1680,12 +2380,9 @@ function App() {
                 setIntakeForm((prev) => ({ ...prev, domain: event.target.value }))
               }
             >
-              <option>تشغيلي</option>
-              <option>جودة</option>
-              <option>تجربة مريض</option>
-              <option>تقني</option>
-              <option>موارد بشرية</option>
-              <option>مالي</option>
+              {DOMAIN_OPTIONS.map((domain) => (
+                <option key={domain}>{domain}</option>
+              ))}
             </select>
           </label>
 
@@ -1729,7 +2426,7 @@ function App() {
         <article className="panel board-panel">
           <div className="panel-head">
             <h3>لوحة دورة الحياة المؤسسية</h3>
-            <span>{state.ideas.length} فكرة</span>
+            <span>{visibleIdeas.length} فكرة مطابقة للبحث</span>
           </div>
 
           <div className="board">
@@ -1745,6 +2442,7 @@ function App() {
                     const readiness = calcReadiness(idea)
                     const maturity = calcMaturity(idea)
                     const risk = calcRisk(idea)
+                    const progress = getProgressPercentByStage(idea.stage)
 
                     return (
                       <article key={idea.id} className="idea-card">
@@ -1754,6 +2452,10 @@ function App() {
                         </div>
 
                         <p>{idea.owner}</p>
+
+                        <div className="idea-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress}>
+                          <span style={{ width: `${progress}%` }} />
+                        </div>
 
                         <div className="metric-row">
                           <span>Maturity {maturity}%</span>
@@ -1772,6 +2474,7 @@ function App() {
                           <select
                             value={idea.stage}
                             onChange={(event) => handleIdeaStageChange(idea.id, event.target.value)}
+                            disabled={!permissions.canMoveStages}
                           >
                             {LIFECYCLE_STAGES.map((item) => (
                               <option key={item}>{item}</option>
@@ -1780,6 +2483,7 @@ function App() {
                           <select
                             value={idea.status}
                             onChange={(event) => handleIdeaStatusChange(idea.id, event.target.value)}
+                            disabled={!permissions.canMoveStages}
                           >
                             {STATUS_OPTIONS.map((item) => (
                               <option key={item}>{item}</option>
@@ -1818,7 +2522,8 @@ function App() {
     }
 
     const approvals = selectedIdea.approvals || createDefaultApprovals()
-    const requiredGateForStage = STAGE_GATE_REQUIREMENT[selectedIdea.stage]
+    const workflowGates = getApprovalFlow(selectedIdea.domain)
+    const requiredGateForStage = getStageGateRequirement(selectedIdea.domain, selectedIdea.stage)
 
     return (
       <section className="workflow-layout">
@@ -1832,6 +2537,10 @@ function App() {
             الانتقال بين مراحل دورة الحياة يعتمد على اعتماد البوابات المرحلية من المراجعين، مع توثيق
             القرار والتاريخ والمسؤول.
           </p>
+          <div className="chip-row">
+            <span className="chip">نوع الابتكار: {selectedIdea.domain}</span>
+            <span className="chip">مسار الموافقات: {resolveWorkflowType(selectedIdea.domain)}</span>
+          </div>
 
           <div className="table-wrap">
             <table>
@@ -1845,7 +2554,7 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {APPROVAL_GATES.map((gate) => {
+                {workflowGates.map((gate) => {
                   const item = approvals[gate.id] || createDefaultApprovalGate()
                   const isRequiredNow = requiredGateForStage === gate.id
                   return (
@@ -1926,6 +2635,10 @@ function App() {
               <p>البوابة المطلوبة</p>
               <strong>{requiredGateForStage || 'لا يوجد'}</strong>
             </article>
+            <article>
+              <p>عدد البوابات في المسار</p>
+              <strong>{workflowGates.length}</strong>
+            </article>
           </div>
 
           <p className="lead-text">
@@ -1982,6 +2695,20 @@ function App() {
               <p>Risk</p>
               <strong>{calcRisk(selectedIdea)}%</strong>
             </article>
+            <article>
+              <p>مهام الأسبوع</p>
+              <strong>{weeklyTasks.length}</strong>
+            </article>
+          </div>
+
+          <div className="stage-kpi-grid">
+            {stageKpis.map((kpi) => (
+              <article key={kpi.id} className="stage-kpi-card">
+                <strong>{kpi.title}</strong>
+                <p>{kpi.score}%</p>
+                <small>{kpi.focus}</small>
+              </article>
+            ))}
           </div>
         </article>
 
@@ -2047,6 +2774,48 @@ function App() {
 
         <article className="panel">
           <div className="panel-head">
+            <h3>المساعد الذكي للفريق</h3>
+            <span>Next Best Action</span>
+          </div>
+
+          <ul className="policy-list compact-list">
+            {assistantAdvice.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+
+          <div className="inline-actions wrap">
+            <button className="btn primary" onClick={handleApplyActionPlan} disabled={!permissions.canEdit}>
+              توليد خطة عمل تلقائية
+            </button>
+            <button className="btn" onClick={handleExportIdeaExecutiveReport}>
+              تصدير تقرير تنفيذي
+            </button>
+          </div>
+
+          <div className="alert-stack">
+            {smartAlerts.map((alert) => (
+              <p key={alert.id} className={`alert-item ${alert.tone}`}>
+                {alert.text}
+              </p>
+            ))}
+            {!smartAlerts.length ? <p className="alert-item good">لا توجد تنبيهات حرجة حالياً.</p> : null}
+          </div>
+
+          <h4 className="subhead">المهام المطلوبة خلال الأسبوع</h4>
+          <ul className="list">
+            {weeklyTasks.map((task) => (
+              <li key={task.id}>
+                <strong>{task.text}</strong>
+                <small>موعد الاستحقاق: {formatDate(task.dueAt)}</small>
+              </li>
+            ))}
+            {!weeklyTasks.length ? <li className="empty">لا توجد مهام أسبوعية معلقة.</li> : null}
+          </ul>
+        </article>
+
+        <article className="panel">
+          <div className="panel-head">
             <h3>المهام التشاركية</h3>
             <span>{tasks.length}</span>
           </div>
@@ -2073,6 +2842,7 @@ function App() {
                   />
                   <span className={task.done ? 'done' : ''}>{task.text}</span>
                 </label>
+                <small>الاستحقاق: {formatDate(task.dueAt)}</small>
               </li>
             ))}
             {!tasks.length ? <li className="empty">لا توجد مهام بعد.</li> : null}
@@ -2175,6 +2945,8 @@ function App() {
     }
 
     const template = PROTOTYPE_TEMPLATES.find((item) => item.id === selectedIdea.prototype.template)
+    const prototypeQuality = calcPrototypeQuality(selectedIdea)
+    const prototypeAssets = selectedIdea.prototype.assets || []
 
     return (
       <section className="prototype-layout">
@@ -2236,10 +3008,33 @@ function App() {
             />
           </label>
 
+          <label className="field">
+            <span>رفع ملفات Figma / Miro أو مرفقات التصميم</span>
+            <input type="file" multiple onChange={(event) => handlePrototypeAssetUpload(event.target.files)} />
+          </label>
+
+          <ul className="list compact-list">
+            {prototypeAssets.map((asset) => (
+              <li key={asset.id}>
+                <div className="rank-row">
+                  <strong>{asset.name}</strong>
+                  <button className="btn ghost" onClick={() => handleRemovePrototypeAsset(asset.id)}>
+                    حذف
+                  </button>
+                </div>
+                <small>
+                  الحجم: {formatNumber(asset.size)} بايت | التاريخ: {formatDate(asset.uploadedAt)}
+                </small>
+              </li>
+            ))}
+            {!prototypeAssets.length ? <li className="empty">لم يتم رفع ملفات تصميم بعد.</li> : null}
+          </ul>
+
           <div className="chip-row">
             <span className="chip">النضج: {calcMaturity(selectedIdea)}%</span>
             <span className="chip">الجاهزية: {calcReadiness(selectedIdea)}%</span>
             <span className="chip">القالب: {template?.name || '—'}</span>
+            <span className={`chip score-${scoreTone(prototypeQuality)}`}>جودة النموذج: {prototypeQuality}%</span>
           </div>
 
           <div className="inline-actions">
@@ -2309,6 +3104,19 @@ function App() {
 
             <div className="form-grid two">
               <label className="field">
+                <span>نموذج المحاكاة</span>
+                <select
+                  value={selectedIdea.simulationInputs.model}
+                  onChange={(event) => handleSimulationInputChange('model', event.target.value)}
+                >
+                  {IMPACT_MODELS.map((model) => (
+                    <option key={model.id} value={model.id}>
+                      {model.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="field">
                 <span>تكلفة العملية (ريال)</span>
                 <input
                   type="number"
@@ -2356,12 +3164,21 @@ function App() {
               </label>
             </div>
 
-            <button className="btn primary" onClick={handleRunImpact}>
-              تشغيل المحاكاة
-            </button>
+            <div className="inline-actions wrap">
+              <button className="btn primary" onClick={handleRunImpact}>
+                تشغيل المحاكاة
+              </button>
+              <button className="btn" onClick={handleExportIdeaExecutiveReport}>
+                تصدير التقرير التنفيذي
+              </button>
+            </div>
 
             {impactResult ? (
               <div className="impact-result">
+                <p>
+                  النموذج الحالي:{' '}
+                  {IMPACT_MODELS.find((model) => model.id === selectedIdea.simulationInputs.model)?.label}
+                </p>
                 <p>الوفر المالي السنوي: {formatNumber(impactResult.annualSaving)} ريال</p>
                 <p>الساعات الموفرة سنويًا: {formatNumber(impactResult.annualHoursSaved)} ساعة</p>
                 <p>تحسين الجودة: {impactResult.qualityLift}%</p>
@@ -2537,25 +3354,23 @@ function App() {
     const extraResources = [
       {
         id: 'res-1',
-        title: 'Decision & Prioritization Templates',
-        detail: 'نماذج المفاضلة وترتيب الأولويات للقرار المؤسسي.',
+        title: 'Canvas Template',
+        detail: 'قالب Canvas جاهز لصياغة القيمة والمسار التنفيذي.',
       },
       {
         id: 'res-2',
-        title: 'Business Model Canvas',
-        detail: 'هيكلة القيمة، الشرائح، القنوات، الإيرادات والتكلفة.',
+        title: 'Business Case Template',
+        detail: 'قالب حالة عمل مختصر للقيادة مع التكلفة والعائد والمخاطر.',
       },
       {
         id: 'res-3',
-        title: 'Operational Case Studies',
-        detail: 'أمثلة تطبيقية داخل القطاع الصحي لتحسين التبني.',
-      },
-      {
-        id: 'res-4',
-        title: 'Prototype Testing Sheets',
-        detail: 'نماذج اختبار الفرضيات وجمع الأدلة قبل الاعتماد.',
+        title: 'Prototype Checklist',
+        detail: 'قائمة تحقق قياسية قبل الانتقال إلى الاختبار أو الاعتماد.',
       },
     ]
+
+    const stageLinkedMicro =
+      MICRO_LEARNING.filter((item) => item.stage === selectedIdea?.stage) || []
 
     return (
       <div className="view-stack">
@@ -2587,6 +3402,24 @@ function App() {
               <article key={resource.id} className="knowledge-card">
                 <strong>{resource.title}</strong>
                 <p>{resource.detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head">
+            <h3>Micro-Learning</h3>
+            <span>2-3 دقائق</span>
+          </div>
+          <div className="knowledge-grid">
+            {(stageLinkedMicro.length ? stageLinkedMicro : MICRO_LEARNING).map((item) => (
+              <article key={item.id} className="knowledge-card">
+                <strong>{item.title}</strong>
+                <p>{item.focus}</p>
+                <small>
+                  المرحلة المرتبطة: {item.stage} | المدة: {item.duration}
+                </small>
               </article>
             ))}
           </div>
@@ -2725,7 +3558,37 @@ function App() {
               <p>آخر تحديث</p>
               <strong>{formatDate(selectedIdea.updatedAt)}</strong>
             </article>
+            <article>
+              <p>جاهزية الملكية الفكرية</p>
+              <strong>{selectedIdea.governance.ipReadiness}%</strong>
+            </article>
           </div>
+
+          <label className="field">
+            <span>تقييم الملكية الفكرية الموحد ({selectedIdea.governance.ipReadiness}%)</span>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={selectedIdea.governance.ipReadiness}
+              onChange={(event) => handleIpReadinessChange(event.target.value)}
+            />
+          </label>
+
+          <div className="inline-actions wrap">
+            <button className="btn primary" onClick={handleRequestIpProtection} disabled={!permissions.canGovernance}>
+              رفع طلب حماية ملكية فكرية
+            </button>
+            <button className="btn" onClick={handleExportIdeaExecutiveReport}>
+              تصدير تقرير المرحلة
+            </button>
+          </div>
+
+          {selectedIdea.governance.protectionNeeded ? (
+            <p className="alert-item bad">
+              تنبيه: الفكرة تحتاج مسار حماية ملكية فكرية قبل الاعتماد الكامل.
+            </p>
+          ) : null}
         </section>
 
         <section className="panel">
@@ -2738,6 +3601,22 @@ function App() {
             <li>سياسة تصنيف البيانات وسرية المعلومات في دورات الاختبار.</li>
             <li>سياسة الحوكمة المرحلية: فكرة → نموذج → اختبار → اعتماد → تطبيق.</li>
             <li>سياسة إدارة المخاطر والامتثال قبل التوسع والتشغيل المؤسسي.</li>
+          </ul>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head">
+            <h3>Timeline الفكرة</h3>
+            <span>{(selectedIdea.timeline || []).length} حدث</span>
+          </div>
+          <ul className="list">
+            {(selectedIdea.timeline || []).map((event) => (
+              <li key={event.id}>
+                <strong>{event.title}</strong>
+                <p>{event.detail || '—'}</p>
+                <small>{formatDate(event.at)}</small>
+              </li>
+            ))}
           </ul>
         </section>
       </div>
@@ -2823,6 +3702,21 @@ function App() {
             <span className="badge good">المستخدم: {session.name}</span>
             <span className="badge">{session.role}</span>
             <span className="badge">آخر دخول: {formatDate(session.lastLoginAt)}</span>
+            <div className="session-search">
+              <input
+                value={ideaSearch}
+                onChange={(event) => setIdeaSearch(event.target.value)}
+                placeholder="بحث ذكي: فكرة، مالك، مرحلة..."
+                aria-label="بحث داخل الأفكار"
+              />
+              <span className="badge">نتائج: {visibleIdeas.length}</span>
+            </div>
+            <button className="btn" onClick={() => setActiveView('lifecycle')}>
+              فتح النتائج
+            </button>
+            <button className="btn" onClick={handleExportWeeklyExecutiveReport}>
+              تقرير أسبوعي
+            </button>
             <button className="btn ghost" onClick={handleLogout}>
               تسجيل خروج
             </button>

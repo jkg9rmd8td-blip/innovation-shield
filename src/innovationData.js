@@ -38,6 +38,21 @@ export const PROTOTYPE_TEMPLATES = [
     name: 'Patient Experience Sprint',
     focus: 'رفع تجربة ورضا المستفيدين',
   },
+  {
+    id: 'chatbot-flow',
+    name: 'Chatbot Flow',
+    focus: 'تصميم مساعد محادثة ذكي مع سيناريوهات تصعيد واضحة',
+  },
+  {
+    id: 'kpi-dashboard',
+    name: 'KPI Dashboard',
+    focus: 'بناء لوحة مؤشرات تشغيلية للتتبع اللحظي والتنبيهات',
+  },
+  {
+    id: 'process-map',
+    name: 'Process Map',
+    focus: 'تصوير تدفق العمل الحالي والمستهدف ونقاط الاختناق',
+  },
 ]
 
 export const BENCHMARK_CATALOG = [

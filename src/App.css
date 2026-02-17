@@ -212,6 +212,17 @@ body {
   gap: 8px;
 }
 
+.session-search {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.session-search input {
+  min-width: 240px;
+}
+
 .auth-panel {
   max-width: 840px;
   margin-inline: auto;
@@ -346,6 +357,31 @@ body {
   display: inline-block;
   margin-top: 6px;
   font-size: 1.08rem;
+}
+
+.impact-year-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.impact-year-grid article {
+  border: 1px solid #d2e7f0;
+  border-radius: 11px;
+  background: #fff;
+  padding: 8px;
+}
+
+.impact-year-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.impact-year-grid strong {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.95rem;
 }
 
 .pillars-grid {
@@ -500,6 +536,21 @@ body {
   font-size: 11px;
 }
 
+.idea-progress {
+  width: 100%;
+  height: 7px;
+  border-radius: 999px;
+  background: #deedf4;
+  overflow: hidden;
+}
+
+.idea-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #1d9ac4, #16a070);
+}
+
 .card-actions {
   display: flex;
   flex-wrap: wrap;
@@ -645,6 +696,24 @@ textarea {
   font-size: 12px;
 }
 
+.chip.score-good {
+  border-color: #9fd9bb;
+  background: #e7f8ef;
+  color: #166342;
+}
+
+.chip.score-mid {
+  border-color: #f1d399;
+  background: #fff4dc;
+  color: #8e6200;
+}
+
+.chip.score-bad {
+  border-color: #f1b4b6;
+  background: #ffe9ea;
+  color: #a23436;
+}
+
 .summary-grid {
   margin-top: 10px;
   display: grid;
@@ -680,11 +749,48 @@ textarea {
   gap: 8px;
 }
 
+.stage-kpi-grid {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.stage-kpi-card {
+  border: 1px solid #d2e7f0;
+  border-radius: 10px;
+  background: #fff;
+  padding: 8px;
+  display: grid;
+  gap: 4px;
+}
+
+.stage-kpi-card p,
+.stage-kpi-card small {
+  margin: 0;
+}
+
+.stage-kpi-card p {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #154d64;
+}
+
+.stage-kpi-card small {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 11px;
+}
+
 .inline-input,
 .inline-actions {
   display: flex;
   gap: 6px;
   margin-top: 8px;
+}
+
+.inline-actions.wrap {
+  flex-wrap: wrap;
 }
 
 .inline-input.wrap {
@@ -733,6 +839,50 @@ textarea {
 .empty {
   color: var(--muted);
   text-align: center;
+}
+
+.subhead {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #305568;
+}
+
+.alert-stack {
+  margin-top: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+.alert-item {
+  margin: 0;
+  border: 1px solid #d2e7f0;
+  border-radius: 10px;
+  background: #f7fcff;
+  padding: 8px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.alert-item.good {
+  border-color: #9fd9bb;
+  background: #e7f8ef;
+  color: #166342;
+}
+
+.alert-item.mid {
+  border-color: #f0d18f;
+  background: #fff6de;
+  color: #8f6500;
+}
+
+.alert-item.bad {
+  border-color: #efb4b5;
+  background: #ffeaea;
+  color: #9f3638;
+}
+
+.compact-list {
+  margin-top: 8px;
 }
 
 .rank-row {
@@ -970,9 +1120,11 @@ tbody td small {
   }
 
   .kpi-grid,
+  .impact-year-grid,
   .pillars-grid,
   .cases-grid,
   .trust-grid,
+  .stage-kpi-grid,
   .knowledge-grid,
   .governance-grid,
   .summary-grid,
@@ -999,6 +1151,7 @@ tbody td small {
 
   .top-nav,
   .session-strip,
+  .session-search,
   .inline-actions,
   .inline-input,
   .onboarding-actions {
@@ -1014,9 +1167,11 @@ tbody td small {
   }
 
   .kpi-grid,
+  .impact-year-grid,
   .pillars-grid,
   .cases-grid,
   .trust-grid,
+  .stage-kpi-grid,
   .knowledge-grid,
   .governance-grid,
   .summary-grid,
