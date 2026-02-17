@@ -1,373 +1,16 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
-
-<head>
-  <meta charset="UTF-8" />
-  <title>درع الابتكار | مركز القيادة</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/app.css" />
-</head>
-
-<body class="career-body">
-  <a class="skip-link" href="#mainContent">تخطي إلى المحتوى الرئيسي</a>
-
-  <!-- Background Mesh -->
-  <div class="platform-bg" aria-hidden="true">
-    <div class="mesh mesh-1"></div>
-    <div class="mesh mesh-2"></div>
-    <div class="mesh mesh-3"></div>
-  </div>
-
-  <main class="platform-shell" id="mainContent" tabindex="-1">
-
-    <!-- ================== TOPBAR ================== -->
-    <header class="platform-topbar reveal">
-      <div class="topbar-brand">
-        <div class="brand-mark" aria-label="Innovation Shield">IS</div>
-        <div>
-          <h1 class="topbar-title">درع الابتكار</h1>
-          <p class="topbar-sub" data-i18n="topbar_sub">حرية ابتكار + تحديات واقعية + AI مساعد + تحكيم عادل</p>
-        </div>
-      </div>
-
-      <nav class="nav" aria-label="التنقل الرئيسي">
-        <a href="index.html" class="active">الرئيسية</a>
-        <a href="app/map/index.html">خريطة الابتكار</a>
-        <a href="app/prototype/index.html">النماذج الأولية</a>
-        <a href="app/employee/index.html">مسار الموظف</a>
-        <a href="app/judging/index.html">التحكيم</a>
-        <a href="app/command/index.html">لوحة القيادة</a>
-        <a href="app/policies/index.html">السياسات</a>
-        <a href="app/report/index.html">التقرير التنفيذي</a>
-        <a href="app/about/index.html">عن المنصة</a>
-      </nav>
-
-      <div class="topbar-actions">
-        <span class="live-pill" data-i18n="system_active">🟢 نظام نشط</span>
-        <button class="btn btn-ghost" id="langToggle" aria-label="تبديل اللغة">EN</button>
-        <div class="hero-actions">
-          <button class="btn btn-primary" data-go="app/map/index.html" data-i18n="start_initiative">بدء مبادرة</button>
-          <button class="btn btn-soft" data-go="app/employee/index.html" data-i18n="my_profile">ملفي الابتكاري</button>
-          <button class="btn btn-ghost" data-go="app/about/index.html">عن المنصة</button>
-        </div>
-      </div>
-    </header>
-
-    <!-- ================== HERO ================== -->
-    <section class="workspace-banner reveal">
-      <div>
-        <span class="eyebrow" data-i18n="command_center">مركز القيادة</span>
-        <h2 class="hero-title" data-i18n="hero_title">
-          منصة تمنح الموظفين حرية ابتكار الحلول وتربطهم بتحديات حقيقية داخل التجمع
-        </h2>
-        <p class="hero-sub" data-i18n="hero_sub">
-          ابتكر حلولًا تخدم الموظف أو المريض أو التشغيل أو الجودة أو التقنية أو الموارد البشرية،
-          أو اختر من التحديات الواقعية المعروضة وتنافس على أفضل حل،
-          ثم استخدم الذكاء الاصطناعي لبناء الفكرة وادخل التحكيم البشري لضمان العدالة والجودة.
-        </p>
-      </div>
-
-      <div class="quality-pill" data-i18n="institutional_readiness">
-        ⚡ جاهزية الابتكار المؤسسي
-      </div>
-    </section>
-
-    <!-- ================== KPIs ================== -->
-    <section class="stats-grid reveal" aria-label="مؤشرات الأداء">
-      <div class="stat-card">
-        <p>المبتكرون النشطون</p>
-        <h3 data-kpi="innovators">0</h3>
-      </div>
-
-      <div class="stat-card">
-        <p>المبادرات المسجلة</p>
-        <h3 data-kpi="initiatives">0</h3>
-      </div>
-
-      <div class="stat-card">
-        <p>النماذج الأولية</p>
-        <h3 data-kpi="prototypes">0</h3>
-      </div>
-
-      <div class="stat-card">
-        <p>المبادرات المعتمدة</p>
-        <h3 data-kpi="approved">0</h3>
-      </div>
-
-      <div class="stat-card">
-        <p>نسبة الاعتماد</p>
-        <h3 data-kpi="approvalRate">0%</h3>
-      </div>
-
-      <div class="stat-card">
-        <p>مؤشر التفاعل</p>
-        <h3 data-kpi="engagement">0</h3>
-      </div>
-    </section>
-
-    <!-- ================== QUICK ACCESS ================== -->
-    <section class="workspace-grid reveal">
-
-      <div class="panel">
-        <div class="panel-head">
-          <h3>🚀 مسارات المنصة</h3>
-        </div>
-
-        <div class="badge-list">
-          <span class="badge-pill" data-go="app/map/index.html">خريطة الابتكار</span>
-          <span class="badge-pill" data-go="app/prototype/index.html">مركز النماذج</span>
-          <span class="badge-pill" data-go="app/employee/index.html">مساحة المبتكر</span>
-          <span class="badge-pill" data-go="app/judging/index.html">نظام التحكيم</span>
-          <span class="badge-pill" data-go="app/command/index.html">لوحة القيادة</span>
-          <span class="badge-pill" data-go="app/policies/index.html">الحوكمة والسياسات</span>
-          <span class="badge-pill" data-go="app/report/index.html">التقرير التنفيذي</span>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head">
-          <h3>🎯 رؤية المنصة</h3>
-        </div>
-        <ul class="insight-list" style="margin:0;">
-          <li>ابتكار حر: أي موظف يقدر يطلق مبادرة تخدم أي مسار يحتاج تحسين.</li>
-          <li>تحديات واقعية: المنصة تعرض مشاكل فعلية داخل التجمع للاختيار والتنافس.</li>
-          <li>AI Co-Pilot: دعم ذكي لصياغة المشكلة والحل وMVP والأثر.</li>
-          <li>Human Judging: تحكيم بشري بمعايير واضحة لضمان العدالة والجودة.</li>
-        </ul>
-      </div>
-
-    </section>
-
-    <section class="workspace-grid reveal">
-      <div class="panel">
-        <div class="panel-head">
-          <h3>عن المنصة</h3>
-          <span class="panel-note">الرؤية • الأهداف • الفريق</span>
-        </div>
-        <ul class="insight-list" style="margin:0;">
-          <li>الرؤية: تحويل أفكار الموظفين إلى حلول مطبّقة ترفع جودة الخدمة الصحية.</li>
-          <li>الأهداف: تقليل زمن التقييم، رفع جودة المبادرات، وزيادة الاعتماد الفعلي.</li>
-          <li>الفريق: مبتكرون، محكّمون، فرق تشغيل، دعم تقني، وحوكمة مؤسسية.</li>
-          <li>الصفحة التفصيلية: <button class="btn btn-soft sm" data-go="app/about/index.html">فتح صفحة التعريف</button></li>
-        </ul>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head">
-          <h3>حالة الأمان والأداء</h3>
-          <span class="panel-note" id="perfStamp">قياس التحميل قيد التحديث...</span>
-        </div>
-        <ul class="insight-list" id="securityList" style="margin:0;"></ul>
-      </div>
-    </section>
-
-    <section class="workspace-grid reveal">
-      <div class="panel">
-        <div class="panel-head">
-          <h3>قصص نجاح</h3>
-          <span class="panel-note">مبادرات مطبّقة أو معتمدة ذات أثر فعلي</span>
-        </div>
-        <ul class="insight-list" id="successList" style="margin:0;"></ul>
-      </div>
-      <div class="panel">
-        <div class="panel-head">
-          <h3>الأفكار الأكثر تفاعلًا</h3>
-          <span class="panel-note">تصويت + تعليقات</span>
-        </div>
-        <ul class="insight-list" id="interactionList" style="margin:0;"></ul>
-      </div>
-    </section>
-
-  </main>
-
-  <div class="modal hidden" id="homeOnboarding" role="dialog" aria-modal="true" aria-labelledby="onbTitle">
-    <div class="modal-backdrop" data-close-onb></div>
-    <div class="modal-card" style="max-width:720px; width:min(720px, calc(100vw - 24px));">
-      <div class="mhead">
-        <div class="mtitle" id="onbTitle">مرحبًا بك في درع الابتكار</div>
-        <button class="btn btn-ghost" data-close-onb>إغلاق</button>
-      </div>
-      <div class="panel" style="margin:0;">
-        <div class="panel-head">
-          <h3>ابدأ في 3 خطوات</h3>
-          <span class="panel-note">رحلة مختصرة للمستخدم الجديد</span>
-        </div>
-        <ol class="insight-list" style="margin:0;">
-          <li>افتح <strong>خريطة الابتكار</strong> واختر فكرة جديدة أو تحديًا واقعيًا.</li>
-          <li>استخدم أدوات الذكاء الاصطناعي لصياغة المشكلة والحل بسرعة.</li>
-          <li>أرسل المبادرة للتحكيم وتابع أثرها في لوحة القيادة.</li>
-        </ol>
-      </div>
-      <div class="mfoot">
-        <div class="mtext">يمكنك إعادة هذا الدليل لاحقًا من زر "المساعدة".</div>
-        <button class="btn btn-soft" id="onbGoMap">افتح خريطة الابتكار</button>
-        <button class="btn btn-primary" id="onbStartNow">ابدأ الآن</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- JS -->
-  <script src="assets/js/app.js"></script>
-  <script>
-    (() => {
-      "use strict";
-      const IS = window.IS;
-      if (!IS) return;
-
-      const ONBOARDING_KEY = "is_home_onboarded_v2";
-      const $ = (s, r = document) => r.querySelector(s);
-      const fmt = (n) => new Intl.NumberFormat("ar-SA").format(Number(n || 0));
-
-      const I18N = {
-        ar: {
-          topbar_sub: "حرية ابتكار + تحديات واقعية + AI مساعد + تحكيم عادل",
-          system_active: "🟢 نظام نشط",
-          start_initiative: "بدء مبادرة",
-          my_profile: "ملفي الابتكاري",
-          command_center: "مركز القيادة",
-          hero_title: "منصة تمنح الموظفين حرية ابتكار الحلول وتربطهم بتحديات حقيقية داخل التجمع",
-          hero_sub: "ابتكر حلولًا تخدم الموظف أو المريض أو التشغيل أو الجودة أو التقنية أو الموارد البشرية، أو اختر من التحديات الواقعية المعروضة وتنافس على أفضل حل، ثم استخدم الذكاء الاصطناعي لبناء الفكرة وادخل التحكيم البشري لضمان العدالة والجودة.",
-          institutional_readiness: "⚡ جاهزية الابتكار المؤسسي"
-        },
-        en: {
-          topbar_sub: "Open Innovation + Real Challenges + AI Co‑Pilot + Fair Judging",
-          system_active: "🟢 System Active",
-          start_initiative: "Start Initiative",
-          my_profile: "My Innovation Profile",
-          command_center: "Command Center",
-          hero_title: "A platform that empowers employees to innovate and solve real health-cluster challenges",
-          hero_sub: "Build ideas for employee, patient, operations, quality, technology, or HR; select real internal challenges; use AI to draft solutions; then move to human judging for fairness and quality.",
-          institutional_readiness: "⚡ Institutional Innovation Readiness"
-        }
-      };
-
-      const go = (path) => {
-        if (!path) return;
-        window.location.href = path;
-      };
-
-      const inis = IS.state.initiatives || [];
-      const teams = IS.state.teams || [];
-      const members = new Set();
-      teams.forEach((t) => (t.members || []).forEach((m) => members.add(m.id || m.name)));
-
-      const approvedCount = inis.filter((i) => ["معتمد", "مطبق"].includes(i.status) || ["الاعتماد", "التطبيق"].includes(i.stage)).length;
-      const interactionScore = (i) => {
-        const up = Math.max(0, Number(i.engagement?.upvotes || 0));
-        const down = Math.max(0, Number(i.engagement?.downvotes || 0));
-        const comments = Array.isArray(i.comments) ? i.comments.length : 0;
-        return Math.max(0, (up * 2) - down + (comments * 3));
-      };
-
-      const totalEngagement = inis.reduce((sum, i) => sum + interactionScore(i), 0);
-      const approvalRate = inis.length ? Math.round((approvedCount / inis.length) * 100) : 0;
-
-      const kpi = {
-        innovators: Math.max(1, members.size || 0),
-        initiatives: inis.length,
-        prototypes: inis.filter((i) => !!i.prototype || i.stage === "النموذج الأولي").length,
-        approved: approvedCount,
-        approvalRate: `${fmt(approvalRate)}%`,
-        engagement: fmt(totalEngagement)
-      };
-
-      Object.entries(kpi).forEach(([key, value]) => {
-        const node = document.querySelector(`[data-kpi="${key}"]`);
-        if (node) node.textContent = value;
-      });
-
-      const successRows = [...inis]
-        .filter((i) => ["معتمد", "مطبق"].includes(i.status) || ["الاعتماد", "التطبيق"].includes(i.stage))
-        .sort((a, b) => Number(b.impact?.costSaving || 0) - Number(a.impact?.costSaving || 0))
-        .slice(0, 3);
-      $("#successList").innerHTML = successRows.length ? successRows.map((i) => `
-        <li>
-          <strong>${i.id} — ${i.title}</strong>
-          <span class="status-badge is-good">${i.status || i.stage}</span>
-          <div>أثر سنوي متوقع: ${fmt(i.impact?.costSaving || 0)} ريال</div>
-        </li>
-      `).join("") : `<li>لا توجد قصص نجاح بعد، ابدأ أول مبادرة الآن.</li>`;
-
-      const topInteraction = [...inis].sort((a, b) => interactionScore(b) - interactionScore(a)).slice(0, 3);
-      $("#interactionList").innerHTML = topInteraction.length ? topInteraction.map((i) => `
-        <li>
-          <strong>${i.id} — ${i.title}</strong>
-          <div>التفاعل: ${fmt(interactionScore(i))} نقطة • تعليقات: ${fmt((i.comments || []).length)} • تصويت: +${fmt(i.engagement?.upvotes || 0)}</div>
-        </li>
-      `).join("") : `<li>لا توجد مبادرات كافية لقياس التفاعل بعد.</li>`;
-
-      const policyAccepted = IS.ensurePolicyAccepted();
-      const perfMs = (() => {
-        const nav = performance.getEntriesByType("navigation")[0];
-        if (nav && Number.isFinite(nav.domContentLoadedEventEnd)) return Math.round(nav.domContentLoadedEventEnd);
-        return Math.round(performance.now());
-      })();
-      $("#perfStamp").textContent = `جاهزية الواجهة: ${fmt(perfMs)}ms • متجاوبة للجوال`;
-      $("#securityList").innerHTML = `
-        <li>RBAC + سجل تدقيق: <span class="status-badge is-good">مفعّل</span></li>
-        <li>تعهد السرية (NDA): <span class="status-badge ${policyAccepted ? "is-good" : "is-mid"}">${policyAccepted ? "مقبول" : "بانتظار القبول"}</span></li>
-        <li>عدد أحداث التدقيق الحالية: <strong>${fmt((IS.state.audit || []).length)}</strong></li>
-        <li>عند النشر على GitHub Pages يوصى بتفعيل HTTPS فقط وقيود صلاحيات API.</li>
-      `;
-
-      function applyLanguage(lang) {
-        const dictionary = I18N[lang] || I18N.ar;
-        document.documentElement.lang = lang === "en" ? "en" : "ar";
-        document.documentElement.dir = lang === "en" ? "ltr" : "rtl";
-        Object.entries(dictionary).forEach(([key, value]) => {
-          const node = document.querySelector(`[data-i18n="${key}"]`);
-          if (node) node.textContent = value;
-        });
-        const toggle = $("#langToggle");
-        if (toggle) toggle.textContent = lang === "en" ? "AR" : "EN";
-        IS.state.preferences = IS.state.preferences || {};
-        IS.state.preferences.language = lang;
-        IS.state.preferences.rtl = lang !== "en";
-        IS.save();
-      }
-
-      const langPref = String(IS.state.preferences?.language || "ar").toLowerCase();
-      applyLanguage(langPref === "en" ? "en" : "ar");
-
-      $("#langToggle").addEventListener("click", () => {
-        const next = document.documentElement.lang === "en" ? "ar" : "en";
-        applyLanguage(next);
-      });
-
-      document.querySelectorAll("[data-go]").forEach((el) => {
-        el.addEventListener("click", () => go(el.getAttribute("data-go")));
-      });
-
-      const openOnboarding = () => $("#homeOnboarding").classList.remove("hidden");
-      const closeOnboarding = () => $("#homeOnboarding").classList.add("hidden");
-
-      if (!localStorage.getItem(ONBOARDING_KEY)) openOnboarding();
-      document.querySelectorAll("[data-close-onb]").forEach((el) => {
-        el.addEventListener("click", () => {
-          localStorage.setItem(ONBOARDING_KEY, "1");
-          closeOnboarding();
-        });
-      });
-
-      $("#onbStartNow").addEventListener("click", () => {
-        localStorage.setItem(ONBOARDING_KEY, "1");
-        closeOnboarding();
-      });
-      $("#onbGoMap").addEventListener("click", () => {
-        localStorage.setItem(ONBOARDING_KEY, "1");
-        go("app/map/index.html");
-      });
-
-      IS.audit("فتح الصفحة الرئيسية", "home");
-      IS.save();
-    })();
-  </script>
-
-</body>
-
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Innovation Shield V3 - منصة درع الابتكار لإدارة دورة الابتكار المؤسسي من الفكرة حتى التطبيق."
+    />
+    <title>درع الابتكار V3</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
