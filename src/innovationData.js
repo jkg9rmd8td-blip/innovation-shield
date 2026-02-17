@@ -1,433 +1,713 @@
-export const STAGES = [
-  'الفكرة',
-  'التقييم',
-  'النموذج الأولي',
-  'التجربة',
-  'الاعتماد',
-  'التطبيق',
+export const APP_CONFIG = {
+  storageKey: 'innovation_shield_v5_state',
+  onboardingKey: 'innovation_shield_v5_onboarding_seen',
+  orgName: 'التجمع الصحي بالطائف',
+  version: 'V5',
+  strategicGoal: 'تحويل الابتكار إلى قدرة تشغيلية مستدامة بأثر سنوي قابل للقياس',
+}
+
+export const VIEWS = [
+  { id: 'overview', label: 'القيادة التنفيذية' },
+  { id: 'lifecycle', label: 'دورة الحياة' },
+  { id: 'workflow', label: 'Workflow & Approvals' },
+  { id: 'workspace', label: 'لوحة الفريق' },
+  { id: 'prototype', label: 'Prototype Builder' },
+  { id: 'impact', label: 'Impact Simulator' },
+  { id: 'governance', label: 'الحوكمة وIP' },
+  { id: 'knowledge', label: 'المعرفة' },
+  { id: 'audit', label: 'السجل' },
 ]
 
-export const STATUSES = [
-  'مسودة',
-  'قيد الدراسة',
-  'قيد التطوير',
-  'قيد التحكيم',
+export const LIFECYCLE_STAGES = [
+  'Idea Intake',
+  'Prototype',
+  'Testing',
+  'Adoption',
+]
+
+export const STATUS_OPTIONS = [
+  'جديد',
+  'قيد العمل',
+  'قيد الاختبار',
+  'قيد المراجعة',
   'معتمد',
   'مطبق',
-  'مؤجل',
+  'متعثر',
 ]
+
+export const ROLE_OPTIONS = ['مبتكر', 'مراجع', 'حوكمة', 'مدير المنصة']
+
+export const ROLE_PERMISSIONS = {
+  مبتكر: {
+    canCreate: true,
+    canEdit: true,
+    canApprove: false,
+    canGovernance: false,
+    canMoveStage: false,
+  },
+  مراجع: {
+    canCreate: false,
+    canEdit: true,
+    canApprove: true,
+    canGovernance: false,
+    canMoveStage: true,
+  },
+  حوكمة: {
+    canCreate: false,
+    canEdit: true,
+    canApprove: false,
+    canGovernance: true,
+    canMoveStage: true,
+  },
+  'مدير المنصة': {
+    canCreate: true,
+    canEdit: true,
+    canApprove: true,
+    canGovernance: true,
+    canMoveStage: true,
+  },
+}
+
+export const DOMAIN_OPTIONS = ['تشغيلي', 'تقني', 'سريري', 'تجربة مريض', 'جودة', 'مالي', 'موارد بشرية']
+
+export const WORKFLOW_FLOWS = {
+  operational: [
+    { id: 'screening', title: 'Gate 1 - فرز الفكرة' },
+    { id: 'prototype', title: 'Gate 2 - صلاحية النموذج الأولي' },
+    { id: 'pilot', title: 'Gate 3 - جاهزية الاختبار' },
+    { id: 'adoption', title: 'Gate 4 - قرار الاعتماد' },
+  ],
+  technical: [
+    { id: 'screening', title: 'Gate 1 - فرز الفكرة' },
+    { id: 'architecture', title: 'Gate 2 - اعتماد المعمارية التقنية' },
+    { id: 'security', title: 'Gate 3 - أمن المعلومات والتكامل' },
+    { id: 'pilot', title: 'Gate 4 - جاهزية الاختبار' },
+    { id: 'adoption', title: 'Gate 5 - قرار الاعتماد' },
+  ],
+  clinical: [
+    { id: 'screening', title: 'Gate 1 - فرز الفكرة' },
+    { id: 'ethics', title: 'Gate 2 - الموافقة الأخلاقية' },
+    { id: 'clinicalSafety', title: 'Gate 3 - التحقق من السلامة السريرية' },
+    { id: 'pilot', title: 'Gate 4 - جاهزية الاختبار' },
+    { id: 'adoption', title: 'Gate 5 - قرار الاعتماد' },
+  ],
+}
+
+export const STAGE_GATE_REQUIREMENTS = {
+  operational: {
+    'Idea Intake': 'screening',
+    Prototype: 'prototype',
+    Testing: 'pilot',
+    Adoption: 'adoption',
+  },
+  technical: {
+    'Idea Intake': 'screening',
+    Prototype: 'architecture',
+    Testing: 'security',
+    Adoption: 'adoption',
+  },
+  clinical: {
+    'Idea Intake': 'screening',
+    Prototype: 'ethics',
+    Testing: 'clinicalSafety',
+    Adoption: 'adoption',
+  },
+}
 
 export const PROTOTYPE_TEMPLATES = [
   {
-    id: 'service-blueprint',
-    name: 'Service Blueprint',
-    focus: 'رحلة الخدمة ونقاط التحسين التشغيلية',
-  },
-  {
-    id: 'digital-mvp',
-    name: 'Digital MVP',
-    focus: 'إطلاق نسخة رقمية أولية سريعة',
-  },
-  {
-    id: 'policy-redesign',
-    name: 'Policy Redesign',
-    focus: 'تحسين الإجراء والامتثال والجودة',
-  },
-  {
-    id: 'patient-experience',
-    name: 'Patient Experience Sprint',
-    focus: 'رفع تجربة ورضا المستفيدين',
-  },
-  {
     id: 'chatbot-flow',
     name: 'Chatbot Flow',
-    focus: 'تصميم مساعد محادثة ذكي مع سيناريوهات تصعيد واضحة',
+    focus: 'بناء تدفق محادثة لخدمة داخلية أو مسار مستفيد.',
   },
   {
     id: 'kpi-dashboard',
     name: 'KPI Dashboard',
-    focus: 'بناء لوحة مؤشرات تشغيلية للتتبع اللحظي والتنبيهات',
+    focus: 'لوحة مؤشرات تنفيذية مع تنبيهات وتشغيل فوري.',
   },
   {
     id: 'process-map',
     name: 'Process Map',
-    focus: 'تصوير تدفق العمل الحالي والمستهدف ونقاط الاختناق',
+    focus: 'تصميم الوضع الحالي والمستهدف مع نقاط الاختناق.',
   },
 ]
 
-export const BENCHMARK_CATALOG = [
+export const IMPACT_MODELS = [
   {
-    id: 'BM-001',
-    solution: 'Mayo Clinic - Digital Triage Pathway',
-    country: 'USA',
-    tags: ['فرز', 'طوارئ', 'رحلة المريض', 'رقمنة'],
+    id: 'financial',
+    name: 'وفورات مالية',
+    summary: 'قياس التوفير السنوي في التكلفة المباشرة.',
   },
   {
-    id: 'BM-002',
-    solution: 'NHS - Outpatient Flow Optimization',
-    country: 'UK',
-    tags: ['عيادات', 'تشغيل', 'انتظار', 'جودة'],
+    id: 'patient',
+    name: 'تحسين تجربة المريض',
+    summary: 'قياس أثر التجربة والرضا والانسيابية.',
   },
   {
-    id: 'BM-003',
-    solution: 'Singapore Health - Smart Staff Scheduling',
-    country: 'Singapore',
-    tags: ['موارد بشرية', 'جداول', 'تشغيل', 'ذكاء اصطناعي'],
-  },
-  {
-    id: 'BM-004',
-    solution: 'Cleveland Clinic - Predictive Quality Alerts',
-    country: 'USA',
-    tags: ['جودة', 'تنبيهات', 'تحليلات', 'سلامة'],
-  },
-  {
-    id: 'BM-005',
-    solution: 'Karolinska - Lean Surgical Throughput',
-    country: 'Sweden',
-    tags: ['عمليات', 'تدفق', 'هدر', 'تشغيلي'],
+    id: 'service',
+    name: 'تقليل وقت الخدمة',
+    summary: 'قياس خفض الزمن التشغيلي وطاقة الخدمة.',
   },
 ]
 
-export const EXECUTIVE_SCOPE = [
+export const GOVERNANCE_CHECKLIST = [
   {
-    id: 'workspace',
-    title: 'Innovation Workspace',
-    note: 'مساحة تعاون موحدة لإدارة المهام والتعليقات وتقدم المبادرة.',
+    id: 'ipProtection',
+    title: 'تسجيل الملكية الفكرية',
+    note: 'توثيق حقوق الفكرة ونطاق الحماية المؤسسية.',
   },
   {
-    id: 'maturity',
-    title: 'Idea Maturity Score',
-    note: 'تقييم نضج الفكرة عبر معايير الوضوح والجدوى والاستعداد.',
+    id: 'confidentiality',
+    title: 'اتفاقيات السرية',
+    note: 'ضبط مشاركة البيانات مع الأطراف ذات العلاقة.',
   },
   {
-    id: 'prototype_builder',
-    title: 'Prototype Builder',
-    note: 'أداة لبناء نماذج أولية جاهزة للعرض والتنفيذ.',
+    id: 'ethicsReview',
+    title: 'مراجعة أخلاقية',
+    note: 'التحقق من التوافق الأخلاقي خصوصًا في الحالات السريرية.',
   },
   {
-    id: 'impact',
-    title: 'Impact Simulator',
-    note: 'محاكاة أثر الابتكار على الجودة والتكلفة والوقت.',
+    id: 'dataPolicy',
+    title: 'امتثال حوكمة البيانات',
+    note: 'الالتزام بسياسات الأمن والخصوصية واستمرارية الأعمال.',
   },
   {
-    id: 'analytics',
-    title: 'Dashboard',
-    note: 'لوحة مؤشرات قيادية لدعم القرار التنفيذي في الوقت الحقيقي.',
-  },
-  {
-    id: 'marketplace',
-    title: 'Marketplace',
-    note: 'عرض الابتكارات الجاهزة للتطبيق داخل التجمع.',
-  },
-  {
-    id: 'benchmarking',
-    title: 'Global Benchmarking',
-    note: 'مقارنة الحلول المحلية بممارسات وتجارب عالمية مشابهة.',
-  },
-  {
-    id: 'rewards',
-    title: 'Rewards',
-    note: 'نظام تحفيز يرفع المشاركة ويحسن جودة المخرجات الابتكارية.',
-  },
-  {
-    id: 'governance',
-    title: 'Governance & Policies',
-    note: 'ضبط الحوكمة والامتثال لحماية الفكرة وضمان الاستدامة المؤسسية.',
+    id: 'ownershipDefined',
+    title: 'تحديد الملكية والمسؤوليات',
+    note: 'تسمية مالك القرار ومسار المسؤولية التنفيذية.',
   },
 ]
+
+export const STAGE_KPI_DEFINITION = [
+  {
+    id: 'intake',
+    title: 'Idea Intake',
+    focus: 'وضوح المشكلة والقيمة.',
+  },
+  {
+    id: 'prototype',
+    title: 'Prototype',
+    focus: 'جودة النموذج والفرضيات.',
+  },
+  {
+    id: 'testing',
+    title: 'Testing',
+    focus: 'جاهزية الاختبار والتحكم بالمخاطر.',
+  },
+  {
+    id: 'adoption',
+    title: 'Adoption',
+    focus: 'جاهزية التبني المؤسسي.',
+  },
+]
+
+export const KNOWLEDGE_SHORTS = [
+  {
+    id: 'short-1',
+    title: 'Idea Intake خلال 3 دقائق',
+    stage: 'Idea Intake',
+    duration: '2-3 دقائق',
+    detail: 'حوّل التحدي إلى مشكلة تنفيذية قابلة للقياس.',
+  },
+  {
+    id: 'short-2',
+    title: 'Prototype Readiness سريع',
+    stage: 'Prototype',
+    duration: '2-3 دقائق',
+    detail: 'اربط الفرضية بالمؤشر وأغلق فجوات التجربة.',
+  },
+  {
+    id: 'short-3',
+    title: 'Testing Plan محكم',
+    stage: 'Testing',
+    duration: '2-3 دقائق',
+    detail: 'نفّذ اختبار محدود مع قرار أسبوعي واضح.',
+  },
+  {
+    id: 'short-4',
+    title: 'Adoption Deck قيادي',
+    stage: 'Adoption',
+    duration: '2-3 دقائق',
+    detail: 'قدّم قرار الاعتماد بصيغة تنفيذية مقنعة.',
+  },
+]
+
+export const KNOWLEDGE_TEMPLATES = [
+  {
+    id: 'tmpl-1',
+    title: 'Canvas',
+    detail: 'قالب قيمة وتشغيل لتوحيد الرؤية قبل التنفيذ.',
+  },
+  {
+    id: 'tmpl-2',
+    title: 'Business Case',
+    detail: 'قالب جدوى مالي/تشغيلي جاهز لقرار القيادة.',
+  },
+  {
+    id: 'tmpl-3',
+    title: 'Prototype Checklist',
+    detail: 'قائمة تحقق لاكتمال النموذج قبل الاختبار.',
+  },
+]
+
+export const V4_ROADMAP = [
+  {
+    id: 'road-1',
+    title: 'تكامل منصة فكرة - منشآت',
+    note: 'رفع الابتكارات الواعدة تلقائيًا بعد الاعتماد.',
+  },
+  {
+    id: 'road-2',
+    title: 'ربط مع نظام الموارد البشرية',
+    note: 'اقتراح أعضاء الفريق تلقائيًا حسب نوع الابتكار.',
+  },
+  {
+    id: 'road-3',
+    title: 'لوحة أثر سنوية للتجمع',
+    note: 'متابعة الأداء على مستوى السنة بالكامل.',
+  },
+]
+
+export const QUICK_GUIDE = [
+  {
+    id: 'guide-1',
+    title: '1) سجّل الفكرة',
+    detail: 'عنوان + مشكلة + حل + مستفيد في شاشة واحدة.',
+  },
+  {
+    id: 'guide-2',
+    title: '2) ابنِ نموذجًا أوليًا',
+    detail: 'اختر قالبًا، ارفع الأصول، فعّل Auto-Scoring.',
+  },
+  {
+    id: 'guide-3',
+    title: '3) اختبر واعتمد',
+    detail: 'اتبع Workflow ديناميكيًا حسب نوع الابتكار.',
+  },
+]
+
+export const ONBOARDING_STEPS = [
+  {
+    id: 'ob-1',
+    title: 'مرحبًا بك في درع الابتكار V5',
+    detail: 'هذه نسخة تنفيذية جاهزة لإدارة الابتكار من الالتقاط حتى التبني.',
+  },
+  {
+    id: 'ob-2',
+    title: 'ابدأ من دورة الحياة',
+    detail: 'سجل فكرة جديدة، ثم انتقل للنموذج والاختبار والاعتماد.',
+  },
+  {
+    id: 'ob-3',
+    title: 'لوحة الفريق الذكية',
+    detail: 'تابع النضج، المخاطر، مهام الأسبوع، والخطوة التالية تلقائيًا.',
+  },
+]
+
+export const YEAR_MONTHS = [
+  'يناير',
+  'فبراير',
+  'مارس',
+  'أبريل',
+  'مايو',
+  'يونيو',
+  'يوليو',
+  'أغسطس',
+  'سبتمبر',
+  'أكتوبر',
+  'نوفمبر',
+  'ديسمبر',
+]
+
+export const DEFAULT_SIMULATION = {
+  model: 'financial',
+  baselineCost: 180,
+  baselineMinutes: 24,
+  transactionsPerYear: 1600,
+  expectedCostReduction: 18,
+  expectedTimeReduction: 20,
+}
+
+export const DEFAULT_MONITORING = {
+  tocInput: 0,
+  tocOutput: 0,
+  tocOutcome: 0,
+  cashIn: 0,
+  cashOut: 0,
+  investment: 250000,
+  paybackMonths: 18,
+  lastReview: null,
+}
+
+export const DEFAULT_GOVERNANCE = {
+  ipProtection: false,
+  confidentiality: false,
+  ethicsReview: false,
+  dataPolicy: false,
+  ownershipDefined: false,
+  ipReadiness: 45,
+  protectionNeeded: false,
+  protectionRequestedAt: null,
+  gateApproved: false,
+}
+
+export const DEFAULT_MATURITY = {
+  clarity: 60,
+  feasibility: 55,
+  value: 62,
+  readiness: 48,
+  riskHandling: 52,
+}
+
+export const DEFAULT_RISK = {
+  operational: 3,
+  financial: 2,
+  technical: 2,
+  compliance: 2,
+}
+
+export const DEFAULT_PROTOTYPE = {
+  template: 'chatbot-flow',
+  progress: 15,
+  hypothesis: '',
+  testPlan: '',
+  validationMetric: '',
+  lastDeck: '',
+  assets: [],
+}
+
+export const DEFAULT_IMPACT = {
+  costSaving: 0,
+  timeSaving: 0,
+  qualityImprovement: 0,
+  satisfaction: 0,
+}
+
+export const DEFAULT_IDEA = {
+  id: '',
+  title: 'فكرة جديدة',
+  owner: 'فريق الابتكار',
+  department: 'التجمع الصحي بالطائف',
+  domain: 'تشغيلي',
+  problem: '',
+  solution: '',
+  beneficiary: '',
+  stage: 'Idea Intake',
+  status: 'جديد',
+  maturity: DEFAULT_MATURITY,
+  risk: DEFAULT_RISK,
+  prototype: DEFAULT_PROTOTYPE,
+  impact: DEFAULT_IMPACT,
+  simulation: DEFAULT_SIMULATION,
+  monitoring: DEFAULT_MONITORING,
+  governance: DEFAULT_GOVERNANCE,
+  approvals: {},
+  workspace: {
+    tasks: [],
+    notes: [],
+  },
+  timeline: [],
+  createdAt: '',
+  updatedAt: '',
+}
+
+export const DEFAULT_SESSION = {
+  isAuthenticated: false,
+  name: '',
+  role: ROLE_OPTIONS[0],
+  lastLoginAt: null,
+}
 
 export const DEFAULT_STATE = {
   meta: {
-    orgName: 'التجمع الصحي بالطائف',
-    visionYear: '2030',
-    appVersion: 'V3',
-    lastUpdated: new Date().toISOString(),
+    orgName: APP_CONFIG.orgName,
+    version: APP_CONFIG.version,
+    strategicGoal: APP_CONFIG.strategicGoal,
+    lastUpdated: '2026-02-17T22:30:00.000Z',
   },
   engagement: {
-    points: 42,
-    contributors: 18,
+    contributors: 23,
+    activeSquads: 8,
   },
-  initiatives: [
+  session: DEFAULT_SESSION,
+  auditLog: [],
+  ideas: [
     {
-      id: 'IS-101',
-      title: 'تحسين مسار التحويل بين المرافق',
-      challengeType: 'تشغيلي',
-      owner: 'فريق التنسيق السريري',
-      organization: 'إدارة التحسين المستمر',
-      stage: 'التقييم',
-      status: 'قيد التحكيم',
-      description:
-        'تقليل زمن التحويل الداخلي عبر توحيد بروتوكول القرار وتفعيل إشعار رقمي فوري.',
+      id: 'INN-501',
+      title: 'مركز تنبيهات التحويلات السريرية',
+      owner: 'فريق الابتكار السريري',
+      department: 'إدارة التشغيل السريري',
+      domain: 'سريري',
+      problem: 'تأخر الاستجابة للتحويلات الداخلية الحرجة بين المنشآت.',
+      solution: 'محرك تنبيهات مرحلي مع لوحة تحكم فورية ونقاط تصعيد آلية.',
+      beneficiary: 'الأطباء والمرضى وفرق التنسيق',
+      stage: 'Testing',
+      status: 'قيد الاختبار',
       maturity: {
-        clarity: 82,
+        clarity: 84,
         feasibility: 76,
         value: 88,
-        readiness: 64,
-        riskHandling: 62,
+        readiness: 72,
+        riskHandling: 70,
       },
       risk: {
         operational: 3,
-        financial: 2,
-        technical: 2,
-        compliance: 2,
-      },
-      prototype: {
-        template: 'service-blueprint',
-        progress: 45,
-        lastOutput: '',
-      },
-      impact: {
-        costSaving: 220000,
-        timeSaving: 24,
-        qualityImprovement: 18,
-        satisfaction: 14,
-      },
-      benchmark: {
-        lastRun: null,
-        topMatches: [],
-      },
-      workspace: {
-        tasks: [
-          {
-            id: 'TSK-101-1',
-            text: 'توثيق رحلة التحويل الحالية',
-            done: true,
-          },
-          {
-            id: 'TSK-101-2',
-            text: 'تصميم نموذج التحويل الموحد',
-            done: false,
-          },
-        ],
-        comments: [
-          {
-            id: 'COM-101-1',
-            author: 'قائد المشروع',
-            text: 'تم اعتماد نطاق المرحلة الأولى.',
-            at: '2026-02-14T09:45:00.000Z',
-          },
-        ],
-      },
-      createdAt: '2026-02-10T09:00:00.000Z',
-      updatedAt: '2026-02-16T11:10:00.000Z',
-    },
-    {
-      id: 'IS-102',
-      title: 'مساعد رقمي لفرز استفسارات الموظفين',
-      challengeType: 'موارد بشرية',
-      owner: 'فريق تجربة الموظف',
-      organization: 'إدارة الموارد البشرية',
-      stage: 'النموذج الأولي',
-      status: 'قيد التطوير',
-      description:
-        'بناء مساعد ذكي يقلل وقت الرد ويزيد دقة تحويل الطلبات الداخلية للجهات الصحيحة.',
-      maturity: {
-        clarity: 74,
-        feasibility: 70,
-        value: 79,
-        readiness: 58,
-        riskHandling: 60,
-      },
-      risk: {
-        operational: 2,
         financial: 2,
         technical: 3,
         compliance: 2,
       },
       prototype: {
-        template: 'digital-mvp',
-        progress: 62,
-        lastOutput: '',
+        template: 'kpi-dashboard',
+        progress: 68,
+        hypothesis: 'التنبيه المبكر سيخفض زمن التحويل بنسبة 25%.',
+        testPlan: 'اختبار 3 أسابيع على مسارين سريريين عاليي الكثافة.',
+        validationMetric: 'متوسط زمن الإغلاق لكل تحويل',
+        lastDeck: 'Executive Deck v1',
+        assets: [],
       },
       impact: {
-        costSaving: 175000,
-        timeSaving: 28,
-        qualityImprovement: 20,
+        costSaving: 280000,
+        timeSaving: 24,
+        qualityImprovement: 21,
         satisfaction: 17,
       },
-      benchmark: {
-        lastRun: null,
-        topMatches: [],
+      simulation: {
+        model: 'service',
+        baselineCost: 230,
+        baselineMinutes: 31,
+        transactionsPerYear: 1800,
+        expectedCostReduction: 15,
+        expectedTimeReduction: 27,
+      },
+      monitoring: {
+        tocInput: 62,
+        tocOutput: 48,
+        tocOutcome: 41,
+        cashIn: 0,
+        cashOut: 0,
+        investment: 320000,
+        paybackMonths: 17,
+        lastReview: '2026-02-16T09:10:00.000Z',
+      },
+      governance: {
+        ipProtection: true,
+        confidentiality: true,
+        ethicsReview: true,
+        dataPolicy: true,
+        ownershipDefined: true,
+        ipReadiness: 82,
+        protectionNeeded: false,
+        protectionRequestedAt: null,
+        gateApproved: true,
+      },
+      approvals: {
+        screening: {
+          status: 'approved',
+          requested: false,
+          requestedAt: '2026-02-06T10:20:00.000Z',
+          decidedBy: 'مراجع أول',
+          decidedAt: '2026-02-06T15:00:00.000Z',
+          note: 'اجتازت الفرز.',
+        },
+        ethics: {
+          status: 'approved',
+          requested: false,
+          requestedAt: '2026-02-08T09:00:00.000Z',
+          decidedBy: 'لجنة أخلاقيات',
+          decidedAt: '2026-02-09T12:00:00.000Z',
+          note: 'موافقة أخلاقية.',
+        },
+        clinicalSafety: {
+          status: 'approved',
+          requested: false,
+          requestedAt: '2026-02-10T09:00:00.000Z',
+          decidedBy: 'قسم السلامة',
+          decidedAt: '2026-02-11T11:00:00.000Z',
+          note: 'تمت مراجعة السلامة.',
+        },
+        pilot: {
+          status: 'pending',
+          requested: true,
+          requestedAt: '2026-02-17T08:00:00.000Z',
+          decidedBy: '',
+          decidedAt: null,
+          note: '',
+        },
+        adoption: {
+          status: 'not_requested',
+          requested: false,
+          requestedAt: null,
+          decidedBy: '',
+          decidedAt: null,
+          note: '',
+        },
       },
       workspace: {
         tasks: [
           {
-            id: 'TSK-102-1',
-            text: 'تجربة النموذج على 3 إدارات',
+            id: 'TSK-501-1',
+            text: 'إغلاق قائمة مخاطر الاختبار السريري',
             done: false,
+            dueAt: '2026-02-20T10:00:00.000Z',
+          },
+          {
+            id: 'TSK-501-2',
+            text: 'تحديث لوحة الأداء اليومية',
+            done: true,
+            dueAt: '2026-02-15T10:00:00.000Z',
           },
         ],
-        comments: [],
+        notes: [
+          {
+            id: 'NTE-501-1',
+            author: 'مدير الابتكار',
+            text: 'الفريق جاهز لطلب اعتماد اختبار أوسع في الأسبوع القادم.',
+            at: '2026-02-16T13:00:00.000Z',
+          },
+        ],
       },
-      createdAt: '2026-02-11T07:00:00.000Z',
-      updatedAt: '2026-02-16T14:05:00.000Z',
+      timeline: [
+        {
+          id: 'EVT-501-1',
+          at: '2026-02-17T08:00:00.000Z',
+          title: 'طلب اعتماد Gate pilot',
+          detail: 'تم رفع الطلب من قائد الفريق.',
+        },
+      ],
+      createdAt: '2026-02-03T07:00:00.000Z',
+      updatedAt: '2026-02-17T08:00:00.000Z',
     },
     {
-      id: 'IS-103',
-      title: 'نموذج متابعة جودة المواعيد الجراحية',
-      challengeType: 'جودة',
-      owner: 'فريق الجودة السريرية',
-      organization: 'إدارة الجودة',
-      stage: 'الاعتماد',
-      status: 'معتمد',
-      description:
-        'لوحة متابعة تتنبأ بالتعثر في جداول العمليات وتقترح تدخلات استباقية.',
+      id: 'INN-502',
+      title: 'مساعد HR الذكي لتوجيه الطلبات',
+      owner: 'فريق التحول الرقمي',
+      department: 'الموارد البشرية',
+      domain: 'تقني',
+      problem: 'تأخر توجيه الطلبات الإدارية وتكرار الاستفسارات.',
+      solution: 'مساعد ذكي يصنف الطلب ويوجهه للمسار التنفيذي الصحيح.',
+      beneficiary: 'الموظفون وإدارات الدعم',
+      stage: 'Prototype',
+      status: 'قيد العمل',
       maturity: {
-        clarity: 91,
-        feasibility: 83,
-        value: 90,
-        readiness: 78,
-        riskHandling: 75,
+        clarity: 74,
+        feasibility: 71,
+        value: 80,
+        readiness: 60,
+        riskHandling: 57,
       },
       risk: {
         operational: 2,
-        financial: 1,
-        technical: 2,
-        compliance: 2,
-      },
-      prototype: {
-        template: 'policy-redesign',
-        progress: 80,
-        lastOutput: '',
-      },
-      impact: {
-        costSaving: 290000,
-        timeSaving: 31,
-        qualityImprovement: 27,
-        satisfaction: 21,
-      },
-      benchmark: {
-        lastRun: null,
-        topMatches: [],
-      },
-      workspace: {
-        tasks: [
-          {
-            id: 'TSK-103-1',
-            text: 'اعتماد السياسات النهائية',
-            done: true,
-          },
-        ],
-        comments: [
-          {
-            id: 'COM-103-1',
-            author: 'مكتب التحول',
-            text: 'يرجى تجهيز خطة إطلاق لمدة 90 يوم.',
-            at: '2026-02-15T10:20:00.000Z',
-          },
-        ],
-      },
-      createdAt: '2026-01-30T10:00:00.000Z',
-      updatedAt: '2026-02-17T06:30:00.000Z',
-    },
-    {
-      id: 'IS-104',
-      title: 'تحسين تجربة المريض في العيادات التخصصية',
-      challengeType: 'تجربة مريض',
-      owner: 'فريق تجربة المستفيد',
-      organization: 'إدارة تجربة المريض',
-      stage: 'التجربة',
-      status: 'قيد التطوير',
-      description:
-        'تقليل نقاط التعثر في رحلة المريض عبر جدولة مرنة ورسائل استباقية.',
-      maturity: {
-        clarity: 79,
-        feasibility: 72,
-        value: 84,
-        readiness: 66,
-        riskHandling: 61,
-      },
-      risk: {
-        operational: 3,
         financial: 2,
-        technical: 2,
+        technical: 3,
         compliance: 3,
       },
       prototype: {
-        template: 'patient-experience',
-        progress: 68,
-        lastOutput: '',
+        template: 'chatbot-flow',
+        progress: 46,
+        hypothesis: 'المساعد سيخفض زمن الرد الأول بنسبة 35%.',
+        testPlan: 'اختبار تجريبي على 4 إدارات لمدة أسبوعين.',
+        validationMetric: 'First Response Time',
+        lastDeck: 'Prototype Brief v0.9',
+        assets: [],
       },
       impact: {
-        costSaving: 205000,
-        timeSaving: 26,
-        qualityImprovement: 24,
-        satisfaction: 22,
+        costSaving: 140000,
+        timeSaving: 18,
+        qualityImprovement: 12,
+        satisfaction: 19,
       },
-      benchmark: {
-        lastRun: null,
-        topMatches: [],
+      simulation: {
+        model: 'financial',
+        baselineCost: 140,
+        baselineMinutes: 21,
+        transactionsPerYear: 2600,
+        expectedCostReduction: 16,
+        expectedTimeReduction: 22,
+      },
+      monitoring: {
+        tocInput: 0,
+        tocOutput: 0,
+        tocOutcome: 0,
+        cashIn: 0,
+        cashOut: 0,
+        investment: 210000,
+        paybackMonths: 15,
+        lastReview: null,
+      },
+      governance: {
+        ipProtection: true,
+        confidentiality: true,
+        ethicsReview: false,
+        dataPolicy: true,
+        ownershipDefined: false,
+        ipReadiness: 58,
+        protectionNeeded: true,
+        protectionRequestedAt: null,
+        gateApproved: false,
+      },
+      approvals: {
+        screening: {
+          status: 'approved',
+          requested: false,
+          requestedAt: '2026-02-11T08:00:00.000Z',
+          decidedBy: 'مراجع أول',
+          decidedAt: '2026-02-11T14:30:00.000Z',
+          note: 'مقبولة للانتقال إلى المعمارية.',
+        },
+        architecture: {
+          status: 'pending',
+          requested: true,
+          requestedAt: '2026-02-16T08:00:00.000Z',
+          decidedBy: '',
+          decidedAt: null,
+          note: '',
+        },
+        security: {
+          status: 'not_requested',
+          requested: false,
+          requestedAt: null,
+          decidedBy: '',
+          decidedAt: null,
+          note: '',
+        },
+        pilot: {
+          status: 'not_requested',
+          requested: false,
+          requestedAt: null,
+          decidedBy: '',
+          decidedAt: null,
+          note: '',
+        },
+        adoption: {
+          status: 'not_requested',
+          requested: false,
+          requestedAt: null,
+          decidedBy: '',
+          decidedAt: null,
+          note: '',
+        },
       },
       workspace: {
         tasks: [
           {
-            id: 'TSK-104-1',
-            text: 'جمع ملاحظات 50 مراجع',
+            id: 'TSK-502-1',
+            text: 'استكمال خريطة التكامل مع أنظمة HR',
             done: false,
+            dueAt: '2026-02-21T12:00:00.000Z',
           },
         ],
-        comments: [],
+        notes: [],
       },
-      createdAt: '2026-02-02T12:00:00.000Z',
-      updatedAt: '2026-02-17T08:12:00.000Z',
-    },
-    {
-      id: 'IS-105',
-      title: 'أتمتة طلبات الصيانة الطبية',
-      challengeType: 'تقني',
-      owner: 'فريق الهندسة الطبية',
-      organization: 'إدارة التقنية',
-      stage: 'التطبيق',
-      status: 'مطبق',
-      description:
-        'منصة طلبات موحدة تقلل زمن الاستجابة وتتابع حالة الأجهزة الحيوية بشكل لحظي.',
-      maturity: {
-        clarity: 94,
-        feasibility: 86,
-        value: 92,
-        readiness: 88,
-        riskHandling: 82,
-      },
-      risk: {
-        operational: 1,
-        financial: 1,
-        technical: 2,
-        compliance: 1,
-      },
-      prototype: {
-        template: 'digital-mvp',
-        progress: 100,
-        lastOutput: '',
-      },
-      impact: {
-        costSaving: 340000,
-        timeSaving: 36,
-        qualityImprovement: 29,
-        satisfaction: 25,
-      },
-      benchmark: {
-        lastRun: null,
-        topMatches: [],
-      },
-      workspace: {
-        tasks: [
-          {
-            id: 'TSK-105-1',
-            text: 'قياس الأثر بعد الإطلاق',
-            done: true,
-          },
-        ],
-        comments: [
-          {
-            id: 'COM-105-1',
-            author: 'العمليات',
-            text: 'أثر واضح في سرعة الاستجابة خلال الربع الحالي.',
-            at: '2026-02-16T08:10:00.000Z',
-          },
-        ],
-      },
-      createdAt: '2026-01-20T09:30:00.000Z',
-      updatedAt: '2026-02-17T10:00:00.000Z',
+      timeline: [
+        {
+          id: 'EVT-502-1',
+          at: '2026-02-16T08:00:00.000Z',
+          title: 'طلب اعتماد Gate architecture',
+          detail: 'بانتظار قرار المعمارية التقنية.',
+        },
+      ],
+      createdAt: '2026-02-08T10:00:00.000Z',
+      updatedAt: '2026-02-17T09:10:00.000Z',
     },
   ],
 }
