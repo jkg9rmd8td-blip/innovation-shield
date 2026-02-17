@@ -138,8 +138,17 @@ body {
   gap: 10px;
 }
 
+.summary-stack {
+  display: grid;
+  gap: 10px;
+}
+
 .summary-grid {
   grid-template-columns: 1.2fr 1.8fr;
+}
+
+.summary-extra-grid {
+  grid-template-columns: 1fr 1fr;
 }
 
 .map-grid {
@@ -187,6 +196,46 @@ body {
 .panel p {
   color: var(--muted);
   line-height: 1.8;
+}
+
+.executive-brief {
+  margin: 0;
+  color: #d9ecf8;
+  line-height: 1.9;
+  font-size: 14px;
+}
+
+.readiness-overview {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.readiness-overview article {
+  border: 1px solid rgba(145, 201, 235, 0.22);
+  border-radius: 10px;
+  background: rgba(6, 26, 39, 0.82);
+  padding: 8px;
+}
+
+.readiness-overview p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.readiness-overview strong {
+  display: inline-block;
+  margin-top: 5px;
+  font-size: 1.1rem;
+}
+
+.cta-button {
+  margin-top: 12px;
+  width: 100%;
+  min-height: 42px;
+  font-size: 15px;
 }
 
 .chip-row {
@@ -246,6 +295,21 @@ body {
   margin: 0;
   color: var(--muted);
   font-size: 12px;
+}
+
+.scope-card.good {
+  border-color: rgba(76, 213, 146, 0.45);
+  background: rgba(24, 66, 49, 0.32);
+}
+
+.scope-card.mid {
+  border-color: rgba(255, 196, 91, 0.48);
+  background: rgba(95, 68, 22, 0.32);
+}
+
+.scope-card.bad {
+  border-color: rgba(250, 135, 135, 0.52);
+  background: rgba(94, 36, 36, 0.35);
 }
 
 .scope-foot b {
@@ -441,6 +505,116 @@ textarea {
   display: inline-block;
 }
 
+.impact-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.impact-kpi-grid article {
+  border: 1px solid rgba(146, 198, 228, 0.23);
+  border-radius: 10px;
+  background: rgba(6, 31, 47, 0.84);
+  padding: 9px;
+}
+
+.impact-kpi-grid p {
+  margin: 0;
+  font-size: 11px;
+}
+
+.impact-kpi-grid strong {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 1.16rem;
+}
+
+.journey-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.journey-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(144, 196, 225, 0.28);
+  border-radius: 999px;
+  background: rgba(9, 34, 49, 0.78);
+  padding: 7px 12px;
+  font-size: 12px;
+  color: #dff2ff;
+}
+
+.journey-step small {
+  color: #83c6e6;
+}
+
+.latest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.latest-card {
+  border: 1px solid rgba(146, 198, 228, 0.22);
+  border-radius: 10px;
+  background: rgba(9, 35, 51, 0.8);
+  padding: 10px;
+  display: grid;
+  gap: 5px;
+}
+
+.latest-card strong {
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.latest-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.toolkit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.toolkit-card {
+  border: 1px solid rgba(146, 198, 228, 0.22);
+  border-radius: 10px;
+  background: rgba(9, 35, 51, 0.8);
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.toolkit-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 8px;
+}
+
+.toolkit-card strong {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.toolkit-card p {
+  margin: 0;
+  font-size: 12px;
+}
+
+.toolkit-meta small {
+  color: #9bc3db;
+  font-size: 11px;
+}
+
 .inline-actions,
 .inline-input {
   margin-top: 8px;
@@ -588,11 +762,38 @@ tbody td small {
   color: var(--muted);
   font-size: 12px;
   text-align: center;
-  padding: 8px;
+  padding: 0;
+  margin: 0;
+}
+
+.platform-footer {
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  background: rgba(6, 23, 34, 0.86);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  border: 1px solid rgba(141, 195, 224, 0.26);
+  border-radius: 999px;
+  padding: 6px 12px;
+  color: #d5edfb;
+  font-size: 12px;
+  background: rgba(9, 33, 48, 0.75);
 }
 
 @media (max-width: 1250px) {
   .summary-grid,
+  .summary-extra-grid,
   .map-grid,
   .workspace-grid,
   .prototype-grid,
@@ -601,6 +802,13 @@ tbody td small {
   }
 
   .scope-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .readiness-overview,
+  .latest-grid,
+  .impact-kpi-grid,
+  .toolkit-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -621,6 +829,10 @@ tbody td small {
 
   .scope-grid,
   .kpi-grid,
+  .readiness-overview,
+  .latest-grid,
+  .impact-kpi-grid,
+  .toolkit-grid,
   .summary-cards,
   .form-grid.two {
     grid-template-columns: 1fr;

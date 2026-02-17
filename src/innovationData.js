@@ -75,49 +75,49 @@ export const BENCHMARK_CATALOG = [
 
 export const EXECUTIVE_SCOPE = [
   {
-    id: 'journey',
-    title: 'رحلة ابتكار معيارية',
-    note: 'من الفكرة حتى التطبيق',
-  },
-  {
-    id: 'prototype_builder',
-    title: 'Prototype Builder',
-    note: 'قوالب جاهزة للعرض',
-  },
-  {
     id: 'workspace',
     title: 'Innovation Workspace',
-    note: 'تعاون المهام والتعليقات',
+    note: 'مساحة تعاون موحدة لإدارة المهام والتعليقات وتقدم المبادرة.',
   },
   {
     id: 'maturity',
     title: 'Idea Maturity Score',
-    note: 'تقييم موضوعي للنضج',
+    note: 'تقييم نضج الفكرة عبر معايير الوضوح والجدوى والاستعداد.',
+  },
+  {
+    id: 'prototype_builder',
+    title: 'Prototype Builder',
+    note: 'أداة لبناء نماذج أولية جاهزة للعرض والتنفيذ.',
   },
   {
     id: 'impact',
     title: 'Impact Simulator',
-    note: 'محاكاة الوقت والتكلفة',
+    note: 'محاكاة أثر الابتكار على الجودة والتكلفة والوقت.',
+  },
+  {
+    id: 'analytics',
+    title: 'Dashboard',
+    note: 'لوحة مؤشرات قيادية لدعم القرار التنفيذي في الوقت الحقيقي.',
+  },
+  {
+    id: 'marketplace',
+    title: 'Marketplace',
+    note: 'عرض الابتكارات الجاهزة للتطبيق داخل التجمع.',
   },
   {
     id: 'benchmarking',
     title: 'Global Benchmarking',
-    note: 'مقارنة مع حلول عالمية',
-  },
-  {
-    id: 'analytics',
-    title: 'Dashboard & Analytics',
-    note: 'مؤشرات أداء قيادية',
+    note: 'مقارنة الحلول المحلية بممارسات وتجارب عالمية مشابهة.',
   },
   {
     id: 'rewards',
-    title: 'Rewards & Gamification',
-    note: 'تحفيز المشاركة والجودة',
+    title: 'Rewards',
+    note: 'نظام تحفيز يرفع المشاركة ويحسن جودة المخرجات الابتكارية.',
   },
   {
-    id: 'marketplace',
-    title: 'Internal Marketplace',
-    note: 'عرض الحلول القابلة للتطبيق',
+    id: 'governance',
+    title: 'Governance & Policies',
+    note: 'ضبط الحوكمة والامتثال لحماية الفكرة وضمان الاستدامة المؤسسية.',
   },
 ]
 

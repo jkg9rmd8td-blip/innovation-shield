@@ -8,6 +8,7 @@ import {
   STAGES,
   STATUSES,
 } from './innovationData'
+import { METHOD_TOOLKIT } from './methodToolkit'
 import {
   benchmarkInitiative,
   buildPitchDeck,
@@ -60,9 +61,16 @@ function loadState() {
 }
 
 function readinessTag(value) {
-  if (value >= 75) return { label: 'جاهز', tone: 'good' }
-  if (value >= 50) return { label: 'قيد التمكين', tone: 'mid' }
+  if (value >= 80) return { label: 'جاهز', tone: 'good' }
+  if (value >= 40) return { label: 'قيد التطوير', tone: 'mid' }
   return { label: 'يحتاج تركيز', tone: 'bad' }
+}
+
+function formatMillions(value) {
+  const number = Number(value) || 0
+  if (number >= 1000000) return `${(number / 1000000).toFixed(2)}M`
+  if (number >= 1000) return `${(number / 1000).toFixed(1)}K`
+  return formatNumber(number)
 }
 
 function App() {
@@ -107,8 +115,6 @@ function App() {
   const scopeReadiness = useMemo(() => {
     const initiatives = state.initiatives
     const total = Math.max(1, initiatives.length)
-    const activeStages = new Set(initiatives.map((item) => item.stage)).size
-    const stageCoverage = Math.round((activeStages / STAGES.length) * 100)
 
     const withPrototype = initiatives.filter((item) => (item.prototype?.progress || 0) > 0).length
     const workspaceActive = initiatives.filter((item) => {
@@ -132,16 +138,30 @@ function App() {
       (item) => item.status === 'معتمد' || item.status === 'مطبق',
     ).length
 
+    const governanceAvg =
+      initiatives.length > 0
+        ? Math.round(
+            initiatives.reduce((sum, item) => sum + Number(item.risk?.compliance || 0), 0) /
+              initiatives.length,
+          )
+        : 0
+    const governanceCoverage = Math.round(
+      Math.max(
+        0,
+        Math.min(100, (marketplaceReady / total) * 55 + (100 - governanceAvg * 20) * 0.45),
+      ),
+    )
+
     return {
-      journey: stageCoverage,
-      prototype_builder: Math.round((withPrototype / total) * 100),
       workspace: Math.round((workspaceActive / total) * 100),
       maturity: kpis.avgMaturity,
+      prototype_builder: Math.round((withPrototype / total) * 100),
       impact: Math.round((impactActive / total) * 100),
-      benchmarking: Math.round((benchmarked / total) * 100),
       analytics: Math.round((analyticsReady / total) * 100),
-      rewards: rewardsSignal,
       marketplace: Math.round((marketplaceReady / total) * 100),
+      benchmarking: Math.round((benchmarked / total) * 100),
+      rewards: rewardsSignal,
+      governance: governanceCoverage,
     }
   }, [kpis.avgMaturity, state.engagement.points, state.initiatives])
 
@@ -408,46 +428,195 @@ function App() {
       scopeCards.reduce((sum, card) => sum + card.value, 0) / scopeCards.length,
     )
 
-    return (
-      <section className="view-grid summary-grid">
-        <article className="panel">
-          <div className="panel-head">
-            <h3>Executive Summary</h3>
-            <span>{state.meta.orgName}</span>
-          </div>
-          <p>
-            درع الابتكار V3 منصة مؤسسية متكاملة لإدارة دورة الابتكار داخل التجمع الصحي بالطائف،
-            من التقاط الفكرة حتى التطبيق. النسخة الجديدة مبنية من الصفر بهيكل مرن يدعم
-            التطوير المستقبلي، ويركز على الجودة، سرعة القرار، والأثر القابل للقياس.
-          </p>
-          <div className="chip-row">
-            <span className="chip good">الجاهزية الكلية: {overallReadiness}%</span>
-            <span className="chip mid">رؤية {state.meta.visionYear}</span>
-            <span className="chip">الإصدار: {state.meta.appVersion}</span>
-          </div>
-        </article>
+    const readyUnits = scopeCards.filter((card) => card.value >= 80).length
+    const inProgressUnits = scopeCards.filter(
+      (card) => card.value >= 40 && card.value < 80,
+    ).length
+    const inactiveUnits = scopeCards.filter((card) => card.value < 40).length
 
-        <article className="panel">
-          <div className="panel-head">
-            <h3>المسارات التنفيذية</h3>
-            <span>9 وحدات أساسية</span>
-          </div>
-          <div className="scope-grid">
-            {scopeCards.map((card) => (
-              <article key={card.id} className="scope-card">
-                <div className="scope-top">
-                  <strong>{card.title}</strong>
-                  <span className={`badge ${card.readiness.tone}`}>{card.readiness.label}</span>
+    const latestInnovationsRaw = [...state.initiatives]
+      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+      .slice(0, 3)
+    const placeholders = [
+      {
+        id: 'PL-1',
+        title: 'ابتكار قيد الإضافة',
+        organization: 'التجمع الصحي بالطائف',
+        status: 'قيد التحديث',
+      },
+      {
+        id: 'PL-2',
+        title: 'ابتكار جديد',
+        organization: 'إدارة التحول',
+        status: 'قيد المراجعة',
+      },
+      {
+        id: 'PL-3',
+        title: 'نموذج أولي جديد',
+        organization: 'إدارة الجودة',
+        status: 'قيد البناء',
+      },
+    ]
+    const latestInnovations = [...latestInnovationsRaw, ...placeholders].slice(0, 3)
+
+    const journeySteps = [
+      'Idea',
+      'Evaluation',
+      'Prototype',
+      'Simulation',
+      'Marketplace',
+      'Adoption',
+    ]
+
+    return (
+      <div className="summary-stack">
+        <section className="view-grid summary-grid">
+          <article className="panel">
+            <div className="panel-head">
+              <h3>Executive Summary</h3>
+              <span>{state.meta.orgName}</span>
+            </div>
+
+            <p className="executive-brief">
+              منصة درع الابتكار V3 هي منظومة ابتكار مؤسسية متكاملة تهدف إلى رفع جودة الأفكار،
+              تسريع التقييم، وتمكين النماذج الأولية داخل التجمع الصحي بالطائف.
+            </p>
+
+            <div className="readiness-overview">
+              <article>
+                <p>جاهزية المنصة</p>
+                <strong>{overallReadiness}%</strong>
+              </article>
+              <article>
+                <p>الوحدات الجاهزة</p>
+                <strong>{readyUnits}</strong>
+              </article>
+              <article>
+                <p>قيد التطوير</p>
+                <strong>{inProgressUnits}</strong>
+              </article>
+              <article>
+                <p>غير مفعلة</p>
+                <strong>{inactiveUnits}</strong>
+              </article>
+            </div>
+
+            <div className="chip-row">
+              <span className="chip good">الجاهزية الكلية: {overallReadiness}%</span>
+              <span className="chip mid">رؤية {state.meta.visionYear}</span>
+              <span className="chip">الإصدار: {state.meta.appVersion}</span>
+            </div>
+
+            <button
+              className="btn primary cta-button"
+              onClick={() => {
+                if (!selectedId && state.initiatives[0]?.id) {
+                  setSelectedId(state.initiatives[0].id)
+                }
+                setActiveView('workspace')
+              }}
+            >
+              ابدأ رحلتك الابتكارية الآن
+            </button>
+          </article>
+
+          <article className="panel">
+            <div className="panel-head">
+              <h3>الوحدات حسب الأولوية</h3>
+              <span>من الفكرة إلى التطبيق</span>
+            </div>
+            <div className="scope-grid">
+              {scopeCards.map((card) => (
+                <article key={card.id} className={`scope-card ${card.readiness.tone}`}>
+                  <div className="scope-top">
+                    <strong>{card.title}</strong>
+                    <span className={`badge ${card.readiness.tone}`}>{card.readiness.label}</span>
+                  </div>
+                  <p>{card.note}</p>
+                  <div className="scope-foot">
+                    <b>{card.value}%</b>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </article>
+        </section>
+
+        <section className="view-grid summary-extra-grid">
+          <article className="panel">
+            <div className="panel-head">
+              <h3>أثر الابتكار</h3>
+              <span>Innovation Impact</span>
+            </div>
+            <div className="impact-kpi-grid">
+              <article>
+                <p>نضج الابتكار</p>
+                <strong>{kpis.avgMaturity}%</strong>
+              </article>
+              <article>
+                <p>الوفر المالي</p>
+                <strong>{formatMillions(kpis.annualSaving)}</strong>
+              </article>
+              <article>
+                <p>المخاطر</p>
+                <strong>{kpis.avgRisk}%</strong>
+              </article>
+            </div>
+          </article>
+
+          <article className="panel">
+            <div className="panel-head">
+              <h3>Innovation Journey</h3>
+              <span>خارطة مسار مبسطة</span>
+            </div>
+            <div className="journey-strip">
+              {journeySteps.map((step, index) => (
+                <div key={step} className="journey-step">
+                  <span>{step}</span>
+                  {index < journeySteps.length - 1 ? <small>→</small> : null}
                 </div>
-                <p>{card.note}</p>
-                <div className="scope-foot">
-                  <b>{card.value}%</b>
+              ))}
+            </div>
+          </article>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head">
+            <h3>أحدث الابتكارات</h3>
+            <span>Latest 3</span>
+          </div>
+          <div className="latest-grid">
+            {latestInnovations.map((item) => (
+              <article key={item.id} className="latest-card">
+                <strong>{item.title}</strong>
+                <p>الجهة: {item.organization}</p>
+                <span className="badge">{item.status}</span>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="panel">
+          <div className="panel-head">
+            <h3>Innovation Toolkit (من الملفات المرفوعة)</h3>
+            <span>{METHOD_TOOLKIT.length} أداة</span>
+          </div>
+          <div className="toolkit-grid">
+            {METHOD_TOOLKIT.map((tool) => (
+              <article key={tool.id} className="toolkit-card">
+                <div className="toolkit-head">
+                  <strong>{tool.title}</strong>
+                  <span className="badge">{tool.stage}</span>
+                </div>
+                <p>{tool.purpose}</p>
+                <div className="toolkit-meta">
+                  <small>Source: {tool.source}</small>
                 </div>
               </article>
             ))}
           </div>
-        </article>
-      </section>
+        </section>
+      </div>
     )
   }
 
@@ -1049,8 +1218,8 @@ function App() {
           <p className="eyebrow">Innovation Shield V3</p>
           <h1>درع الابتكار - منصة جديدة مبنية من الصفر</h1>
           <p className="lead">
-            منظومة ابتكار مؤسسية متكاملة لتحويل الأفكار إلى حلول مطبقة داخل التجمع الصحي
-            بالطائف، مع أدوات نضج، محاكاة أثر، ومقارنة عالمية.
+            منصة درع الابتكار V3 هي منظومة ابتكار مؤسسية متكاملة تهدف إلى رفع جودة الأفكار،
+            تسريع التقييم، وتمكين النماذج الأولية داخل التجمع الصحي بالطائف.
           </p>
         </div>
         <div className="hero-stats">
@@ -1107,9 +1276,17 @@ function App() {
       {activeView === 'analytics' ? renderAnalytics() : null}
       {activeView === 'marketplace' ? renderMarketplace() : null}
 
-      <footer className="footer-note">
-        آخر تحديث: {formatDate(state.meta.lastUpdated)} | Contributors:{' '}
-        {state.engagement.contributors} | Points: {state.engagement.points}
+      <footer className="platform-footer">
+        <div className="footer-links">
+          <a href="#about">من نحن</a>
+          <a href="#policies">السياسات</a>
+          <a href="#support">الدعم</a>
+          <a href="#contact">تواصل معنا</a>
+        </div>
+        <p className="footer-note">
+          آخر تحديث: {formatDate(state.meta.lastUpdated)} | Contributors:{' '}
+          {state.engagement.contributors} | Points: {state.engagement.points}
+        </p>
       </footer>
     </div>
   )
