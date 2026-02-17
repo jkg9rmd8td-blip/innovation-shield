@@ -20,11 +20,13 @@ const STORAGE_KEY = 'innovation_shield_v4_state'
 const VIEWS = [
   { id: 'overview', label: 'الرؤية التنفيذية' },
   { id: 'lifecycle', label: 'دورة حياة الابتكار' },
+  { id: 'workflow', label: 'Workflow & Approvals' },
   { id: 'workspace', label: 'Innovation Workspace' },
   { id: 'prototype', label: 'Prototype Builder' },
   { id: 'impact', label: 'Impact Simulator' },
   { id: 'knowledge', label: 'المكتبة المعرفية' },
   { id: 'governance', label: 'الحوكمة والملكية الفكرية' },
+  { id: 'audit', label: 'Audit Log' },
 ]
 
 const LIFECYCLE_STAGES = [
@@ -37,6 +39,54 @@ const LIFECYCLE_STAGES = [
 ]
 
 const STATUS_OPTIONS = ['جديد', 'قيد العمل', 'قيد الاختبار', 'قيد المراجعة', 'معتمد', 'مطبق']
+
+const ROLE_OPTIONS = ['مبتكر', 'مراجع', 'حوكمة', 'مدير المنصة']
+
+const ROLE_PERMISSIONS = {
+  مبتكر: {
+    canCreate: true,
+    canEdit: true,
+    canMoveStages: false,
+    canApprove: false,
+    canGovernance: false,
+  },
+  مراجع: {
+    canCreate: false,
+    canEdit: true,
+    canMoveStages: true,
+    canApprove: true,
+    canGovernance: false,
+  },
+  حوكمة: {
+    canCreate: false,
+    canEdit: true,
+    canMoveStages: true,
+    canApprove: false,
+    canGovernance: true,
+  },
+  'مدير المنصة': {
+    canCreate: true,
+    canEdit: true,
+    canMoveStages: true,
+    canApprove: true,
+    canGovernance: true,
+  },
+}
+
+const APPROVAL_GATES = [
+  { id: 'screening', title: 'Gate 1 - فرز الفكرة' },
+  { id: 'prototype', title: 'Gate 2 - صلاحية النموذج' },
+  { id: 'pilot', title: 'Gate 3 - جاهزية الاختبار' },
+  { id: 'adoption', title: 'Gate 4 - قرار الاعتماد' },
+]
+
+const STAGE_GATE_REQUIREMENT = {
+  'الفرز المؤسسي': 'screening',
+  'بناء النموذج الأولي': 'prototype',
+  'الاختبار الميداني': 'pilot',
+  الاعتماد: 'adoption',
+  'التوسع والتطبيق': 'adoption',
+}
 
 const REQUIRED_GOVERNANCE_FIELDS = [
   'ipProtection',
@@ -54,6 +104,11 @@ const DEFAULT_INTAKE_FORM = {
   problem: '',
   solution: '',
   beneficiary: '',
+}
+
+const DEFAULT_LOGIN_FORM = {
+  name: '',
+  role: ROLE_OPTIONS[0],
 }
 
 const DEFAULT_SIMULATION_INPUTS = {
@@ -75,6 +130,13 @@ const DEFAULT_MONITORING = {
   lastReview: null,
 }
 
+const DEFAULT_SESSION = {
+  isAuthenticated: false,
+  name: '',
+  role: ROLE_OPTIONS[0],
+  lastLoginAt: null,
+}
+
 const DEFAULT_STATE = {
   meta: {
     orgName: 'التجمع الصحي بالطائف',
@@ -86,6 +148,8 @@ const DEFAULT_STATE = {
     contributors: 18,
     activeSquads: 6,
   },
+  session: DEFAULT_SESSION,
+  auditLog: [],
   ideas: [
     {
       id: 'INN-201',
@@ -224,6 +288,26 @@ const DEFAULT_STATE = {
   ],
 }
 
+function createDefaultApprovalGate() {
+  return {
+    status: 'not_requested',
+    requested: false,
+    requestedAt: null,
+    decidedBy: '',
+    decidedAt: null,
+    note: '',
+  }
+}
+
+function createDefaultApprovals() {
+  return {
+    screening: createDefaultApprovalGate(),
+    prototype: createDefaultApprovalGate(),
+    pilot: createDefaultApprovalGate(),
+    adoption: createDefaultApprovalGate(),
+  }
+}
+
 function safeParse(input, fallback) {
   try {
     return JSON.parse(input)
@@ -256,6 +340,54 @@ function normalizeIdea(input) {
   }
 
   const gateApproved = REQUIRED_GOVERNANCE_FIELDS.every((field) => Boolean(governance[field]))
+
+  const approvals = {
+    ...createDefaultApprovals(),
+    ...(idea.approvals || {}),
+    screening: {
+      ...createDefaultApprovalGate(),
+      ...(idea.approvals?.screening || {}),
+    },
+    prototype: {
+      ...createDefaultApprovalGate(),
+      ...(idea.approvals?.prototype || {}),
+    },
+    pilot: {
+      ...createDefaultApprovalGate(),
+      ...(idea.approvals?.pilot || {}),
+    },
+    adoption: {
+      ...createDefaultApprovalGate(),
+      ...(idea.approvals?.adoption || {}),
+    },
+  }
+
+  const ideaStageIndex = LIFECYCLE_STAGES.indexOf(idea.stage)
+  const autoGateOrder = [
+    { gateId: 'screening', stage: 'الفرز المؤسسي' },
+    { gateId: 'prototype', stage: 'بناء النموذج الأولي' },
+    { gateId: 'pilot', stage: 'الاختبار الميداني' },
+    { gateId: 'adoption', stage: 'الاعتماد' },
+  ]
+
+  autoGateOrder.forEach((item) => {
+    const threshold = LIFECYCLE_STAGES.indexOf(item.stage)
+    if (ideaStageIndex >= threshold) {
+      const gate = approvals[item.gateId]
+      if (gate.status === 'not_requested' || gate.status === 'pending') {
+        approvals[item.gateId] = {
+          ...gate,
+          status: 'approved',
+          requested: false,
+          decidedBy: gate.decidedBy || 'system',
+          decidedAt: gate.decidedAt || idea.updatedAt || now,
+          note: gate.note || 'اعتماد تلقائي بسبب تقدم الفكرة في دورة الحياة.',
+        }
+      }
+    }
+  })
+
+  const evidence = Array.isArray(idea.evidence) ? idea.evidence : []
 
   return {
     id: idea.id || newId('INN'),
@@ -310,6 +442,8 @@ function normalizeIdea(input) {
       lastRun: idea.benchmark?.lastRun || null,
       topMatches: Array.isArray(idea.benchmark?.topMatches) ? idea.benchmark.topMatches : [],
     },
+    approvals,
+    evidence,
     createdAt: idea.createdAt || now,
     updatedAt: idea.updatedAt || idea.createdAt || now,
   }
@@ -334,6 +468,11 @@ function normalizeState(input) {
       ...seed.engagement,
       ...(raw.engagement || {}),
     },
+    session: {
+      ...DEFAULT_SESSION,
+      ...(raw.session || {}),
+    },
+    auditLog: Array.isArray(raw.auditLog) ? raw.auditLog : [],
     ideas,
   }
 }
@@ -354,6 +493,7 @@ function stageTone(stage) {
 function canMoveToStage(idea, nextStage) {
   const currentIndex = LIFECYCLE_STAGES.indexOf(idea.stage)
   const nextIndex = LIFECYCLE_STAGES.indexOf(nextStage)
+  const requiredGate = STAGE_GATE_REQUIREMENT[nextStage]
 
   if (nextIndex === -1) {
     return { ok: false, message: 'مرحلة غير معروفة.' }
@@ -361,6 +501,13 @@ function canMoveToStage(idea, nextStage) {
 
   if (nextIndex <= currentIndex) {
     return { ok: true }
+  }
+
+  if (requiredGate) {
+    const gate = idea.approvals?.[requiredGate]
+    if (!gate || gate.status !== 'approved') {
+      return { ok: false, message: 'يلزم اعتماد البوابة المرحلية قبل الانتقال.' }
+    }
   }
 
   if (nextStage === 'الفرز المؤسسي') {
@@ -409,10 +556,14 @@ function App() {
   const [state, setState] = useState(loadState)
   const [activeView, setActiveView] = useState('overview')
   const [selectedId, setSelectedId] = useState(state.ideas[0]?.id || null)
+  const [loginForm, setLoginForm] = useState(DEFAULT_LOGIN_FORM)
   const [intakeForm, setIntakeForm] = useState(DEFAULT_INTAKE_FORM)
   const [taskInput, setTaskInput] = useState('')
   const [noteAuthor, setNoteAuthor] = useState('صاحب الفكرة')
   const [noteInput, setNoteInput] = useState('')
+  const [approvalNote, setApprovalNote] = useState('')
+  const [evidenceType, setEvidenceType] = useState('ملف اختبار')
+  const [evidenceNote, setEvidenceNote] = useState('')
   const [flashMessage, setFlashMessage] = useState('')
   const [impactResult, setImpactResult] = useState(null)
 
@@ -435,6 +586,9 @@ function App() {
     () => state.ideas.find((item) => item.id === selectedId) || state.ideas[0] || null,
     [state.ideas, selectedId],
   )
+
+  const session = state.session || DEFAULT_SESSION
+  const permissions = ROLE_PERMISSIONS[session.role] || ROLE_PERMISSIONS[ROLE_OPTIONS[0]]
 
   const lifecycleGroups = useMemo(() => {
     return LIFECYCLE_STAGES.reduce((acc, stage) => {
@@ -466,6 +620,27 @@ function App() {
 
     const governanceReady = state.ideas.filter((item) => item.governance.gateApproved).length
 
+    const allGateStates = state.ideas.flatMap((idea) =>
+      APPROVAL_GATES.map((gate) => idea.approvals?.[gate.id]?.status || 'not_requested'),
+    )
+    const pendingApprovals = allGateStates.filter((status) => status === 'pending').length
+    const approvedGates = allGateStates.filter((status) => status === 'approved').length
+    const rejectedGates = allGateStates.filter((status) => status === 'rejected').length
+
+    const cycleDays = state.ideas
+      .map((idea) => {
+        const created = new Date(idea.createdAt).getTime()
+        const updated = new Date(idea.updatedAt).getTime()
+        if (Number.isNaN(created) || Number.isNaN(updated) || updated < created) return 0
+        return Math.max(1, Math.round((updated - created) / (1000 * 60 * 60 * 24)))
+      })
+      .filter((value) => value > 0)
+
+    const averageCycleDays =
+      cycleDays.length > 0
+        ? Math.round(cycleDays.reduce((sum, value) => sum + value, 0) / cycleDays.length)
+        : 0
+
     return {
       total,
       avgMaturity,
@@ -475,10 +650,24 @@ function App() {
       implemented,
       annualSaving,
       governanceReady,
+      pendingApprovals,
+      approvedGates,
+      rejectedGates,
+      averageCycleDays,
     }
   }, [state.ideas])
 
-  const updateIdea = (ideaId, updater) => {
+  const buildAuditEntry = (action, target, detail) => ({
+    id: newId('AUD'),
+    at: new Date().toISOString(),
+    actor: session.name || 'system',
+    role: session.role || 'مبتكر',
+    action,
+    target,
+    detail,
+  })
+
+  const updateIdea = (ideaId, updater, audit = null) => {
     setState((prev) => {
       const updatedIdeas = prev.ideas.map((idea) => {
         if (idea.id !== ideaId) return idea
@@ -493,6 +682,9 @@ function App() {
       return {
         ...prev,
         ideas: updatedIdeas,
+        auditLog: audit
+          ? [buildAuditEntry(audit.action, audit.target || ideaId, audit.detail), ...prev.auditLog].slice(0, 300)
+          : prev.auditLog,
         meta: {
           ...prev.meta,
           lastUpdated: new Date().toISOString(),
@@ -501,7 +693,74 @@ function App() {
     })
   }
 
+  const handleLogin = () => {
+    if (!loginForm.name.trim()) {
+      setFlashMessage('اكتب الاسم قبل تسجيل الدخول.')
+      return
+    }
+
+    const now = new Date().toISOString()
+    setState((prev) => ({
+      ...prev,
+      session: {
+        isAuthenticated: true,
+        name: loginForm.name.trim(),
+        role: loginForm.role,
+        lastLoginAt: now,
+      },
+      auditLog: [
+        {
+          id: newId('AUD'),
+          at: now,
+          actor: loginForm.name.trim(),
+          role: loginForm.role,
+          action: 'login',
+          target: 'session',
+          detail: 'تسجيل دخول إلى المنصة',
+        },
+        ...prev.auditLog,
+      ].slice(0, 300),
+      meta: {
+        ...prev.meta,
+        lastUpdated: now,
+      },
+    }))
+
+    setFlashMessage(`تم تسجيل الدخول كـ ${loginForm.role}.`)
+  }
+
+  const handleLogout = () => {
+    const now = new Date().toISOString()
+    setState((prev) => ({
+      ...prev,
+      session: {
+        ...DEFAULT_SESSION,
+      },
+      auditLog: [
+        {
+          id: newId('AUD'),
+          at: now,
+          actor: session.name || 'unknown',
+          role: session.role || 'مبتكر',
+          action: 'logout',
+          target: 'session',
+          detail: 'تسجيل خروج من المنصة',
+        },
+        ...prev.auditLog,
+      ].slice(0, 300),
+      meta: {
+        ...prev.meta,
+        lastUpdated: now,
+      },
+    }))
+  }
+
   const createIdeaFromForm = () => {
+    if (!permissions.canCreate) {
+      setFlashMessage('صلاحياتك الحالية لا تسمح بإنشاء أفكار جديدة.')
+      return
+    }
+
     if (!intakeForm.title.trim()) {
       setFlashMessage('اكتب عنوان الابتكار أولاً.')
       return
@@ -516,7 +775,7 @@ function App() {
     const newIdea = normalizeIdea({
       id: newId('INN'),
       title: intakeForm.title.trim(),
-      owner: intakeForm.owner.trim() || 'فريق الابتكار',
+      owner: intakeForm.owner.trim() || session.name || 'فريق الابتكار',
       department: intakeForm.department.trim() || 'التجمع الصحي بالطائف',
       domain: intakeForm.domain,
       problem: intakeForm.problem.trim(),
@@ -553,6 +812,18 @@ function App() {
     setState((prev) => ({
       ...prev,
       ideas: [newIdea, ...prev.ideas],
+      auditLog: [
+        {
+          id: newId('AUD'),
+          at: now,
+          actor: session.name || 'system',
+          role: session.role || 'مبتكر',
+          action: 'create_idea',
+          target: newIdea.id,
+          detail: `إنشاء فكرة جديدة بعنوان "${newIdea.title}"`,
+        },
+        ...prev.auditLog,
+      ].slice(0, 300),
       engagement: {
         ...prev.engagement,
         contributors: prev.engagement.contributors + 1,
@@ -570,6 +841,11 @@ function App() {
   }
 
   const handleIdeaStageChange = (ideaId, nextStage) => {
+    if (!permissions.canMoveStages) {
+      setFlashMessage('صلاحياتك لا تسمح بتغيير المراحل.')
+      return
+    }
+
     const idea = state.ideas.find((item) => item.id === ideaId)
     if (!idea) return
 
@@ -596,10 +872,19 @@ function App() {
       }
 
       return draft
+    }, {
+      action: 'change_stage',
+      target: ideaId,
+      detail: `تغيير المرحلة إلى "${nextStage}"`,
     })
   }
 
   const handleIdeaStatusChange = (ideaId, nextStatus) => {
+    if (!permissions.canMoveStages) {
+      setFlashMessage('صلاحياتك لا تسمح بتغيير الحالة.')
+      return
+    }
+
     updateIdea(ideaId, (draft) => {
       draft.status = nextStatus
       if (nextStatus === 'معتمد' && LIFECYCLE_STAGES.indexOf(draft.stage) < LIFECYCLE_STAGES.indexOf('الاعتماد')) {
@@ -609,18 +894,36 @@ function App() {
         draft.stage = 'التوسع والتطبيق'
       }
       return draft
+    }, {
+      action: 'change_status',
+      target: ideaId,
+      detail: `تغيير الحالة إلى "${nextStatus}"`,
     })
   }
 
   const handleMaturityChange = (field, value) => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بتعديل التقييم.')
+      return
+    }
+
     if (!selectedIdea) return
     updateIdea(selectedIdea.id, (draft) => {
       draft.maturity[field] = clamp(value, 0, 100)
       return draft
+    }, {
+      action: 'update_maturity',
+      target: selectedIdea.id,
+      detail: `تحديث مؤشر ${field}`,
     })
   }
 
   const handleAddTask = () => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بإضافة مهام.')
+      return
+    }
+
     if (!selectedIdea || !taskInput.trim()) return
     updateIdea(selectedIdea.id, (draft) => {
       draft.workspace.tasks.unshift({
@@ -629,21 +932,39 @@ function App() {
         done: false,
       })
       return draft
+    }, {
+      action: 'add_task',
+      target: selectedIdea.id,
+      detail: 'إضافة مهمة جديدة إلى مساحة العمل',
     })
     setTaskInput('')
   }
 
   const handleToggleTask = (taskId) => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بتحديث المهام.')
+      return
+    }
+
     if (!selectedIdea) return
     updateIdea(selectedIdea.id, (draft) => {
       draft.workspace.tasks = draft.workspace.tasks.map((task) =>
         task.id === taskId ? { ...task, done: !task.done } : task,
       )
       return draft
+    }, {
+      action: 'toggle_task',
+      target: selectedIdea.id,
+      detail: `تحديث حالة المهمة ${taskId}`,
     })
   }
 
   const handleAddNote = () => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بإضافة ملاحظات.')
+      return
+    }
+
     if (!selectedIdea || !noteInput.trim()) return
     updateIdea(selectedIdea.id, (draft) => {
       draft.workspace.notes.unshift({
@@ -653,19 +974,37 @@ function App() {
         at: new Date().toISOString(),
       })
       return draft
+    }, {
+      action: 'add_note',
+      target: selectedIdea.id,
+      detail: 'إضافة ملاحظة في سجل التعاون',
     })
     setNoteInput('')
   }
 
   const handlePrototypeFieldChange = (field, value) => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بتعديل النموذج الأولي.')
+      return
+    }
+
     if (!selectedIdea) return
     updateIdea(selectedIdea.id, (draft) => {
       draft.prototype[field] = value
       return draft
+    }, {
+      action: 'update_prototype',
+      target: selectedIdea.id,
+      detail: `تعديل حقل ${field} في Prototype`,
     })
   }
 
   const handlePrototypeGenerate = () => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بتوليد النموذج.')
+      return
+    }
+
     if (!selectedIdea) return
 
     const template = PROTOTYPE_TEMPLATES.find((item) => item.id === selectedIdea.prototype.template)
@@ -679,21 +1018,39 @@ function App() {
       }
       draft.status = draft.status === 'جديد' ? 'قيد العمل' : draft.status
       return draft
+    }, {
+      action: 'generate_pitch',
+      target: selectedIdea.id,
+      detail: 'توليد Deck أولي',
     })
 
     setFlashMessage('تم توليد نموذج عرض أولي وربطه بسجل الابتكار.')
   }
 
   const handleSimulationInputChange = (field, value) => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بتعديل مدخلات المحاكاة.')
+      return
+    }
+
     if (!selectedIdea) return
 
     updateIdea(selectedIdea.id, (draft) => {
       draft.simulationInputs[field] = Number(value)
       return draft
+    }, {
+      action: 'update_simulation',
+      target: selectedIdea.id,
+      detail: `تعديل مدخل ${field} في المحاكاة`,
     })
   }
 
   const handleRunImpact = () => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بتشغيل محاكاة الأثر.')
+      return
+    }
+
     if (!selectedIdea) return
 
     const result = simulateImpact(selectedIdea, selectedIdea.simulationInputs)
@@ -705,12 +1062,21 @@ function App() {
       draft.impact.qualityImprovement = result.qualityLift
       draft.impact.satisfaction = result.satisfactionLift
       return draft
+    }, {
+      action: 'run_impact_simulation',
+      target: selectedIdea.id,
+      detail: 'تشغيل محاكاة الأثر',
     })
 
     setFlashMessage('تم تنفيذ محاكاة الأثر وتحديث مؤشرات الفكرة.')
   }
 
   const handleRunBenchmark = () => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بتشغيل المقارنة المرجعية.')
+      return
+    }
+
     if (!selectedIdea) return
     const matches = benchmarkInitiative(selectedIdea, BENCHMARK_CATALOG)
 
@@ -718,12 +1084,21 @@ function App() {
       draft.benchmark.topMatches = matches
       draft.benchmark.lastRun = new Date().toISOString()
       return draft
+    }, {
+      action: 'run_benchmark',
+      target: selectedIdea.id,
+      detail: 'تشغيل مقارنة مرجعية عالمية',
     })
 
     setFlashMessage('تمت المقارنة مع الحلول العالمية المرجعية.')
   }
 
   const handleGovernanceToggle = (field) => {
+    if (!permissions.canGovernance) {
+      setFlashMessage('تعديل الحوكمة متاح لدور الحوكمة أو مدير المنصة.')
+      return
+    }
+
     if (!selectedIdea) return
 
     updateIdea(selectedIdea.id, (draft) => {
@@ -732,27 +1107,158 @@ function App() {
         Boolean(draft.governance[item]),
       )
       return draft
+    }, {
+      action: 'toggle_governance',
+      target: selectedIdea.id,
+      detail: `تحديث بند الحوكمة ${field}`,
     })
   }
 
   const handleMonitoringChange = (field, value) => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بتعديل متابعة التطبيق.')
+      return
+    }
+
     if (!selectedIdea) return
 
     updateIdea(selectedIdea.id, (draft) => {
       draft.monitoring[field] = Number(value)
       return draft
+    }, {
+      action: 'update_monitoring',
+      target: selectedIdea.id,
+      detail: `تحديث مؤشر متابعة ${field}`,
     })
   }
 
   const handleSaveMonitoring = () => {
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بحفظ المتابعة.')
+      return
+    }
+
     if (!selectedIdea) return
 
     updateIdea(selectedIdea.id, (draft) => {
       draft.monitoring.lastReview = new Date().toISOString()
       return draft
+    }, {
+      action: 'save_monitoring_review',
+      target: selectedIdea.id,
+      detail: 'حفظ مراجعة متابعة ما بعد التطبيق',
     })
 
     setFlashMessage('تم حفظ متابعة ما بعد التطبيق.')
+  }
+
+  const handleRequestApproval = (gateId) => {
+    if (!selectedIdea) return
+    if (!permissions.canEdit && !permissions.canCreate) {
+      setFlashMessage('صلاحياتك الحالية لا تسمح بطلب اعتماد مرحلي.')
+      return
+    }
+
+    updateIdea(selectedIdea.id, (draft) => {
+      const gate = draft.approvals[gateId]
+      if (!gate) return draft
+      gate.requested = true
+      gate.requestedAt = new Date().toISOString()
+      if (gate.status !== 'approved') {
+        gate.status = 'pending'
+      }
+      return draft
+    }, {
+      action: 'request_approval',
+      target: selectedIdea.id,
+      detail: `طلب اعتماد البوابة ${gateId}`,
+    })
+
+    setFlashMessage('تم إرسال طلب الاعتماد المرحلي.')
+  }
+
+  const handleDecideApproval = (gateId, decision) => {
+    if (!selectedIdea) return
+    if (!permissions.canApprove) {
+      setFlashMessage('اعتماد المراحل متاح لدور المراجع أو مدير المنصة.')
+      return
+    }
+
+    updateIdea(selectedIdea.id, (draft) => {
+      const gate = draft.approvals[gateId]
+      if (!gate) return draft
+      gate.status = decision
+      gate.requested = false
+      gate.decidedBy = session.name || 'reviewer'
+      gate.decidedAt = new Date().toISOString()
+      gate.note = approvalNote.trim()
+      return draft
+    }, {
+      action: decision === 'approved' ? 'approve_gate' : 'reject_gate',
+      target: selectedIdea.id,
+      detail: `${decision === 'approved' ? 'اعتماد' : 'رفض'} البوابة ${gateId}`,
+    })
+
+    setApprovalNote('')
+    setFlashMessage(decision === 'approved' ? 'تم اعتماد البوابة.' : 'تم رفض البوابة.')
+  }
+
+  const handleEvidenceUpload = (files) => {
+    if (!selectedIdea) return
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بإرفاق أدلة.')
+      return
+    }
+
+    const list = Array.from(files || [])
+    if (!list.length) return
+
+    updateIdea(selectedIdea.id, (draft) => {
+      const batch = list.map((file) => ({
+        id: newId('EVD'),
+        name: file.name,
+        type: evidenceType,
+        size: file.size,
+        mime: file.type || 'application/octet-stream',
+        note: evidenceNote.trim(),
+        uploadedBy: session.name || 'user',
+        uploadedAt: new Date().toISOString(),
+      }))
+
+      draft.evidence = [...batch, ...(draft.evidence || [])].slice(0, 100)
+      return draft
+    }, {
+      action: 'upload_evidence',
+      target: selectedIdea.id,
+      detail: `إرفاق ${list.length} ملف/دليل`,
+    })
+
+    setEvidenceNote('')
+    setFlashMessage(`تم إرفاق ${list.length} ملف بنجاح.`)
+  }
+
+  const handleRemoveEvidence = (evidenceId) => {
+    if (!selectedIdea) return
+    if (!permissions.canEdit) {
+      setFlashMessage('صلاحياتك لا تسمح بحذف الأدلة.')
+      return
+    }
+
+    updateIdea(selectedIdea.id, (draft) => {
+      draft.evidence = (draft.evidence || []).filter((item) => item.id !== evidenceId)
+      return draft
+    }, {
+      action: 'remove_evidence',
+      target: selectedIdea.id,
+      detail: `حذف دليل ${evidenceId}`,
+    })
+  }
+
+  const approvalStatusTone = (status) => {
+    if (status === 'approved') return 'good'
+    if (status === 'pending') return 'mid'
+    if (status === 'rejected') return 'bad'
+    return 'neutral'
   }
 
   const renderOverview = () => {
@@ -837,6 +1343,22 @@ function App() {
           <article>
             <p>الوفر السنوي المقدر</p>
             <strong>{formatNumber(metrics.annualSaving)} ريال</strong>
+          </article>
+          <article>
+            <p>اعتمادات معلقة</p>
+            <strong>{metrics.pendingApprovals}</strong>
+          </article>
+          <article>
+            <p>بوابات معتمدة</p>
+            <strong>{metrics.approvedGates}</strong>
+          </article>
+          <article>
+            <p>بوابات مرفوضة</p>
+            <strong>{metrics.rejectedGates}</strong>
+          </article>
+          <article>
+            <p>متوسط دورة الفكرة</p>
+            <strong>{metrics.averageCycleDays} يوم</strong>
           </article>
         </section>
 
@@ -1018,6 +1540,135 @@ function App() {
     )
   }
 
+  const renderWorkflow = () => {
+    if (!selectedIdea) {
+      return (
+        <section className="panel">
+          <p>اختر فكرة أولاً من دورة الحياة.</p>
+        </section>
+      )
+    }
+
+    const approvals = selectedIdea.approvals || createDefaultApprovals()
+    const requiredGateForStage = STAGE_GATE_REQUIREMENT[selectedIdea.stage]
+
+    return (
+      <section className="workflow-layout">
+        <article className="panel">
+          <div className="panel-head">
+            <h3>Workflow & Stage Gates</h3>
+            <span>{selectedIdea.id}</span>
+          </div>
+
+          <p className="lead-text">
+            الانتقال بين مراحل دورة الحياة يعتمد على اعتماد البوابات المرحلية من المراجعين، مع توثيق
+            القرار والتاريخ والمسؤول.
+          </p>
+
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>البوابة</th>
+                  <th>الحالة</th>
+                  <th>طلب</th>
+                  <th>قرار</th>
+                  <th>ملاحظات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {APPROVAL_GATES.map((gate) => {
+                  const item = approvals[gate.id] || createDefaultApprovalGate()
+                  const isRequiredNow = requiredGateForStage === gate.id
+                  return (
+                    <tr key={gate.id}>
+                      <td>
+                        <strong>{gate.title}</strong>
+                        {isRequiredNow ? <small>مطلوبة للمرحلة الحالية</small> : null}
+                      </td>
+                      <td>
+                        <span className={`badge ${approvalStatusTone(item.status)}`}>{item.status}</span>
+                      </td>
+                      <td>
+                        <button
+                          className="btn"
+                          onClick={() => handleRequestApproval(gate.id)}
+                          disabled={item.status === 'approved' || (!permissions.canEdit && !permissions.canCreate)}
+                        >
+                          طلب اعتماد
+                        </button>
+                      </td>
+                      <td>
+                        <div className="inline-actions">
+                          <button
+                            className="btn primary"
+                            onClick={() => handleDecideApproval(gate.id, 'approved')}
+                            disabled={!permissions.canApprove}
+                          >
+                            اعتماد
+                          </button>
+                          <button
+                            className="btn ghost"
+                            onClick={() => handleDecideApproval(gate.id, 'rejected')}
+                            disabled={!permissions.canApprove}
+                          >
+                            رفض
+                          </button>
+                        </div>
+                      </td>
+                      <td>
+                        <small>
+                          {item.decidedBy ? `${item.decidedBy} - ${formatDate(item.decidedAt)}` : '—'}
+                        </small>
+                      </td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          <label className="field">
+            <span>ملاحظة قرار الاعتماد</span>
+            <textarea
+              rows={2}
+              value={approvalNote}
+              onChange={(event) => setApprovalNote(event.target.value)}
+              placeholder="اكتب سبب الاعتماد أو الرفض..."
+            />
+          </label>
+        </article>
+
+        <article className="panel">
+          <div className="panel-head">
+            <h3>التحكم المرحلي</h3>
+            <span>Lifecycle Control</span>
+          </div>
+
+          <div className="summary-grid mini">
+            <article>
+              <p>المرحلة الحالية</p>
+              <strong>{selectedIdea.stage}</strong>
+            </article>
+            <article>
+              <p>الحالة التشغيلية</p>
+              <strong>{selectedIdea.status}</strong>
+            </article>
+            <article>
+              <p>البوابة المطلوبة</p>
+              <strong>{requiredGateForStage || 'لا يوجد'}</strong>
+            </article>
+          </div>
+
+          <p className="lead-text">
+            يمكن للمراجع أو مدير المنصة فقط اعتماد البوابات. يستطيع المبتكر طلب الاعتماد وتحديث
+            الأدلة.
+          </p>
+        </article>
+      </section>
+    )
+  }
+
   const renderWorkspace = () => {
     if (!selectedIdea) {
       return (
@@ -1191,6 +1842,55 @@ function App() {
               </li>
             ))}
             {!notes.length ? <li className="empty">لا توجد ملاحظات بعد.</li> : null}
+          </ul>
+        </article>
+
+        <article className="panel">
+          <div className="panel-head">
+            <h3>أدلة ومستندات الفكرة</h3>
+            <span>{(selectedIdea.evidence || []).length}</span>
+          </div>
+
+          <div className="inline-input wrap">
+            <select value={evidenceType} onChange={(event) => setEvidenceType(event.target.value)}>
+              <option>ملف اختبار</option>
+              <option>مؤشر أداء</option>
+              <option>تقرير مالي</option>
+              <option>موافقة تشغيلية</option>
+              <option>مستند حوكمة</option>
+            </select>
+            <input
+              value={evidenceNote}
+              onChange={(event) => setEvidenceNote(event.target.value)}
+              placeholder="وصف مختصر للدليل..."
+            />
+            <input
+              type="file"
+              multiple
+              onChange={(event) => handleEvidenceUpload(event.target.files)}
+            />
+          </div>
+
+          <ul className="list">
+            {(selectedIdea.evidence || []).map((item) => (
+              <li key={item.id}>
+                <div className="rank-row">
+                  <strong>{item.name}</strong>
+                  <button className="btn ghost" onClick={() => handleRemoveEvidence(item.id)}>
+                    حذف
+                  </button>
+                </div>
+                <p>
+                  النوع: {item.type} | الحجم: {formatNumber(item.size)} بايت
+                </p>
+                <small>
+                  رفع بواسطة {item.uploadedBy} - {formatDate(item.uploadedAt)}
+                </small>
+              </li>
+            ))}
+            {!(selectedIdea.evidence || []).length ? (
+              <li className="empty">لا توجد أدلة مرفوعة بعد.</li>
+            ) : null}
           </ul>
         </article>
       </section>
@@ -1627,6 +2327,51 @@ function App() {
     )
   }
 
+  const renderAudit = () => {
+    const logs = (state.auditLog || []).slice(0, 120)
+
+    return (
+      <section className="panel">
+        <div className="panel-head">
+          <h3>Audit Log</h3>
+          <span>{logs.length} سجل</span>
+        </div>
+
+        <div className="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>الوقت</th>
+                <th>المستخدم</th>
+                <th>الدور</th>
+                <th>الإجراء</th>
+                <th>الهدف</th>
+                <th>التفاصيل</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((log) => (
+                <tr key={log.id}>
+                  <td>{formatDate(log.at)}</td>
+                  <td>{log.actor}</td>
+                  <td>{log.role}</td>
+                  <td>{log.action}</td>
+                  <td>{log.target}</td>
+                  <td>{log.detail || '—'}</td>
+                </tr>
+              ))}
+              {!logs.length ? (
+                <tr>
+                  <td colSpan="6">لا يوجد نشاط مسجل بعد.</td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    )
+  }
+
   const renderGovernance = () => {
     if (!selectedIdea) {
       return (
@@ -1736,10 +2481,10 @@ function App() {
       <header className="hero">
         <div>
           <p className="eyebrow">Innovation Shield Platform</p>
-          <h1>درع الابتكار - منظومة ابتكار مؤسسية متكاملة</h1>
+          <h1>درع الابتكار - منصة قوية لإدارة الابتكار المؤسسي</h1>
           <p className="hero-text">
             منصة تشغيلية داخل التجمع الصحي بالطائف لتمكين المبتكرين وتحويل الأفكار إلى نماذج
-            قابلة للاختبار والتطبيق، مع تقييم نضج، محاكاة أثر، مكتبة معرفية، وحوكمة واضحة.
+            قابلة للاختبار والتطبيق، مع Workflow موافقات رسمي، إدارة أدلة، ولوحة تدقيق كاملة.
           </p>
         </div>
         <div className="hero-side">
@@ -1758,27 +2503,67 @@ function App() {
         </div>
       </header>
 
-      <nav className="top-nav">
-        {VIEWS.map((view) => (
-          <button
-            key={view.id}
-            className={activeView === view.id ? 'active' : ''}
-            onClick={() => setActiveView(view.id)}
-          >
-            {view.label}
-          </button>
-        ))}
-      </nav>
-
       {flashMessage ? <section className="flash-box">{flashMessage}</section> : null}
 
-      {activeView === 'overview' ? renderOverview() : null}
-      {activeView === 'lifecycle' ? renderLifecycle() : null}
-      {activeView === 'workspace' ? renderWorkspace() : null}
-      {activeView === 'prototype' ? renderPrototype() : null}
-      {activeView === 'impact' ? renderImpact() : null}
-      {activeView === 'knowledge' ? renderKnowledge() : null}
-      {activeView === 'governance' ? renderGovernance() : null}
+      {!session.isAuthenticated ? (
+        <section className="panel auth-panel">
+          <div className="panel-head">
+            <h3>تسجيل الدخول للمنصة</h3>
+            <span>Role-Based Access</span>
+          </div>
+          <div className="inline-input wrap">
+            <input
+              value={loginForm.name}
+              onChange={(event) => setLoginForm((prev) => ({ ...prev, name: event.target.value }))}
+              placeholder="اسم المستخدم"
+            />
+            <select
+              value={loginForm.role}
+              onChange={(event) => setLoginForm((prev) => ({ ...prev, role: event.target.value }))}
+            >
+              {ROLE_OPTIONS.map((role) => (
+                <option key={role}>{role}</option>
+              ))}
+            </select>
+            <button className="btn primary" onClick={handleLogin}>
+              دخول
+            </button>
+          </div>
+        </section>
+      ) : (
+        <>
+          <section className="session-strip">
+            <span className="badge good">المستخدم: {session.name}</span>
+            <span className="badge">{session.role}</span>
+            <span className="badge">آخر دخول: {formatDate(session.lastLoginAt)}</span>
+            <button className="btn ghost" onClick={handleLogout}>
+              تسجيل خروج
+            </button>
+          </section>
+
+          <nav className="top-nav">
+            {VIEWS.map((view) => (
+              <button
+                key={view.id}
+                className={activeView === view.id ? 'active' : ''}
+                onClick={() => setActiveView(view.id)}
+              >
+                {view.label}
+              </button>
+            ))}
+          </nav>
+
+          {activeView === 'overview' ? renderOverview() : null}
+          {activeView === 'lifecycle' ? renderLifecycle() : null}
+          {activeView === 'workflow' ? renderWorkflow() : null}
+          {activeView === 'workspace' ? renderWorkspace() : null}
+          {activeView === 'prototype' ? renderPrototype() : null}
+          {activeView === 'impact' ? renderImpact() : null}
+          {activeView === 'knowledge' ? renderKnowledge() : null}
+          {activeView === 'governance' ? renderGovernance() : null}
+          {activeView === 'audit' ? renderAudit() : null}
+        </>
+      )}
 
       <footer className="platform-footer">
         <div className="footer-links">

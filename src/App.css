@@ -108,6 +108,22 @@ body {
   background: linear-gradient(120deg, rgba(44, 153, 216, 0.35), rgba(30, 186, 160, 0.32));
 }
 
+.session-strip {
+  border: 1px solid rgba(126, 190, 227, 0.3);
+  border-radius: 12px;
+  background: rgba(7, 30, 45, 0.75);
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.auth-panel {
+  max-width: 760px;
+  margin-inline: auto;
+}
+
 .flash-box {
   border: 1px solid rgba(73, 207, 145, 0.52);
   border-radius: 12px;
@@ -234,6 +250,12 @@ body {
   display: grid;
   gap: 10px;
   grid-template-columns: minmax(280px, 360px) 1fr;
+}
+
+.workflow-layout {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1.2fr 1fr;
 }
 
 .intake-panel {
@@ -382,6 +404,13 @@ textarea {
 .card-actions.two-cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
+}
+
+.rank-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
 }
 
 .badge {
@@ -681,6 +710,7 @@ tbody td small {
 @media (max-width: 1280px) {
   .hero,
   .lifecycle-layout,
+  .workflow-layout,
   .workspace-layout,
   .prototype-layout,
   .impact-layout {
@@ -711,6 +741,7 @@ tbody td small {
   }
 
   .top-nav,
+  .session-strip,
   .inline-actions,
   .inline-input {
     flex-direction: column;
